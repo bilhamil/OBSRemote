@@ -1,0 +1,152 @@
+
+<html>
+	<head>
+		<title>OBS Streamer</title>
+		
+		<link rel="stylesheet" type="text/css" href="styles/fonts.css"/>
+		<link rel="stylesheet" type="text/css" href="styles/index.css"/>
+		<link rel="stylesheet" type="text/css" href="styles/scenelist.css"/>
+		<link rel="stylesheet" type="text/css" href="styles/sourcelist.css"/>
+		<link rel="stylesheet" type="text/css" href="styles/button.css"/>
+		<link rel="stylesheet" type="text/css" href="styles/streamconfig.css"/>
+		
+		<link rel="stylesheet" type="text/css" href="styles/custom-theme/jquery-ui-1.10.0.custom.min.css"/>
+			
+	</head>
+	
+	<body>
+	
+	<div id="headband">
+		<img id="LogoSpinner" src="imgs/OBSLogo54.png" />
+		<p id="OBSHeader">Open Broadcaster Software</p>
+		<table id="buttoncontainer">
+			<tr>
+				<td>
+					<div id="button1" class="button">
+						<p>Start Streaming</p>
+					</div>
+				</td>
+				<td>
+					<div id="button2" class="button">
+						<p>Start Preview</p>
+					</div>
+				</td>
+				<td>
+					<div id="OnTheAir">
+						<p>OFF THE AIR</p>
+					</div>
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+	
+	<div id="bigOne">
+	
+		<div id="streamView">
+			<div id = "sourcesBox">
+				<div id="configuregear"> </div>
+				<div id="streambox">
+					
+				</div>
+			</div>
+			<div id="SourceSceneMenus">
+				<div id="ActualMenus">
+					<div id="scenes">
+						<div>SCENES</div>
+						<ul id="SceneList">
+							
+						</ul>
+					</div>
+					<div id="sources">
+						<div>SOURCES</div>
+						<ul id="SourceList">
+							
+						</ul>					
+					</div>
+				</div>
+				<div id="menusResizeBar" class="resizeBarVert">
+					
+				</div>
+			</div>
+		</div>
+		
+	</div>
+	
+	<div id="statsView">
+		<!--<div id="StatsViewResizeBar" class="resizeBarHoriz">
+		</div> -->
+		<div id="Lights" title="Disconnected from OBS">
+			<img id="ConnectedLight" src="imgs/connected.png"/>
+			<img id="DisconnectedLight" src="imgs/disconnected.png"/>
+		</div>
+		<div id="StatsTableDiv">
+			<table id ="StatsTable">
+				<tr>
+					<td class="statlabel" id="TimeRunningLb">Time Running:</td>
+					<td class="statlabel" id="DroppedFramesLb">Dropped Frames:</td>
+					<td class="statlabel" id="FPSLb">FPS:</td>
+					<td class="statlabel" id="DataRateLb">Bitrate:</td>
+				</tr>
+				<tr>
+					<td class="stattext" id="TimeRunning">00:00:00</td>
+					<td class="stattext" id="DroppedFrames">10000(90.00%)</td>
+					<td class="stattext" id="FPS">31</td>
+					<td class="stattext" id="DataRate"> 0 kb/s</td>
+				</tr>
+			</table>
+		</div>
+	</div>	
+	
+	<div id="dialog-form" title="Stream Preview Options">
+	  
+	  <form>
+	  
+	  	<!--<label for="streamservice">Service</label>
+	    <select id="streamservice">
+		  <option value="twitch">Twitch.tv</option>
+		  <option value="own3d">Own3d.tv</option>
+		</select>-->
+		
+	    <label for="username">Twitch Username</label>
+	    <input type="text" name="username" id="username" class="text ui-widget-content ui-corner-all" />
+	    
+	    <table>
+	    	<tr>
+	    		<td>
+	    			<input type="checkbox" name="showstream" id="showstream"/>
+	    			<label for="showstream"><span></span>Show Stream</label>
+	    		</td>
+	    		<td>
+	    			<input type="checkbox" name="showchat" id="showchat"/>
+	    			<label for="showchat"><span></span>Show Chat</label>
+	    		</td>
+	    	</tr>
+	    	<tr>
+	    		<td>
+	    			<input type="checkbox" name="onlywhenstreaming" id="onlywhenstreaming"/>
+	    			<label for="onlywhenstreaming"><span></span>Only When Streaming</label>
+	    		</td>
+	    	</tr>
+	    </table>
+	    
+	  
+	  </form>
+	  
+	</div>
+		
+	</body>
+		
+	<script type="text/JavaScript" src="js/jquery-1.9.0.js"></script>
+	<script type="text/JavaScript" src="js/jquery-ui-1.10.0.custom.min.js"></script>
+	
+	<script type="text/JavaScript" src="js/browserDetect.js"></script>
+	<script type="text/JavaScript" src="js/websocketutils.js"></script>
+	<script type="text/JavaScript" src="js/resizeDiv.js"></script> 
+	<script type="text/JavaScript" src="js/websocket.js"></script>
+	<script type="text/JavaScript" src="js/main.js"></script> 
+	<script type="text/JavaScript" src="js/sourcelist.js"></script>
+	<script type="text/JavaScript" src="js/scenelist.js"></script> 
+	<script type="text/JavaScript" src="js/streamconfig.js"></script>
+	
+</html>

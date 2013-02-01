@@ -1,0 +1,79 @@
+#scenes {
+	width:40%;
+	position: absolute;
+	height:100%;	
+	left: 0px;
+	background: #222222;
+}
+
+#scenes div {
+	position: absolute;
+	width: 100%;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	font-family: Verdana;
+	font-weight: bold;
+	font-size: 20px;
+	color: #888888;
+}
+
+#scenes div:hover{
+	cursor: default;
+}
+
+
+#SceneList {
+	position: absolute;
+	padding: 0px;
+	margin: 0px;
+	top: 30px;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	overflow-y:auto;
+	list-style-type: none;
+}
+
+#SceneList li {
+	text-align: center;
+	font-family: Verdana;
+	font-weight: bold;
+	font-size: 16px;
+	border:1px solid;
+	background: #444444;
+	
+	margin: 4px;	
+	height: 28px;
+	line-height: 28px;
+	
+	background: #555555;
+	border-radius:3px;
+	border-color: #333333;
+	color: #DDDDDD;
+	
+	white-space: nowrap;
+	overflow:hidden;
+	text-overflow: ellipsis;
+	
+	-webkit-user-select: none;  /* Chrome all / Safari all */
+  	-moz-user-select: none;     /* Firefox all */
+  	-ms-user-select: none;      /* IE 10+ */
+}
+
+#SceneList li:hover {
+	background: #555555;
+	cursor: hand;
+}
+
+#SceneList li.sceneselect {
+	background: #777777;
+	cursor: hand;
+	border:2px solid;
+	border-color: #FF9900;
+	
+	height: 26px;
+	line-height: 26px;
+	
+	
+}
