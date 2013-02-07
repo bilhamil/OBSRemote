@@ -64,7 +64,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OBSApi.lib libwebsocketswin32.lib ws2_32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ZLib.lib jansson.lib"
+				AdditionalDependencies="OBSApi.lib libwebsocketswin32.lib ws2_32.lib ZLib.lib jansson.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;.\jansson-2.4\win32\vs2008\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;..\..\OBS\OBSApi\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\libwebsocketswin32\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\zlib\Output\$(PlatformName)\$(ConfigurationName)&quot;"
 				GenerateDebugInformation="true"
@@ -219,7 +219,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OBSApi.lib libwebsocketswin32.lib ws2_32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ZLib.lib jansson.lib"
+				AdditionalDependencies="OBSApi.lib libwebsocketswin32.lib ws2_32.lib ZLib.lib jansson.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;.\jansson-2.4\win32\vs2008\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;..\..\OBS\OBSApi\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\libwebsocketswin32\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\zlib\Output\$(PlatformName)\$(ConfigurationName)&quot;"
 				GenerateDebugInformation="true"
