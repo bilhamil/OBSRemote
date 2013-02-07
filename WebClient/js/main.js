@@ -69,7 +69,7 @@ function onStreamStatus(update)
 			onStopStreaming(update);
 		}
 	}
-	if(currentlyStreaming)
+	if(currentlyStreaming || currentlyPreviewing)
 	{
 		/* update stats output */
 		$("#StatsTable").css("visibility", "visible");
