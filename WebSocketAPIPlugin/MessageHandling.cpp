@@ -193,11 +193,11 @@ json_t* getSceneJson(XElement* scene)
 /* Message Handlers */
 json_t* OBSAPIMessageHandler::HandleGetCurrentScene(OBSAPIMessageHandler* handler, json_t* message)
 {
-    API->EnterSceneMutex();
+    OBSEnterSceneMutex();
     
     json_t* ret = GetOkResponse();
 
-    XElement* scene = API->GetSceneElement();
+    XElement* scene = OBSGetSceneElement();
     json_object_set_new(ret, "name", json_string_wchar(scene->GetName()));
 
     XElement* sources = scene->GetElement(TEXT("sources"));
@@ -212,17 +212,17 @@ json_t* OBSAPIMessageHandler::HandleGetCurrentScene(OBSAPIMessageHandler* handle
     }
 
     json_object_set_new(ret, "sources", scene_items);
-    API->LeaveSceneMutex();
+    OBSLeaveSceneMutex();
     return ret;
 }
 
 json_t* OBSAPIMessageHandler::HandleGetSceneList(OBSAPIMessageHandler* handler, json_t* message)
 {
-    API->EnterSceneMutex();
+    OBSEnterSceneMutex();
     json_t* ret = GetOkResponse();
-    XElement* xscenes = API->GetSceneListElement();
+    XElement* xscenes = OBSGetSceneListElement();
 
-    XElement* currentScene = API->GetSceneElement();
+    XElement* currentScene = OBSGetSceneElement();
     json_object_set_new(ret, "current-scene", json_string_wchar(currentScene->GetName()));
 
     json_t* scenes = json_array();
@@ -237,7 +237,7 @@ json_t* OBSAPIMessageHandler::HandleGetSceneList(OBSAPIMessageHandler* handler, 
     }
     
     json_object_set_new(ret,"scenes", scenes);
-    API->LeaveSceneMutex();
+    OBSLeaveSceneMutex();
 
     return ret;
 }
@@ -250,7 +250,7 @@ json_t* OBSAPIMessageHandler::HandleSetCurrentScene(OBSAPIMessageHandler* handle
     {
         String name = json_string_value(newScene);
 
-        API->SetScene(name.Array(), true);
+        OBSSetScene(name.Array(), true);
     }
     return GetOkResponse();
 }
@@ -268,7 +268,7 @@ json_t* OBSAPIMessageHandler::HandleSetSourcesOrder(OBSAPIMessageHandler* handle
 
             sceneNames.Add(name);
         }
-        API->SetSourceOrder(sceneNames);
+        OBSSetSourceOrder(sceneNames);
     }
     return GetOkResponse();
 }
@@ -291,7 +291,7 @@ json_t* OBSAPIMessageHandler::HandleSetSourceRender(OBSAPIMessageHandler *handle
     json_t* ret = GetOkResponse();
 
     String sourceName = json_string_value(source);
-    API->SetSourceRender(sourceName.Array(), json_typeof(sourceRender) == JSON_TRUE);
+    OBSSetSourceRender(sourceName.Array(), json_typeof(sourceRender) == JSON_TRUE);
 
     return ret;
 }
@@ -304,8 +304,8 @@ json_t* OBSAPIMessageHandler::HandleSetSceneItemPositionAndSize(OBSAPIMessageHan
 json_t* OBSAPIMessageHandler::HandleGetStreamingStatus(OBSAPIMessageHandler* handler, json_t* message)
 {
     json_t* ret = GetOkResponse();
-    json_object_set_new(ret, "streaming", json_boolean(API->GetStreaming()));
-    json_object_set_new(ret, "preview-only", json_boolean(API->GetPreviewOnly()));
+    json_object_set_new(ret, "streaming", json_boolean(OBSGetStreaming()));
+    json_object_set_new(ret, "preview-only", json_boolean(OBSGetPreviewOnly()));
 
     return ret;
 }
@@ -316,11 +316,11 @@ json_t* OBSAPIMessageHandler::HandleStartStopStreaming(OBSAPIMessageHandler* han
 
     if(previewOnly != NULL && json_typeof(previewOnly) == JSON_TRUE)
     {
-        API->StartStopPreview();
+        OBSStartStopPreview();
     }
     else
     {
-        API->StartStopStream();
+        OBSStartStopStream();
     }
     return GetOkResponse();
 }
@@ -415,7 +415,7 @@ void WebSocketOBSTriggerHandler::SourceOrderChanged()
     json_t* update = json_object();
     json_object_set_new(update, "update-type", json_string("SourceOrderChanged"));
 
-    XElement* xsources = API->GetSceneElement()->GetElement(TEXT("sources"));
+    XElement* xsources = OBSGetSceneElement()->GetElement(TEXT("sources"));
     
     json_t* sources = json_array();
     for(UINT i = 0; i < xsources->NumElements(); i++)
@@ -437,7 +437,7 @@ void WebSocketOBSTriggerHandler::SourcesAddedOrRemoved()
     json_t* update = json_object();
     json_object_set_new(update, "update-type", json_string("RepopulateSources"));
 
-    XElement* xsources = API->GetSceneElement()->GetElement(TEXT("sources"));
+    XElement* xsources = OBSGetSceneElement()->GetElement(TEXT("sources"));
     
     json_t* sources = json_array();
     for(UINT i = 0; i < xsources->NumElements(); i++)
@@ -459,7 +459,7 @@ void WebSocketOBSTriggerHandler::SourceChanged(CTSTR sourceName, XElement* sourc
     json_t* update = json_object();
     json_object_set_new(update, "update-type", json_string("SourceChanged"));
 
-    XElement* xsources = API->GetSceneElement()->GetElement(TEXT("sources"));
+    XElement* xsources = OBSGetSceneElement()->GetElement(TEXT("sources"));
     
     json_object_set_new(update, "source-name", json_string_wchar(sourceName));
     
