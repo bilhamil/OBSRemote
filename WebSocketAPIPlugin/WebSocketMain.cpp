@@ -336,7 +336,7 @@ bool LoadPlugin()
 
     /* initialize and register trigger handler */
     triggerHandler = new WebSocketOBSTriggerHandler();
-    OBSAddEventListener(triggerHandler);
+    API->AddOBSEventListener(triggerHandler);
 
     WebSocketThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)MainWebSocketThread, NULL, 0, &dummy);
     return true;
@@ -347,8 +347,6 @@ void UnloadPlugin()
     running = false;
     DWORD exitStatus;
     OSWaitForThread(WebSocketThread, &exitStatus);
-    
-    OBSRemoveEventListener(triggerHandler);
 
     delete accesslist;
     delete triggerHandler;
