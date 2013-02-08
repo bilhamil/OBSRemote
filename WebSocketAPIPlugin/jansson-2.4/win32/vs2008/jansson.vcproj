@@ -283,7 +283,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy $(OutDir)\$(ProjectName).dll ..\..\..\..\..\OBS\rundir\"
+				CommandLine=""
 			/>
 		</Configuration>
 	</Configurations>
