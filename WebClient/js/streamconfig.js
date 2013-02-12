@@ -122,7 +122,7 @@ function streamConfigStartStreaming()
 			currentlyShowingStream = true;
 		}
 		showStreamTimeoutVariable = null;
-	}, 5000);
+	}, 6000);
 }
 
 function streamConfigStopStreaming()

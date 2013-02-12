@@ -268,16 +268,16 @@ body {
 
 #chathideshow:hover div {
 	cursor: pointer;
-	background: #222222 url("../imgs/chatsprite.png") 0px -32px no-repeat;
+	background-position: 0px -32px;
 }
 
 #chathideshow.open div {
-	background: #222222 url("../imgs/chatsprite.png") 0px -64px no-repeat;
+	background-position: 0px -64px;
 }
 
 #chathideshow.open div:hover {
 	cursor: pointer;
-	background: #222222 url("../imgs/chatsprite.png") 0px -96px no-repeat;
+	background-position: 0px -96px;
 }
 
 #chatHider {
