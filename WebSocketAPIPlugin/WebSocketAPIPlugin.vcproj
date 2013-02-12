@@ -368,6 +368,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OBSRemote.h"
+				>
+			</File>
+			<File
 				RelativePath=".\WebSocketMain.h"
 				>
 			</File>

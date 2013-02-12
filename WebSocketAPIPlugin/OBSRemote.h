@@ -17,9 +17,5 @@
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 ********************************************************************************/
 
-
-#pragma once
-
-#include "OBSApi.h"
-#include "OBSRemote.h"
-
+#define OBS_REMOTE_VERSION 1.0
+#define OBS_REMOTE_FULLNAME "OBS Remote v1.0"

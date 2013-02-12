@@ -354,10 +354,10 @@ void UnloadPlugin()
 
 CTSTR GetPluginName()
 {
-    return TEXT("OBS Remote");
+    return TEXT(OBS_REMOTE_FULLNAME);
 }
 
 CTSTR GetPluginDescription()
 {
-    return TEXT("An http/websocket interface enabling remote control through web clients.");
+    return TEXT("An http/websocket interface enabling remote control through web clients. Accessible on port# 4444");
 }
