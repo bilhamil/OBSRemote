@@ -95,7 +95,10 @@ function loadStreamAndOrChat(service, username, showstream, showchat, onlywhenst
 		{
 			removeChatDiv();
 			showChatDiv();
-			$(makeTwitchChat(username)).appendTo("#actualChat");
+			if(!getChatCollapsed())
+			{
+				$(makeTwitchChat(username)).appendTo("#actualChat");
+			}
 			currentlyShowingChat = true;	
 		}
 		else if(!showchat)
@@ -108,16 +111,18 @@ function loadStreamAndOrChat(service, username, showstream, showchat, onlywhenst
 	}
 }
 
+var showStreamTimeoutVariable = null;
 function streamConfigStartStreaming()
 {
-	setTimeout(function() {
+	showStreamTimeoutVariable = setTimeout(function() {
 		if(onlywhenstreaming && showstream)
 		{
 			$("#streambox").empty();
 			$(makeTwitchStream(username)).appendTo("#streambox");
 			currentlyShowingStream = true;
 		}
-	}, 3000);
+		showStreamTimeoutVariable = null;
+	}, 5000);
 }
 
 function streamConfigStopStreaming()
@@ -126,6 +131,11 @@ function streamConfigStopStreaming()
 	{
 		$("#streambox").empty();
 		currentlyShowingStream = false;
+	}
+	if(showStreamTimeoutVariable)
+	{
+		window.clearTimeout(showStreamTimeoutVariable);
+		showStreamTimeoutVariable = null;
 	}
 }
 

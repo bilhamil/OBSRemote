@@ -35,8 +35,9 @@
 
 #define REQ_GET_STREAMING_STATUS "GetStreamingStatus"
 #define REQ_STARTSTOP_STREAMING    "StartStopStreaming"
-#define REQ_GET_VOLUMES    "GetVolumes"
-#define REQ_SET_VOLUMES "SetVolumes"
+#define REQ_TOGGLE_MUTE "ToggleMute"
+#define REQ_GET_VOLUMES "GetVolumes"
+#define REQ_SET_VOLUME "SetVolume"
 
 struct OBSAPIMessageHandler;
 
@@ -66,8 +67,9 @@ struct OBSAPIMessageHandler
     static json_t* HandleSetSceneItemPositionAndSize(OBSAPIMessageHandler* handler, json_t* message);
     static json_t* HandleGetStreamingStatus(OBSAPIMessageHandler* handler, json_t* message);
     static json_t* HandleStartStopStreaming(OBSAPIMessageHandler* handler, json_t* message);
+    static json_t* HandleToggleMute(OBSAPIMessageHandler* handler, json_t* message);
     static json_t* HandleGetVolumes(OBSAPIMessageHandler* handler, json_t* message);
-    static json_t* HandleSetVolumes(OBSAPIMessageHandler* handler, json_t* message);
+    static json_t* HandleSetVolume(OBSAPIMessageHandler* handler, json_t* message);
 
     struct libwebsocket *wsi;
     
@@ -98,6 +100,9 @@ public:
     virtual void SourceOrderChanged();
     virtual void SourcesAddedOrRemoved();
     virtual void SourceChanged(CTSTR sourceName, XElement* source);
+
+    virtual void MicVolumeChanged(float level, bool muted, bool finalValue);
+    virtual void DesktopVolumeChanged(float level, bool muted, bool finalValue);
 
     json_t* popUpdate();
 };

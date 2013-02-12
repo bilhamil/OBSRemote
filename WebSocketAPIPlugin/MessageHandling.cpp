@@ -21,16 +21,17 @@
 
 void OBSAPIMessageHandler::initializeMessageMap()
 {
-    messageMap[REQ_GET_CURRENT_SCENE] =                    OBSAPIMessageHandler::HandleGetCurrentScene;
+    messageMap[REQ_GET_CURRENT_SCENE] =                 OBSAPIMessageHandler::HandleGetCurrentScene;
     messageMap[REQ_GET_SCENE_LIST] =                    OBSAPIMessageHandler::HandleGetSceneList;
     messageMap[REQ_SET_CURRENT_SCENE] =                 OBSAPIMessageHandler::HandleSetCurrentScene;
-    messageMap[REQ_SET_SOURCES_ORDER] =                    OBSAPIMessageHandler::HandleSetSourcesOrder;
+    messageMap[REQ_SET_SOURCES_ORDER] =                 OBSAPIMessageHandler::HandleSetSourcesOrder;
     messageMap[REQ_SET_SOURCE_RENDER] =                 OBSAPIMessageHandler::HandleSetSourceRender;
     messageMap[REQ_SET_SCENEITEM_POSITION_AND_SIZE] =   OBSAPIMessageHandler::HandleSetSceneItemPositionAndSize;
     messageMap[REQ_GET_STREAMING_STATUS] =              OBSAPIMessageHandler::HandleGetStreamingStatus;
     messageMap[REQ_STARTSTOP_STREAMING] =               OBSAPIMessageHandler::HandleStartStopStreaming;
+    messageMap[REQ_TOGGLE_MUTE] =                       OBSAPIMessageHandler::HandleToggleMute;
     messageMap[REQ_GET_VOLUMES] =                       OBSAPIMessageHandler::HandleGetVolumes;
-    messageMap[REQ_SET_VOLUMES] =                       OBSAPIMessageHandler::HandleSetVolumes;
+    messageMap[REQ_SET_VOLUME] =                        OBSAPIMessageHandler::HandleSetVolume;
 
     mapInitialized = true;
 }
@@ -193,11 +194,11 @@ json_t* getSceneJson(XElement* scene)
 /* Message Handlers */
 json_t* OBSAPIMessageHandler::HandleGetCurrentScene(OBSAPIMessageHandler* handler, json_t* message)
 {
-    API->EnterSceneMutex();
+    OBSEnterSceneMutex();
     
     json_t* ret = GetOkResponse();
 
-    XElement* scene = API->GetSceneElement();
+    XElement* scene = OBSGetSceneElement();
     json_object_set_new(ret, "name", json_string_wchar(scene->GetName()));
 
     XElement* sources = scene->GetElement(TEXT("sources"));
@@ -212,17 +213,17 @@ json_t* OBSAPIMessageHandler::HandleGetCurrentScene(OBSAPIMessageHandler* handle
     }
 
     json_object_set_new(ret, "sources", scene_items);
-    API->LeaveSceneMutex();
+    OBSLeaveSceneMutex();
     return ret;
 }
 
 json_t* OBSAPIMessageHandler::HandleGetSceneList(OBSAPIMessageHandler* handler, json_t* message)
 {
-    API->EnterSceneMutex();
+    OBSEnterSceneMutex();
     json_t* ret = GetOkResponse();
-    XElement* xscenes = API->GetSceneListElement();
+    XElement* xscenes = OBSGetSceneListElement();
 
-    XElement* currentScene = API->GetSceneElement();
+    XElement* currentScene = OBSGetSceneElement();
     json_object_set_new(ret, "current-scene", json_string_wchar(currentScene->GetName()));
 
     json_t* scenes = json_array();
@@ -237,7 +238,7 @@ json_t* OBSAPIMessageHandler::HandleGetSceneList(OBSAPIMessageHandler* handler, 
     }
     
     json_object_set_new(ret,"scenes", scenes);
-    API->LeaveSceneMutex();
+    OBSLeaveSceneMutex();
 
     return ret;
 }
@@ -250,7 +251,7 @@ json_t* OBSAPIMessageHandler::HandleSetCurrentScene(OBSAPIMessageHandler* handle
     {
         String name = json_string_value(newScene);
 
-        API->SetScene(name.Array(), true);
+        OBSSetScene(name.Array(), true);
     }
     return GetOkResponse();
 }
@@ -268,7 +269,7 @@ json_t* OBSAPIMessageHandler::HandleSetSourcesOrder(OBSAPIMessageHandler* handle
 
             sceneNames.Add(name);
         }
-        API->SetSourceOrder(sceneNames);
+        OBSSetSourceOrder(sceneNames);
     }
     return GetOkResponse();
 }
@@ -291,7 +292,7 @@ json_t* OBSAPIMessageHandler::HandleSetSourceRender(OBSAPIMessageHandler *handle
     json_t* ret = GetOkResponse();
 
     String sourceName = json_string_value(source);
-    API->SetSourceRender(sourceName.Array(), json_typeof(sourceRender) == JSON_TRUE);
+    OBSSetSourceRender(sourceName.Array(), json_typeof(sourceRender) == JSON_TRUE);
 
     return ret;
 }
@@ -304,8 +305,8 @@ json_t* OBSAPIMessageHandler::HandleSetSceneItemPositionAndSize(OBSAPIMessageHan
 json_t* OBSAPIMessageHandler::HandleGetStreamingStatus(OBSAPIMessageHandler* handler, json_t* message)
 {
     json_t* ret = GetOkResponse();
-    json_object_set_new(ret, "streaming", json_boolean(API->GetStreaming()));
-    json_object_set_new(ret, "preview-only", json_boolean(API->GetPreviewOnly()));
+    json_object_set_new(ret, "streaming", json_boolean(OBSGetStreaming()));
+    json_object_set_new(ret, "preview-only", json_boolean(OBSGetPreviewOnly()));
 
     return ret;
 }
@@ -316,22 +317,104 @@ json_t* OBSAPIMessageHandler::HandleStartStopStreaming(OBSAPIMessageHandler* han
 
     if(previewOnly != NULL && json_typeof(previewOnly) == JSON_TRUE)
     {
-        API->StartStopPreview();
+        OBSStartStopPreview();
     }
     else
     {
-        API->StartStopStream();
+        OBSStartStopStream();
+    }
+    return GetOkResponse();
+}
+
+json_t* OBSAPIMessageHandler::HandleToggleMute(OBSAPIMessageHandler* handler, json_t* message)
+{
+    json_t* channel = json_object_get(message, "channel");
+
+    if(channel != NULL && json_typeof(channel) == JSON_STRING)
+    {
+        const char* channelVal = json_string_value(channel);
+        if(stricmp(channelVal, "desktop") == 0)
+        {
+            OBSToggleDesktopMute();
+        }
+        else if(stricmp(channelVal, "microphone") == 0)
+        {
+            OBSToggleMicMute();
+        }
+        else
+        {
+            return GetErrorResponse("Invalid channel specified.");
+        }
+    }
+    else
+    {
+        return GetErrorResponse("Channel not specified.");
     }
     return GetOkResponse();
 }
 
 json_t* OBSAPIMessageHandler::HandleGetVolumes(OBSAPIMessageHandler* handler, json_t* message)
 {
-    return GetOkResponse();
+    json_t* ret = GetOkResponse();
+
+    json_object_set_new(ret, "mic-volume", json_real(OBSGetMicVolume()));
+    json_object_set_new(ret, "mic-muted", json_boolean(OBSGetMicMuted()));
+
+    json_object_set_new(ret, "desktop-volume", json_real(OBSGetDesktopVolume()));
+    json_object_set_new(ret, "desktop-muted", json_boolean(OBSGetDesktopMuted()));
+
+    return ret;
 }
 
-json_t* OBSAPIMessageHandler::HandleSetVolumes(OBSAPIMessageHandler* handler, json_t* message)
+json_t* OBSAPIMessageHandler::HandleSetVolume(OBSAPIMessageHandler* handler, json_t* message)
 {
+    json_t* channel = json_object_get(message, "channel");
+    json_t* volume = json_object_get(message, "volume");
+    json_t* finalValue = json_object_get(message, "final");
+
+    if(volume == NULL)
+    {
+        return GetErrorResponse("Volume not specified.");
+    }
+
+    if(!json_is_number(volume))
+    {
+        return GetErrorResponse("Volume not number.");
+    }
+    
+    float val = (float) json_number_value(volume);
+    val = min(1.0f, max(0.0f, val));
+
+    if(finalValue == NULL)
+    {
+        return GetErrorResponse("Final not specified.");
+    }
+    
+    if(!json_is_boolean(finalValue))
+    {
+        return GetErrorResponse("Final is not a boolean.");
+    }
+
+    if(channel != NULL && json_typeof(channel) == JSON_STRING)
+    {
+        const char* channelVal = json_string_value(channel);
+        if(stricmp(channelVal, "desktop") == 0)
+        {
+            OBSSetDesktopVolume(val, json_is_true(finalValue));
+        }
+        else if(stricmp(channelVal, "microphone") == 0)
+        {
+            OBSSetMicVolume(val, json_is_true(finalValue));
+        }
+        else
+        {
+            return GetErrorResponse("Invalid channel specified.");
+        }
+    }
+    else
+    {
+        return GetErrorResponse("Channel not specified.");
+    }
     return GetOkResponse();
 }
 
@@ -415,7 +498,7 @@ void WebSocketOBSTriggerHandler::SourceOrderChanged()
     json_t* update = json_object();
     json_object_set_new(update, "update-type", json_string("SourceOrderChanged"));
 
-    XElement* xsources = API->GetSceneElement()->GetElement(TEXT("sources"));
+    XElement* xsources = OBSGetSceneElement()->GetElement(TEXT("sources"));
     
     json_t* sources = json_array();
     for(UINT i = 0; i < xsources->NumElements(); i++)
@@ -437,7 +520,7 @@ void WebSocketOBSTriggerHandler::SourcesAddedOrRemoved()
     json_t* update = json_object();
     json_object_set_new(update, "update-type", json_string("RepopulateSources"));
 
-    XElement* xsources = API->GetSceneElement()->GetElement(TEXT("sources"));
+    XElement* xsources = OBSGetSceneElement()->GetElement(TEXT("sources"));
     
     json_t* sources = json_array();
     for(UINT i = 0; i < xsources->NumElements(); i++)
@@ -459,7 +542,7 @@ void WebSocketOBSTriggerHandler::SourceChanged(CTSTR sourceName, XElement* sourc
     json_t* update = json_object();
     json_object_set_new(update, "update-type", json_string("SourceChanged"));
 
-    XElement* xsources = API->GetSceneElement()->GetElement(TEXT("sources"));
+    XElement* xsources = OBSGetSceneElement()->GetElement(TEXT("sources"));
     
     json_object_set_new(update, "source-name", json_string_wchar(sourceName));
     
@@ -469,6 +552,36 @@ void WebSocketOBSTriggerHandler::SourceChanged(CTSTR sourceName, XElement* sourc
     this->updates.Add(update);
     OSLeaveMutex(this->updateQueueMutex);
 }
+
+void WebSocketOBSTriggerHandler::MicVolumeChanged(float level, bool muted, bool finalValue)
+{
+    json_t* update = json_object();
+    json_object_set_new(update, "update-type", json_string("VolumeChanged"));
+    
+    json_object_set_new(update, "channel", json_string("microphone"));
+    json_object_set_new(update, "volume", json_real(level));
+    json_object_set_new(update, "muted", json_boolean(muted));
+    json_object_set_new(update, "finalValue", json_boolean(finalValue));
+
+    OSEnterMutex(this->updateQueueMutex);
+    this->updates.Add(update);
+    OSLeaveMutex(this->updateQueueMutex);
+} 
+
+void WebSocketOBSTriggerHandler::DesktopVolumeChanged(float level, bool muted, bool finalValue)
+{
+    json_t* update = json_object();
+    json_object_set_new(update, "update-type", json_string("VolumeChanged"));
+    
+    json_object_set_new(update, "channel", json_string("desktop"));
+    json_object_set_new(update, "volume", json_real(level));
+    json_object_set_new(update, "muted", json_boolean(muted));
+    json_object_set_new(update, "finalValue", json_boolean(finalValue));
+
+    OSEnterMutex(this->updateQueueMutex);
+    this->updates.Add(update);
+    OSLeaveMutex(this->updateQueueMutex);
+} 
 
 json_t* WebSocketOBSTriggerHandler::popUpdate()
 {

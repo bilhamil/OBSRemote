@@ -85,12 +85,20 @@ function _onWebSocketReceiveMessage(msg)
 			case "RepopulateSources":
 				onRepopulateSources(response);
 				break;
+			case "VolumeChanged":
+				onVolumeChanged(response);
 		}
 	}
 	else
 	{
 		/* else this is a response */
 		var id = response["message-id"];
+		
+		if(response["status"] == "error")
+		{
+			console.log("Error: " + response["error"]);
+		}
+		
 		var callback = requestCallbacks[id];
 		if(callback)
 		{

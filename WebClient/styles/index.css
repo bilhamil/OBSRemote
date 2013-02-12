@@ -66,6 +66,8 @@ body {
 	font-weight: bold;
 	font-size: 16px;
 	color: #222222;
+	width: 140px;
+	
 	-webkit-user-select: none;  /* Chrome all / Safari all */
   	-moz-user-select: none;     /* Firefox all */
   	-ms-user-select: none;      /* IE 10+ */
@@ -149,7 +151,7 @@ body {
 	position: absolute;
 	height: 24px;
 	width: 24px;
-	left: 5px;
+	left: 14px;
 	top: 12px;
 }
 
@@ -160,7 +162,7 @@ body {
 #StatsTableDiv {
 	position: absolute;
 	right: 0px;
-	left: 29px;
+	left: 350px;
 	height: 100%;
 }
 #StatsTable {
@@ -192,9 +194,16 @@ body {
 	font-weight: normal;  
 }
 
+#sourcesBox {
+	height:100%;
+	left: 225px;
+	right: 0px;				
+	position: absolute;
+}
+
 #SourceSceneMenus {
 	background: #333333;
-	width:300px;
+	width:225px;
 	left: 0px;
 	position: absolute;
 	height:100%;	
@@ -204,7 +213,7 @@ body {
 #actualMenus {
 	height:100%;
 	left: 0px;
-	right: 4px;				
+	right: 0px;				
 	position: absolute;
 }
 #actualStats {
@@ -282,13 +291,6 @@ body {
 	z-index: 99;
 }
 
-#sourcesBox {
-	height:100%;
-	left: 300px;
-	right: 0px;				
-	position: absolute;
-}
-
 #streambox {
 	position: absolute;
 	height: 100%;
@@ -314,7 +316,7 @@ body {
 }
 
 #configuregear:hover{
-	background:url("../imgs/gearsprite.png") 0px 25px;
+	background-position: 0px 25px;
 	cursor: pointer;
 }
 
@@ -330,6 +332,7 @@ body {
 
 #menusResizeBar {
 	right: 0px;
+	background: transparent;
 }
 
 .resizeBarHoriz {
@@ -340,4 +343,32 @@ body {
 
 .resizeBarHoriz:hover {	
 	cursor:n-resize;
+}
+
+
+
+
+/*Customize Scrollbar Appearance in Chrome */
+::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+
+::-webkit-scrollbar-button:start:decrement,
+::-webkit-scrollbar-button:end:increment  {
+	height: 5px;
+	display: block;
+	background-color: transparent;
+}
+
+::-webkit-scrollbar-track-piece  {
+	background-color: #3b3b3b;
+	-webkit-border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:vertical {
+	height: 50px;
+	background-color: #777777;
+	border: 1px solid #777777;
+	-webkit-border-radius: 6px;
 }

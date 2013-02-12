@@ -1,7 +1,7 @@
 
 <html>
 	<head>
-		<title>OBS Streamer</title>
+		<title>OBS Remote</title>
 		
 		<link rel="stylesheet" type="text/css" href="styles/fonts.css"/>
 		<link rel="stylesheet" type="text/css" href="styles/index.css"/>
@@ -9,6 +9,7 @@
 		<link rel="stylesheet" type="text/css" href="styles/sourcelist.css"/>
 		<link rel="stylesheet" type="text/css" href="styles/button.css"/>
 		<link rel="stylesheet" type="text/css" href="styles/streamconfig.css"/>
+		<link rel="stylesheet" type="text/css" href="styles/volumebar.css"/>
 		
 		<link rel="stylesheet" type="text/css" href="styles/custom-theme/jquery-ui-1.10.0.custom.min.css"/>
 			
@@ -80,8 +81,27 @@
 			<img id="ConnectedLight" src="imgs/connected.png"/>
 			<img id="DisconnectedLight" src="imgs/disconnected.png"/>
 		</div>
+		
+		<div id="MicVolumeControl">
+			<div id="MicVolume" class="VolumeMeter">
+				<div class="VolumeGrey"> </div>
+				<div class="VolumeRed"> </div>
+				<div class="VolumeMask"> </div>
+			</div>
+			<div id="MicMuteButton"> </div>
+		</div>
+		
+		<div id="DesktopVolumeControl">
+			<div id="DesktopVolume" class="VolumeMeter">
+				<div class="VolumeGrey"> </div>
+				<div class="VolumeRed"> </div>
+				<div class="VolumeMask"> </div>
+			</div>
+			<div id="DesktopMuteButton"> </div>
+		</div>
+		
 		<div id="StatsTableDiv">
-			<table id ="StatsTable">
+			<table id="StatsTable">
 				<tr>
 					<td class="statlabel" id="TimeRunningLb">Time Running:</td>
 					<td class="statlabel" id="DroppedFramesLb">Dropped Frames:</td>
@@ -148,5 +168,6 @@
 	<script type="text/JavaScript" src="js/sourcelist.js"></script>
 	<script type="text/JavaScript" src="js/scenelist.js"></script> 
 	<script type="text/JavaScript" src="js/streamconfig.js"></script>
+	<script type="text/JavaScript" src="js/volumecontrol.js"></script>
 	
 </html>

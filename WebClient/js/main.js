@@ -21,6 +21,7 @@ function onWebSocketConnected()
 	
 	requestStreamStatus();
 	requestScenes();
+	requestVolumes();
 }
 
 function onWebSocketClose()
@@ -58,17 +59,16 @@ function onStreamStatus(update)
 	console.log("stream status");
 	
 	var newStreaming = update["streaming"];
-	if(newStreaming != currentlyStreaming)
+	
+	if(newStreaming && !(currentlyStreaming || currentlyPreviewing))
 	{
-		if(newStreaming)
-		{
-			onStartStreaming(update);
-		}
-		else
-		{
-			onStopStreaming(update);
-		}
+		onStartStreaming(update);
 	}
+	else if(!newStreaming && (currentlyStreaming || currentlyPreviewing))
+	{
+		onStopStreaming(update);
+	}
+	
 	if(currentlyStreaming || currentlyPreviewing)
 	{
 		/* update stats output */

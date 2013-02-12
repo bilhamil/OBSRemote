@@ -24,12 +24,12 @@
 .button:hover {
 	background: #444444;
 	border-color: #CC6600;
-	cursor: hand;
+	cursor: pointer;
 }
 
 .button:active {
 	border-color: #FF9900;
-	cursor: hand;
+	cursor: pointer;
 }
 
 .button p{
