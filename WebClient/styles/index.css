@@ -15,6 +15,14 @@ body {
 	user-select: none;
 }
 
+input {
+	-webkit-user-select: all;
+	-khtml-user-select: all;
+	-moz-user-select: all;
+	-ms-user-select: all;
+	user-select: element;
+}
+
 #headband {
 	background: #222222;
 	width:100%;
@@ -149,10 +157,25 @@ body {
 
 #Lights {
 	position: absolute;
-	height: 24px;
-	width: 24px;
+	height: 26px;
+	width: 28px;
 	left: 14px;
 	top: 12px;
+	
+	background: url("../imgs/connectionsprite.png");
+	background-position: 0px 0px;
+}
+
+#Lights:hover{
+	background-position: 0px -26px;
+}
+
+#Lights.disconnected {
+	background-position: 0px -52px;
+}
+
+#Lights.disconnected:hover {
+	background-position: 0px -78px;
 }
 
 #ConnectedLight {

@@ -25,6 +25,8 @@
 #include <hash_map>
 #include <string>
 
+#define REQ_GET_VERSION "GetVersion"
+
 #define REQ_GET_CURRENT_SCENE "GetCurrentScene"
 #define REQ_GET_SCENE_LIST "GetSceneList"
 #define REQ_SET_CURRENT_SCENE "SetCurrentScene"
@@ -59,6 +61,7 @@ struct OBSAPIMessageHandler
     void initializeMessageMap();
 
     /* Message Handlers */
+    static json_t* HandleGetVersion(OBSAPIMessageHandler* handler, json_t* message);
     static json_t* HandleGetCurrentScene(OBSAPIMessageHandler* handler, json_t* message);
     static json_t* HandleGetSceneList(OBSAPIMessageHandler* handler, json_t* message);
     static json_t* HandleSetCurrentScene(OBSAPIMessageHandler* handler, json_t* message);

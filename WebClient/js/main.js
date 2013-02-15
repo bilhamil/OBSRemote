@@ -15,10 +15,48 @@ function pad(num, size) {
 function onWebSocketConnected()
 {
 	console.log("websocket connected");
-	$("#ConnectedLight").css("visibility", "visible");
-	$("#DisconnectedLight").css("visibility", "hidden");
+	$("#Lights").attr("class", "");
+	
+	connectionPopupConnectionStatusChange(true);
+	
 	$("#Lights").attr("title", "Connected to OBS");
 	
+	checkVersion();
+}
+
+function checkVersion()
+{
+	var myJSONRequest = {};
+	myJSONRequest["request-type"] = "GetVersion";
+	
+	sendMessage(myJSONRequest, versionResponse);
+}
+
+function versionResponse(resp)
+{
+	var pluginVersion = resp["version"];
+	
+	console.log("plugin version: v" + pluginVersion );
+	
+	connectionPopupPluginVersionUpdate(pluginVersion);
+	
+	if(pluginVersion >= requiredPluginVersion)
+	{
+		onConnectInitilization();
+	}
+	else
+	{
+		oldVersionFound(pluginVersion);
+	}
+}
+
+function oldVersionFound(plugin)
+{
+	console.log("found old plugin version" );
+}
+
+function onConnectInitilization()
+{
 	requestStreamStatus();
 	requestScenes();
 	requestVolumes();
@@ -27,8 +65,8 @@ function onWebSocketConnected()
 function onWebSocketClose()
 {
 	console.log("websocket disconnected");
-	$("#ConnectedLight").css("visibility", "hidden");
-	$("#DisconnectedLight").css("visibility", "visible");
+	$("#Lights").attr("class", "disconnected");
+	connectionPopupConnectionStatusChange(false);
 	$("#Lights").attr("title", "Disconnected from OBS");
 }
 

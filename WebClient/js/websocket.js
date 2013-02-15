@@ -3,19 +3,33 @@ var websocketConnected = false;
 var reconnectIntervalId = null;
 var currentMessageCounter = 1;
 var requestCallbacks = {};
+var supressWebsocketReconnect = false;
 
-$(function() {
-	connectWebSocket();
-});
+var connectingHost = "";
 
-function connectWebSocket()
+function getOBSHost()
 {
-	console.log("trying to connect");
+	return localStorage["obs-host"];
+}
+
+function setOBSHost(host)
+{
+	localStorage["obs-host"] = host;
+}
+
+function connectWebSocket(host)
+{
+	
+	connectingHost = host;
+	
+	var url = "ws://" + connectingHost + ":4444";
+	
+	console.log("trying to connect to: " + url);
 	if (typeof MozWebSocket != "undefined") {
-	socket_obsapi = new MozWebSocket(get_appropriate_ws_url(),
+	socket_obsapi = new MozWebSocket(url,
 			   "obsapi");
 	} else {
-		socket_obsapi = new WebSocket(get_appropriate_ws_url(),
+		socket_obsapi = new WebSocket(url,
 				   "obsapi");
 	}
 	
@@ -31,12 +45,17 @@ function connectWebSocket()
 
 function reconnectWebSocket()
 {
-	connectWebSocket();
+	connectWebSocket(getOBSHost());
 }
 
 function _onWebSocketConnected()
 {
 	websocketConnected = true;
+	supressWebsocketReconnect = false;
+	
+	/* store successfully connected host for future */
+	setOBSHost(connectingHost);
+	
 	if(reconnectIntervalId != null)
 	{
 		clearInterval(reconnectIntervalId);
@@ -108,20 +127,41 @@ function _onWebSocketReceiveMessage(msg)
 	}
 }
 
-function _onWebSocketError()
+function _onWebSocketError(err)
 {
 	console.log("websocket error");
 	socket_obsapi.close();
 }
 
-function _onWebSocketClose()
+function gracefulWebsocketClose()
 {
-	if(reconnectIntervalId == null)
+	supressWebsocketReconnect = true;
+	
+	socket_obsapi.onopen = null;
+	socket_obsapi.onmessage = null;
+	socket_obsapi.onerror = null;
+	socket_obsapi.onclose = null;
+	
+	socket_obsapi.close();
+	
+	if(reconnectIntervalId != null)
 	{
-		reconnectIntervalId = setInterval(reconnectWebSocket, 10000);
-		websocketConnected = false;
+		clearInterval(reconnectIntervalId);
+		reconnectIntervalId = null;
 	}
 	
+	_onWebSocketClose("Closed gracefully.");
+}
+
+function _onWebSocketClose(err)
+{
+	console.log("websocket close");
+	if(reconnectIntervalId == null && !supressWebsocketReconnect)
+	{
+		reconnectIntervalId = setInterval(reconnectWebSocket, 10000);	
+	}
+	
+	websocketConnected = false;
 	onWebSocketClose();
 }
 

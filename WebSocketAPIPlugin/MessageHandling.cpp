@@ -21,6 +21,7 @@
 
 void OBSAPIMessageHandler::initializeMessageMap()
 {
+    messageMap[REQ_GET_VERSION] =                       OBSAPIMessageHandler::HandleGetVersion;
     messageMap[REQ_GET_CURRENT_SCENE] =                 OBSAPIMessageHandler::HandleGetCurrentScene;
     messageMap[REQ_GET_SCENE_LIST] =                    OBSAPIMessageHandler::HandleGetSceneList;
     messageMap[REQ_SET_CURRENT_SCENE] =                 OBSAPIMessageHandler::HandleSetCurrentScene;
@@ -192,6 +193,15 @@ json_t* getSceneJson(XElement* scene)
 }
 
 /* Message Handlers */
+json_t* OBSAPIMessageHandler::HandleGetVersion(OBSAPIMessageHandler* handler, json_t* message)
+{
+    json_t* ret = GetOkResponse();
+
+    json_object_set_new(ret, "version", json_real(OBS_REMOTE_VERSION));
+    
+    return ret;
+}
+
 json_t* OBSAPIMessageHandler::HandleGetCurrentScene(OBSAPIMessageHandler* handler, json_t* message)
 {
     OBSEnterSceneMutex();
