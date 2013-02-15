@@ -33,6 +33,11 @@
 	width: 50%;
 }
 
+
+#popup-stats td:hover{
+	cursor: default;
+}
+
 #popup-stats td.green{
 	color: #16cb1a;
 }

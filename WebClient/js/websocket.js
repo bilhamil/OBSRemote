@@ -137,12 +137,15 @@ function gracefulWebsocketClose()
 {
 	supressWebsocketReconnect = true;
 	
-	socket_obsapi.onopen = null;
-	socket_obsapi.onmessage = null;
-	socket_obsapi.onerror = null;
-	socket_obsapi.onclose = null;
-	
-	socket_obsapi.close();
+	if(socket_obsapi)
+	{
+		socket_obsapi.onopen = null;
+		socket_obsapi.onmessage = null;
+		socket_obsapi.onerror = null;
+		socket_obsapi.onclose = null;
+		
+		socket_obsapi.close();
+	}
 	
 	if(reconnectIntervalId != null)
 	{
