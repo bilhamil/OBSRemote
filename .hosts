@@ -14,6 +14,6 @@
 169.254.0.0/16
 
 # The world (uncommenting this line is not quite safe)
-# (i.e.) if set it on and your firewall is down someone in
-# russia may start streaming you watching porn
+# (i.e.) if you uncomment it and your firewall is down someone 
+# across the world may start streaming you watching porn.
 #0.0.0.0/0

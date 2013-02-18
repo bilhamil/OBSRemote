@@ -25,12 +25,13 @@ function connectWebSocket(host)
 	var url = "ws://" + connectingHost + ":4444";
 	
 	console.log("trying to connect to: " + url);
-	if (typeof MozWebSocket != "undefined") {
-	socket_obsapi = new MozWebSocket(url,
-			   "obsapi");
-	} else {
-		socket_obsapi = new WebSocket(url,
-				   "obsapi");
+	if (typeof MozWebSocket != "undefined") 
+	{
+		socket_obsapi = new MozWebSocket(url, "obsapi");
+	} 
+	else 
+	{
+		socket_obsapi = new WebSocket(url, "obsapi");
 	}
 	
 	try {
@@ -45,6 +46,7 @@ function connectWebSocket(host)
 
 function reconnectWebSocket()
 {
+	reconnectIntervalId = null;
 	connectWebSocket(getOBSHost());
 }
 
@@ -55,12 +57,6 @@ function _onWebSocketConnected()
 	
 	/* store successfully connected host for future */
 	setOBSHost(connectingHost);
-	
-	if(reconnectIntervalId != null)
-	{
-		clearInterval(reconnectIntervalId);
-		reconnectIntervalId = null;
-	}
 	
 	/* call the generic onWebSocketConnected function */
 	onWebSocketConnected();
@@ -149,7 +145,7 @@ function gracefulWebsocketClose()
 	
 	if(reconnectIntervalId != null)
 	{
-		clearInterval(reconnectIntervalId);
+		clearTimeout(reconnectIntervalId);
 		reconnectIntervalId = null;
 	}
 	
@@ -161,7 +157,7 @@ function _onWebSocketClose(err)
 	console.log("websocket close");
 	if(reconnectIntervalId == null && !supressWebsocketReconnect)
 	{
-		reconnectIntervalId = setInterval(reconnectWebSocket, 10000);	
+		reconnectIntervalId = setTimeout(reconnectWebSocket, 4000);	
 	}
 	
 	websocketConnected = false;

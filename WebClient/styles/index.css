@@ -15,6 +15,10 @@ body {
 	user-select: none;
 }
 
+a {
+	color: #888888;
+}
+
 input {
 	-webkit-user-select: all;
 	-khtml-user-select: all;
@@ -88,6 +92,8 @@ input {
 	left: 60px;
 	font-family: neometric;
 	font-size: 40px;
+	text-decoration: none; 
+	
 	text-align: left;
 	vertical-align: middle;
 	color: #DDDDDD;
@@ -99,7 +105,7 @@ input {
 }
 
 #OBSHeader:hover {
-	cursor: default;
+	cursor: pointer;
 }
 
 #buttoncontainer {
@@ -168,6 +174,7 @@ input {
 
 #Lights:hover{
 	background-position: 0px -26px;
+	cursor: pointer;
 }
 
 #Lights.disconnected {
@@ -185,7 +192,7 @@ input {
 #StatsTableDiv {
 	position: absolute;
 	right: 0px;
-	left: 350px;
+	width: 540px;
 	height: 100%;
 }
 #StatsTable {
@@ -200,21 +207,18 @@ input {
 .statlabel, .stattext {
 	font-family: "Courier New", Courier, monospace;
 	color: #DDDDDD;
+	
+	font-size:16px;
+	text-align: right;
+	
 	padding-left: 20px;
-	padding-right: 20px;
+	padding-right: 10px;
 	padding-top:0px;
 	padding-bottom: 0px;
 }
-.stattext {
-	text-align: right;
-	font-size: 20px;
-	font-weight: bold; 
-}
 
-.statlabel {
-	text-align: right;
-	font-size: 20px;
-	font-weight: normal;  
+.stattext {
+	font-weight: bold; 
 }
 
 #sourcesBox {

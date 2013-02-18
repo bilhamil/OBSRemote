@@ -88,20 +88,20 @@
 	width:37px;
 	height:20px;
 	
-	background:url("../imgs/eyesprite.png") 0 40px;
+	background:url("../imgs/eyesprite.png") 0 -40px;
 }
 
 #SourceList li div div.eye:hover {
 	cursor: pointer;
-	background-position: 0 20px;
+	background-position: 0 -60px;
 }
 
-#sourceList li div div.eye.off {
+#SourceList li div div.eye.off {
 	background-position: 0 0px;
 } 
 
-#sourceList li div div.eye.off:hover {
-	background-position: 0 60px;
+#SourceList li div div.eye.off:hover {
+	background-position: 0 -20px;
 } 
 
 #SourceList li:hover {

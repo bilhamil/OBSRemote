@@ -66,11 +66,15 @@ Section "OBS Remote" Section1
     SetOutPath "$INSTDIR\64bit\plugins\"
     File "..\WebSocketAPIPlugin\Output\x64\Release\WebSocketAPIPlugin.dll"
     SetOutPath "$INSTDIR\64bit\plugins\WebSocketAPIPlugin\"
-    File /r "..\WebClient\"
+    SetOverwrite off
+    File "..\.hosts"
+    SetOverwrite on
   ${endif}
   
   SetOutPath "$INSTDIR\plugins\WebSocketAPIPlugin\"
-  File /r "..\WebClient\"
+  SetOverwrite off
+  File "..\.hosts"
+  SetOverwrite on
   
   SetShellVarContext all
   CreateShortCut "$SMPROGRAMS\Open Broadcaster Software\UninstallOBSRemote.lnk" "$INSTDIR\UninstallOBSRemote.exe"
