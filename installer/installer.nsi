@@ -76,11 +76,11 @@ Section "OBS Remote" Section1
   File "..\.hosts"
   SetOverwrite on
   
-  SetShellVarContext all
-  CreateShortCut "$SMPROGRAMS\Open Broadcaster Software\UninstallOBSRemote.lnk" "$INSTDIR\UninstallOBSRemote.exe"
-  
   ; Enable firewall port opening. Needs http://nsis.sourceforge.net/NSIS_Simple_Firewall_Plugin
   SimpleFC::AddPort 4444 "OBS Remote" 6 0 2 "" 1
+  
+  WriteUninstaller "$INSTDIR\UninstallOBSRemote.exe"
+  CreateShortCut "$SMPROGRAMS\Open Broadcaster Software\UninstallOBSRemote.lnk" "$INSTDIR\UninstallOBSRemote.exe"
   
 SectionEnd
 
@@ -91,7 +91,6 @@ Section -FinishSection
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "UninstallString" "$INSTDIR\UninstallOBSRemote.exe"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayVersion" "${APPVERSION}"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayIcon" "$INSTDIR\OBS.exe,0"
-  WriteUninstaller "$INSTDIR\UninstallOBSRemote.exe"
 
 SectionEnd
 
@@ -111,7 +110,6 @@ Section Uninstall
   Delete "$INSTDIR\UninstallOBSRemote.exe"
 
   ; Delete Shortcuts
-  SetShellVarContext all
   Delete "$SMPROGRAMS\Open Broadcaster Software\UninstallOBSRemote.lnk"
 
   ; Clean up OBS Remote
