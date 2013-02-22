@@ -48,7 +48,7 @@
 	
 		<div id="streamView">
 			<div id = "sourcesBox">
-				<div id="configuregear"> </div>
+				<div id="configuregear" title="Configure Stream Preview"> </div>
 				<div id="streambox">
 					
 				</div>
@@ -79,7 +79,7 @@
 	<div id="statsView">
 		<!--<div id="StatsViewResizeBar" class="resizeBarHoriz">
 		</div> -->
-		<div id="Lights" title="Disconnected from OBS" class="disconnected">
+		<div id="Lights" title="Manage Connection:&#10;Disconnected from OBS" class="disconnected">
 			
 		</div>
 		
@@ -89,7 +89,7 @@
 				<div class="VolumeRed"> </div>
 				<div class="VolumeMask"> </div>
 			</div>
-			<div id="MicMuteButton"> </div>
+			<div title="Toggle Mic Mute" id="MicMuteButton"> </div>
 		</div>
 		
 		<div id="DesktopVolumeControl">
@@ -98,7 +98,7 @@
 				<div class="VolumeRed"> </div>
 				<div class="VolumeMask"> </div>
 			</div>
-			<div id="DesktopMuteButton"> </div>
+			<div title="Toggle Desktop Mute"id="DesktopMuteButton"> </div>
 		</div>
 		
 		<div id="StatsTableDiv">
@@ -163,7 +163,8 @@
 		    <label for="hostname">OBS Host</label>
 		    <input type="text" name="hostname" id="hostname" class="text ui-widget-content ui-corner-all" />
 		   
-		   <div id="connectionbutton" class = "button"> <p>Connect</p> </div>
+		   <div title="Connect To Host" id="connectionbutton" class = "button"> <p>Connect</p> </div>
+		   <div title="Close Connection Dialog" id="closeconnectionform">x</div>
 	  </div>
 	  <div id="popup-stats">
 	  	<table>

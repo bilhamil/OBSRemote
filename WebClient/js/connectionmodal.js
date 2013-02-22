@@ -4,6 +4,11 @@ $(function() {
 	$( "#Lights" ).on("click", function() {
         showConnectToHostDialog();
       });
+      
+    $("#closeconnectionform").on("click", function() {
+        showConnectToHostDialog();
+      });
+    
     $("#connectionbutton").on("click", tryWebsocketConnect);
     
     if(getOBSHost())

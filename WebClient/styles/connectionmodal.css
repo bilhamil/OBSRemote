@@ -65,10 +65,11 @@
 	
 	margin: 5px;
 	
+	padding: .4em;
+	
 	position: absolute;
 	left: 0px;
-	right: 110px;
-	width: auto;
+	width: 260px;
 	top: auto;
 	bottom: 0px;
 }
@@ -102,4 +103,22 @@
 	color: #111111;
 }
 
+#closeconnectionform {
+	position:absolute;
+	top: 0px;
+	right: 0px;
+	width: 20px;
+	
+	text-align: center;
+	
+	font-family: Verdana;
+	font-weight: normal;
+	font-size: 17px;
+	color: #888888;
+}
+
+#closeconnectionform:hover{
+	cursor: pointer;
+	color: #FF9900;
+}
 

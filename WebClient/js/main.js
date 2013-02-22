@@ -19,7 +19,7 @@ function onWebSocketConnected()
 	
 	connectionPopupConnectionStatusChange(true);
 	
-	$("#Lights").attr("title", "Connected to OBS");
+	$("#Lights").attr("title", "Manage Connection:\nConnected to OBS");
 	
 	checkVersion();
 }
@@ -67,7 +67,7 @@ function onWebSocketClose()
 	console.log("websocket disconnected");
 	$("#Lights").attr("class", "disconnected");
 	connectionPopupConnectionStatusChange(false);
-	$("#Lights").attr("title", "Disconnected from OBS");
+	$("#Lights").attr("title", "Manage Connection:\nDisconnected from OBS");
 }
 
 function strainToColor(strain)

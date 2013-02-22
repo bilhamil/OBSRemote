@@ -216,7 +216,7 @@ function collapseChatBox() {
 function showChatDiv()
 {
 	var html = '<div id="chatView">' + 
-					'<div id="chathideshow"> <div></div>' +  
+					'<div id="chathideshow" title="Show/Hide Chat"> <div></div>' +  
 					'</div>' + 
 					'<div id="chatResizeBar" class="resizeBarVert">' + 
 					'</div>' + 

@@ -4,11 +4,11 @@
 	
 }
 
-label, input {
+#dialog-form label, input {
 	display: block;
 }
 
-input.text {
+#dialog-form input.text {
 	margin-bottom: 12px;
 	width: 95%;
 	padding: .4em;
@@ -36,6 +36,7 @@ input[type="checkbox"] + label span {
     background:url("../imgs/checkboxsprite.png") 0px 35px;
     cursor:pointer;
 }
+
 input[type="checkbox"]:checked + label span {
     background-position: 0px 0px;
 }

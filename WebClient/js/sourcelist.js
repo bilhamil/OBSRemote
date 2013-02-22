@@ -18,7 +18,7 @@ function updateSourceList(sources)
 		var render = source["render"];
 		var newHTML = '<li> <div> <div class="arrow"></div><p class="sourceName">' + 
 						source["name"] + "</p>" + 
-						'<div class="eye'+ ((render)?"":" off")  +'"></div>' + "</div></li>";
+						'<div title="Toggle Source" class="eye'+ ((render)?"":" off")  +'"></div>' + "</div></li>";
 		var li = $(newHTML).appendTo('#SourceList');
 		jQuery.data(li[0], "source", source);
 	}
