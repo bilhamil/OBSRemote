@@ -16,11 +16,11 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 ********************************************************************************/
+#include <stdio.h>
 
 #include "WebSocketMain.h"
 #include "MessageHandling.h"
 #include "libwebsockets.h"
-#include <stdio.h>
 #include "AccessList.h"
 
 extern "C" __declspec(dllexport) bool LoadPlugin();
@@ -351,6 +351,8 @@ void UnloadPlugin()
     delete accesslist;
     delete triggerHandler;
 }
+
+
 
 CTSTR GetPluginName()
 {

@@ -1,5 +1,4 @@
 /********************************************************************************
- Copyright (C) 2013 Hugh Bailey <obs.jim@gmail.com>
  Copyright (C) 2013 William Hamilton <bill@ecologylab.net>
 
  This program is free software; you can redistribute it and/or modify
@@ -17,7 +16,44 @@
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 ********************************************************************************/
 
-#define OBS_REMOTE_VERSION 1.0
-#define OBS_REMOTE_FULLNAME "OBS Remote v1.0"
+#include "WebSocketMain.h"
 
-#include "resource.h"
+extern "C" __declspec(dllexport) void ConfigPlugin(HWND);
+
+HINSTANCE hinstMain = NULL;
+
+INT_PTR CALLBACK ConfigDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch(message)
+    {
+        case WM_COMMAND:
+			switch(LOWORD(wParam))
+			{
+				case IDOK:
+					//thePlugin->ApplyConfig(hwnd);
+                    break;
+
+				case IDCANCEL:
+					EndDialog(hwnd, LOWORD(wParam));
+			}
+			break;
+        case WM_CLOSE:
+			EndDialog(hwnd, IDCANCEL);
+            break;
+    }
+
+    return 0;
+};
+
+void ConfigPlugin(HWND hwnd)
+{
+    DialogBox(hinstMain, MAKEINTRESOURCE(IDD_CONFIGURE_OBS_REMOTE), hwnd, ConfigDialogProc);
+}
+
+BOOL CALLBACK DllMain(HINSTANCE hInst, DWORD dwReason, LPVOID lpBla)
+{
+	if(dwReason == DLL_PROCESS_ATTACH)
+		hinstMain = hInst;
+
+	return TRUE;
+}
