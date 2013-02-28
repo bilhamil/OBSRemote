@@ -64,7 +64,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OBSApi.lib libwebsocketswin32.lib ws2_32.lib ZLib.lib jansson.lib"
+				AdditionalDependencies="OBSApi.lib libwebsocketswin32.lib ws2_32.lib ZLib.lib jansson.lib dnssd.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;.\jansson-2.4\win32\vs2008\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;..\..\OBS\OBSApi\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\libwebsocketswin32\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\zlib\Output\$(PlatformName)\$(ConfigurationName)&quot;"
 				GenerateDebugInformation="true"
@@ -93,7 +93,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy $(OutDir)\$(ProjectName).dll ..\..\OBS\rundir\plugins\&#x0D;&#x0A;mkdir ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\&#x0D;&#x0A;copy ..\.hosts ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\"
+				CommandLine="copy $(OutDir)\$(ProjectName).dll ..\..\OBS\rundir\plugins\&#x0D;&#x0A;mkdir ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\&#x0D;&#x0A;copy ..\.hosts ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -142,7 +142,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OBSApi.lib libwebsocketswin32.lib ZLib.lib jansson.lib ws2_32.lib "
+				AdditionalDependencies="OBSApi.lib libwebsocketswin32.lib ws2_32.lib ZLib.lib jansson.lib dnssd.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;.\jansson-2.4\win32\vs2008\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;..\OBSApi\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\libwebsocketswin32\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\zlib\Output\$(PlatformName)\$(ConfigurationName)&quot;"
 				GenerateDebugInformation="true"
@@ -171,7 +171,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy $(OutDir)\$(ProjectName).dll ..\..\OBS\rundir\plugins\&#x0D;&#x0A;mkdir ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\&#x0D;&#x0A;copy ..\.hosts ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\"
+				CommandLine="copy $(OutDir)\$(ProjectName).dll ..\..\OBS\rundir\plugins\&#x0D;&#x0A;mkdir ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\&#x0D;&#x0A;copy ..\.hosts ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -220,7 +220,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OBSApi.lib libwebsocketswin32.lib ws2_32.lib ZLib.lib jansson.lib"
+				AdditionalDependencies="OBSApi.lib libwebsocketswin32.lib ws2_32.lib ZLib.lib jansson.lib dnssd.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;.\jansson-2.4\win32\vs2008\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;..\..\OBS\OBSApi\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\libwebsocketswin32\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\zlib\Output\$(PlatformName)\$(ConfigurationName)&quot;"
 				GenerateDebugInformation="true"
@@ -250,7 +250,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy $(OutDir)\$(ProjectName).dll ..\..\OBS\rundir\plugins\&#x0D;&#x0A;mkdir ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\&#x0D;&#x0A;copy ..\.hosts ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\"
+				CommandLine="copy $(OutDir)\$(ProjectName).dll ..\..\OBS\rundir\plugins\&#x0D;&#x0A;mkdir ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\&#x0D;&#x0A;copy ..\.hosts ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -300,7 +300,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OBSApi.lib libwebsocketswin32.lib ZLib.lib jansson.lib ws2_32.lib "
+				AdditionalDependencies="OBSApi.lib libwebsocketswin32.lib ws2_32.lib ZLib.lib jansson.lib dnssd.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;.\jansson-2.4\win32\vs2008\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;..\..\OBS\OBSApi\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\libwebsocketswin32\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\zlib\Output\$(PlatformName)\$(ConfigurationName)&quot;"
 				GenerateDebugInformation="true"
@@ -329,7 +329,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy $(OutDir)\$(ProjectName).dll ..\..\OBS\rundir\plugins\&#x0D;&#x0A;mkdir ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\&#x0D;&#x0A;copy ..\.hosts ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\"
+				CommandLine="copy $(OutDir)\$(ProjectName).dll ..\..\OBS\rundir\plugins\&#x0D;&#x0A;mkdir ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\&#x0D;&#x0A;copy ..\.hosts ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -353,6 +353,10 @@
 				RelativePath=".\WebSocketMain.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\Zeroconf.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -373,6 +377,10 @@
 			</File>
 			<File
 				RelativePath=".\WebSocketMain.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Zeroconf.h"
 				>
 			</File>
 		</Filter>

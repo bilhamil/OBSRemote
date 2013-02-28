@@ -22,6 +22,7 @@
 #include "libwebsockets.h"
 #include <stdio.h>
 #include "AccessList.h"
+#include "Zeroconf.h"
 
 extern "C" __declspec(dllexport) bool LoadPlugin();
 extern "C" __declspec(dllexport) void UnloadPlugin();
@@ -338,6 +339,8 @@ bool LoadPlugin()
     triggerHandler = new WebSocketOBSTriggerHandler();
     API->AddOBSEventListener(triggerHandler);
 
+    AddWebsocketServiceRecord();
+
     WebSocketThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)MainWebSocketThread, NULL, 0, &dummy);
     return true;
 }
@@ -350,6 +353,8 @@ void UnloadPlugin()
 
     delete accesslist;
     delete triggerHandler;
+
+    DeallocateWebsocketServiceRecord();
 }
 
 CTSTR GetPluginName()
