@@ -17,24 +17,88 @@
 ********************************************************************************/
 
 #include "WebSocketMain.h"
+#include "Configuration.h"
+#include "jansson.h"
+#include "polarssl/sha2.h"
+#include "polarssl/base64.h"
 
 extern "C" __declspec(dllexport) void ConfigPlugin(HWND);
 
 HINSTANCE hinstMain = NULL;
+Config *config;
+
+void Config::setAuth(bool _useAuth, const char *path)
+{
+
+}
+
+void Config::save(const char *path)
+{
+
+}
+
+void Config::load(const char *path)
+{
+    json_error_t error;
+    json_t* json = json_load_file(path, 0, &error);
+
+    if(!json) {
+        /*unable to load config file*/
+        this->useAuth = false;
+        this->authHash = 0;
+        this->authSalt = 0;
+    }
+
+}
 
 INT_PTR CALLBACK ConfigDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch(message)
     {
+        case WM_INITDIALOG:
+        {
+            HWND editBox = GetDlgItem(hwnd, IDC_AUTH_EDIT);
+            SetWindowText(editBox, TEXT("asdfasdf"));
+        }
         case WM_COMMAND:
 			switch(LOWORD(wParam))
 			{
 				case IDOK:
-					//thePlugin->ApplyConfig(hwnd);
+                    {
+                        TCHAR buff[1024];
+                        HWND editBox = GetDlgItem(hwnd, IDC_AUTH_EDIT);
+                        GetWindowText(editBox, buff, 1024);
+                        
+                        size_t wcharLen = slen(buff);
+                        size_t curLength = (UINT)wchar_to_utf8_len(buff, wcharLen, 0);
+                        char *utf8Pass = (char *) malloc((curLength+1));
+                        wchar_to_utf8(buff,wcharLen, utf8Pass, curLength + 1, 0);
+                        utf8Pass[curLength] = 0;
+
+                        HWND checkBox = GetDlgItem(hwnd, ID_USEPASSWORDAUTH);
+                        bool useAuth = SendMessage(checkBox, BM_GETCHECK, 0, 0) == BST_CHECKED;
+                        
+                        config->setAuth(useAuth, utf8Pass);
+                        config->save("");
+
+                        free(utf8Pass);
+                    }
                     break;
 
 				case IDCANCEL:
 					EndDialog(hwnd, LOWORD(wParam));
+                case ID_USEPASSWORDAUTH:
+                    {
+                        if(HIWORD(wParam) == BN_CLICKED)
+                        {
+                            bool useAuth = SendMessage((HWND)lParam, BM_GETCHECK, 0, 0) == BST_CHECKED;
+
+                            HWND editBox = GetDlgItem(hwnd, IDC_AUTH_EDIT);
+                            EnableWindow(editBox, useAuth);
+                        }
+                    }
+                    break;
+
 			}
 			break;
         case WM_CLOSE:

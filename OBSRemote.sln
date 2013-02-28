@@ -3,6 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebSocketAPIPlugin", "WebSocketAPIPlugin\WebSocketAPIPlugin.vcproj", "{E905D054-ACE1-4BE1-8D78-B3D4961C5E99}"
 	ProjectSection(ProjectDependencies) = postProject
+		{42962F06-D1EC-4F50-860B-B353C2F4D91B} = {42962F06-D1EC-4F50-860B-B353C2F4D91B}
 		{11A35235-DD48-41E2-8F40-825C78024BC0} = {11A35235-DD48-41E2-8F40-825C78024BC0}
 		{2309FB97-F0CA-4326-A069-8AD964384704} = {2309FB97-F0CA-4326-A069-8AD964384704}
 		{F180B9CB-D874-4689-9898-CD26395BF4DE} = {F180B9CB-D874-4689-9898-CD26395BF4DE}
@@ -23,6 +24,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jansson", "WebSocketAPIPlugin\jansson-2.4\win32\vs2008\jansson.vcproj", "{F180B9CB-D874-4689-9898-CD26395BF4DE}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OBSApi", "..\OBS\OBSApi\OBSApi.vcproj", "{11A35235-DD48-41E2-8F40-825C78024BC0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "polarssl", "WebSocketAPIPlugin\polarssl-1.2.5\visualc\VS6\polarssl.vcproj", "{42962F06-D1EC-4F50-860B-B353C2F4D91B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,6 +83,12 @@ Global
 		{11A35235-DD48-41E2-8F40-825C78024BC0}.Release|Win32.Build.0 = Release|Win32
 		{11A35235-DD48-41E2-8F40-825C78024BC0}.Release|x64.ActiveCfg = Release|x64
 		{11A35235-DD48-41E2-8F40-825C78024BC0}.Release|x64.Build.0 = Release|x64
+		{42962F06-D1EC-4F50-860B-B353C2F4D91B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{42962F06-D1EC-4F50-860B-B353C2F4D91B}.Debug|Win32.Build.0 = Debug|Win32
+		{42962F06-D1EC-4F50-860B-B353C2F4D91B}.Debug|x64.ActiveCfg = Debug|x64
+		{42962F06-D1EC-4F50-860B-B353C2F4D91B}.Release|Win32.ActiveCfg = Release|Win32
+		{42962F06-D1EC-4F50-860B-B353C2F4D91B}.Release|Win32.Build.0 = Release|Win32
+		{42962F06-D1EC-4F50-860B-B353C2F4D91B}.Release|x64.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

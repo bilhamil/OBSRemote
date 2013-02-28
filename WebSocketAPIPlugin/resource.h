@@ -6,7 +6,7 @@
 #define IDI_OBS_REMOTE                  103
 #define IDD_CONFIGURE_OBS_REMOTE        103
 #define ID_USEPASSWORDAUTH              1003
-#define IDC_EDIT1                       1005
+#define IDC_AUTH_EDIT                   1005
 
 // Next default values for new objects
 // 

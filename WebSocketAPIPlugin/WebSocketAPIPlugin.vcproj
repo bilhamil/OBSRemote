@@ -44,7 +44,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\OBS\OBSApi;.\libwebsockets\lib;.\jansson-2.4\src"
+				AdditionalIncludeDirectories="&quot;.\polarssl-1.2.5\include&quot;;..\..\OBS\OBSApi;.\libwebsockets\lib;&quot;.\jansson-2.4\src&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;WEBSOCKETAPIPLUGIN_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -64,9 +64,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OBSApi.lib libwebsocketswin32.lib ws2_32.lib ZLib.lib jansson.lib"
+				AdditionalDependencies="OBSApi.lib libwebsocketswin32.lib ws2_32.lib ZLib.lib jansson.lib polarssl.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;.\jansson-2.4\win32\vs2008\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;..\..\OBS\OBSApi\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\libwebsocketswin32\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\zlib\Output\$(PlatformName)\$(ConfigurationName)&quot;"
+				AdditionalLibraryDirectories="&quot;.\jansson-2.4\win32\vs2008\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;..\..\OBS\OBSApi\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\libwebsocketswin32\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\zlib\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\polarssl-1.2.5\visualc\Output\$(PlatformName)\$(ConfigurationName)&quot;"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(TargetDir)$(TargetName).pdb"
 				StripPrivateSymbols=""
@@ -122,7 +122,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\OBS\OBSApi;.\libwebsockets\lib;.\jansson-2.4\src"
+				AdditionalIncludeDirectories="&quot;.\polarssl-1.2.5\include&quot;;..\..\OBS\OBSApi;.\libwebsockets\lib;&quot;.\jansson-2.4\src&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;WEBSOCKETAPIPLUGIN_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -142,9 +142,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OBSApi.lib libwebsocketswin32.lib ZLib.lib jansson.lib ws2_32.lib "
+				AdditionalDependencies="OBSApi.lib libwebsocketswin32.lib ws2_32.lib ZLib.lib jansson.lib polarssl.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;.\jansson-2.4\win32\vs2008\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;..\OBSApi\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\libwebsocketswin32\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\zlib\Output\$(PlatformName)\$(ConfigurationName)&quot;"
+				AdditionalLibraryDirectories="&quot;.\jansson-2.4\win32\vs2008\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;..\OBSApi\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\libwebsocketswin32\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\zlib\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\polarssl-1.2.5\visualc\Output\$(PlatformName)\$(ConfigurationName)&quot;;$(NOINHERIT)"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(TargetDir)$(TargetName).pdb"
 				StripPrivateSymbols=""
@@ -201,7 +201,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\..\OBS\OBSApi;.\libwebsockets\lib;.\jansson-2.4\src"
+				AdditionalIncludeDirectories="&quot;.\polarssl-1.2.5\include&quot;;..\..\OBS\OBSApi;.\libwebsockets\lib;&quot;.\jansson-2.4\src&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;WEBSOCKETAPIPLUGIN_EXPORTS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="false"
@@ -220,9 +220,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OBSApi.lib libwebsocketswin32.lib ws2_32.lib ZLib.lib jansson.lib"
+				AdditionalDependencies="OBSApi.lib libwebsocketswin32.lib ws2_32.lib ZLib.lib jansson.lib polarssl.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;.\jansson-2.4\win32\vs2008\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;..\..\OBS\OBSApi\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\libwebsocketswin32\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\zlib\Output\$(PlatformName)\$(ConfigurationName)&quot;"
+				AdditionalLibraryDirectories="&quot;.\jansson-2.4\win32\vs2008\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;..\..\OBS\OBSApi\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\libwebsocketswin32\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\zlib\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\polarssl-1.2.5\visualc\Output\$(PlatformName)\$(ConfigurationName)&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -281,7 +281,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\..\OBS\OBSApi;.\libwebsockets\lib;.\jansson-2.4\src"
+				AdditionalIncludeDirectories="&quot;.\polarssl-1.2.5\include&quot;;..\..\OBS\OBSApi;.\libwebsockets\lib;&quot;.\jansson-2.4\src&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;WEBSOCKETAPIPLUGIN_EXPORTS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -300,9 +300,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OBSApi.lib libwebsocketswin32.lib ZLib.lib jansson.lib ws2_32.lib "
+				AdditionalDependencies="OBSApi.lib libwebsocketswin32.lib ws2_32.lib ZLib.lib jansson.lib polarssl.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;.\jansson-2.4\win32\vs2008\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;..\..\OBS\OBSApi\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\libwebsocketswin32\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\zlib\Output\$(PlatformName)\$(ConfigurationName)&quot;"
+				AdditionalLibraryDirectories="&quot;.\jansson-2.4\win32\vs2008\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;..\OBSApi\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\libwebsocketswin32\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\libwebsockets\win32port\zlib\Output\$(PlatformName)\$(ConfigurationName)&quot;;&quot;.\polarssl-1.2.5\visualc\Output\$(PlatformName)\$(ConfigurationName)&quot;;$(NOINHERIT)"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -365,6 +365,10 @@
 			>
 			<File
 				RelativePath=".\AccessList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Configuration.h"
 				>
 			</File>
 			<File
