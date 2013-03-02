@@ -1,5 +1,6 @@
 var currentlyStreaming = false;
 var currentlyPreviewing = false;
+var totalSecondsStreaming = 0;
 
 $(function() {
 	$("#button1").on("click", startStreaming);
@@ -105,6 +106,7 @@ function onStreamStatus(update)
 	else if(!newStreaming && (currentlyStreaming || currentlyPreviewing))
 	{
 		onStopStreaming(update);
+		totalSecondsStreaming = 0;
 	}
 	
 	if(currentlyStreaming || currentlyPreviewing)
@@ -112,6 +114,9 @@ function onStreamStatus(update)
 		/* update stats output */
 		$("#StatsTable").css("visibility", "visible");
 		var sec = Math.floor(update["total-stream-time"] / 1000);
+		
+		totalSecondsStreaming = sec;
+		
 		$("#TimeRunning").text(Math.floor(sec / 3600)+ ":" + 
 							   pad(Math.floor((sec % 3600) / 60), 2) + ":" + 
 							   pad((sec % 60), 2));
@@ -172,7 +177,7 @@ function onStopStreaming(update)
 		$("#StatsTable").css("visibility", "hidden");
 	}
 	
-	streamConfigStopStreaming();
+	streamConfigStopStreaming(totalSecondsStreaming);
 }
 
 function requestStreamStatus()

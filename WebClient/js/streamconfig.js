@@ -123,9 +123,11 @@ function streamConfigStartStreaming()
 		}
 		showStreamTimeoutVariable = null;
 	}, 6000);
+	
+	_gaq.push(['_trackEvent', 'Streaming', 'Start Streaming', username]);
 }
 
-function streamConfigStopStreaming()
+function streamConfigStopStreaming(secondsStreamed)
 {
 	if(onlywhenstreaming)
 	{
@@ -137,6 +139,8 @@ function streamConfigStopStreaming()
 		window.clearTimeout(showStreamTimeoutVariable);
 		showStreamTimeoutVariable = null;
 	}
+	
+	_gaq.push(['_trackEvent', 'Streaming', 'Stop Streaming', username, secondsStreamed]);
 }
 
 /* getters and setters for local storage chat box prefs*/
