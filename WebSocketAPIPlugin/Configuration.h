@@ -18,12 +18,21 @@
 
 #pragma once
 
+#include <string>
+#include "WebSocketMain.h"
+#include "jansson.h"
+
+#include "polarssl/havege.h""
+#include "polarssl/sha2.h"
+#include "polarssl/base64.h"
+
 class Config
 {
 public:
     bool useAuth;
-    const char *authHash;
-    const char *authSalt;
+    std::string authHash;
+    std::string authSalt;
+    havege_state havegeState;
 
     void setAuth(bool _useAuth, const char *auth);
 
@@ -31,4 +40,4 @@ public:
     void load(const char *path);
 };
 
-extern Config *config;
+Config* getRemoteConfig();

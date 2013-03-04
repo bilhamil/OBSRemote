@@ -16,39 +16,130 @@
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 ********************************************************************************/
 
-#include "WebSocketMain.h"
 #include "Configuration.h"
-#include "jansson.h"
-#include "polarssl/sha2.h"
-#include "polarssl/base64.h"
 
 extern "C" __declspec(dllexport) void ConfigPlugin(HWND);
 
 HINSTANCE hinstMain = NULL;
-Config *config;
+Config *config = NULL;
+LPSTR configPath = NULL;
 
-void Config::setAuth(bool _useAuth, const char *path)
+LPSTR getPluginConfigPath()
 {
+    if(configPath == NULL)
+    {
+        String pluginPath = OBSGetPluginDataPath();
+        pluginPath << TEXT("\\OBSRemote.xconfig");
+        configPath = pluginPath.CreateUTF8String();
+    }
 
+    return configPath;
+}
+
+Config* getRemoteConfig()
+{
+    if(config == NULL)
+    {
+        config = new Config();
+        havege_init(&(config->havegeState));
+
+        config->load(getPluginConfigPath());
+    }
+
+    return config;
+}
+
+void Config::setAuth(bool _useAuth, const char *pass)
+{
+    size_t passLength = strlen(pass);
+
+    this->useAuth = _useAuth;
+
+    unsigned char salt[32];
+    unsigned char salt64[64];
+    size_t salt64Size = 64;
+    havege_random((void*)&(this->havegeState), salt, 32);
+    base64_encode(salt64, &salt64Size, salt, 32);
+    salt64[salt64Size] = 0;
+
+    int saltPlusPassSize = salt64Size + passLength;
+
+    char* saltPlusPass = (char*)malloc(saltPlusPassSize);
+
+    memcpy(saltPlusPass, pass, passLength);
+    memcpy(saltPlusPass + passLength, salt64, salt64Size);
+
+    unsigned char passHash[32];
+    unsigned char passHash64[64];
+    size_t passHash64Size = 64;
+
+    sha2((unsigned char *)saltPlusPass, saltPlusPassSize, passHash, 0);
+
+    zero(saltPlusPass, saltPlusPassSize);
+    free(saltPlusPass);
+    
+    base64_encode(passHash64, &passHash64Size, passHash, 32);
+
+    passHash64[passHash64Size] = 0;
+
+    this->authHash = (char *)passHash64;
+    this->authSalt = (char *)salt64;
 }
 
 void Config::save(const char *path)
 {
+    json_t* json = json_object();
+    json_object_set_new(json, "useAuth", json_boolean(this->useAuth));
 
+    if(this->useAuth)
+    {
+        json_object_set_new(json, "authHash", json_string(this->authHash.c_str()));
+        json_object_set_new(json, "authSalt", json_string(this->authSalt.c_str()));
+    }
+
+    json_dump_file(json, path, 0);
+
+    json_decref(json);
 }
 
 void Config::load(const char *path)
 {
     json_error_t error;
     json_t* json = json_load_file(path, 0, &error);
+    
+    
+    this->useAuth = false;
+    this->authHash = "";
+    this->authSalt = "";
 
     if(!json) {
-        /*unable to load config file*/
-        this->useAuth = false;
-        this->authHash = 0;
-        this->authSalt = 0;
+        return;        
     }
 
+    json_t* jUseAuth = json_object_get(json, "useAuth");
+    json_t* jAuthHash = json_object_get(json, "authHash");
+    json_t* jAuthSalt = json_object_get(json, "authSalt");
+
+    if(jUseAuth == NULL || !json_is_boolean(jUseAuth))
+    {
+        return;
+    }
+
+    if(json_typeof(jUseAuth) == JSON_FALSE)
+    {
+        return;
+    }
+
+    if(jAuthHash == NULL || !json_is_string(jAuthHash) ||
+       jAuthSalt == NULL || !json_is_string(jAuthSalt))
+    {
+        /* couldn't get auth parameters */
+        return;
+    }
+
+    this->useAuth = true;
+    this->authHash = json_string_value(jAuthHash);
+    this->authSalt = json_string_value(jAuthSalt);
 }
 
 INT_PTR CALLBACK ConfigDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -79,7 +170,7 @@ INT_PTR CALLBACK ConfigDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
                         bool useAuth = SendMessage(checkBox, BM_GETCHECK, 0, 0) == BST_CHECKED;
                         
                         config->setAuth(useAuth, utf8Pass);
-                        config->save("");
+                        config->save(getPluginConfigPath());
 
                         free(utf8Pass);
                     }
