@@ -17,7 +17,7 @@
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 ********************************************************************************/
 
-#define OBS_REMOTE_VERSION 1.0
-#define OBS_REMOTE_FULLNAME "OBS Remote v1.0"
+#define OBS_REMOTE_VERSION 1.1
+#define OBS_REMOTE_FULLNAME "OBS Remote v1.1"
 
 #include "resource.h"

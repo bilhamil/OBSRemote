@@ -1,3 +1,3 @@
-var requiredPluginVersion = 1.0;
+var requiredPluginVersion = 1.1;
 
 var webclientVersion = 1.01;

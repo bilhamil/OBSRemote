@@ -2,27 +2,9 @@ var currentlyStreaming = false;
 var currentlyPreviewing = false;
 var totalSecondsStreaming = 0;
 
-/*auth variables*/
-var authSalt = "";
-var authChallenge = "";
-
 $(function() {
 	$("#button1").on("click", startStreaming);
 	$("#button2").on("click", startPreview);
-	
-	/* initialize dialog */
-	$( "#auth-dialog-form" ).dialog({
-      autoOpen: false,
-      height: 370,
-      width: 500,
-      modal: true,
-      buttons: {
-        "Ok": Authenticate,
-      },
-      beforeclose: function(){ return false },
-      close: function() {
-        }
-    });
 });
 
 function pad(num, size) {
@@ -61,7 +43,7 @@ function versionResponse(resp)
 	
 	if(pluginVersion >= requiredPluginVersion)
 	{
-		checkAuthentication();
+		onConnectInitilization();
 	}
 	else
 	{
@@ -72,90 +54,6 @@ function versionResponse(resp)
 function oldVersionFound(plugin)
 {
 	console.log("found old plugin version" );
-}
-
-function checkAuthentication()
-{
-	var myJSONRequest = {};
-	myJSONRequest["request-type"] = "GetAuthRequired";
-	
-	sendMessage(myJSONRequest, authenticationRequiredResponse);
-}
-
-function authenticationRequiredResponse(resp)
-{
-	var authRequired = resp["authRequired"];
-	
-	if(authRequired)
-	{
-		authSalt = resp["salt"];
-		authChallenge = resp["challenge"];
-		startAuth();
-	}
-	else
-	{
-		onConnectInitilization();
-	}
-}
-
-function startAuth()
-{
-	$( "#auth-dialog-form" ).dialog( "open" );
-}
-
-function utf8_encode (string) {
-    string = string.replace(/\r\n/g,"\n");
-    var utftext = "";
-
-    for (var n = 0; n < string.length; n++) {
-
-        var c = string.charCodeAt(n);
-
-        if (c < 128) {
-            utftext += String.fromCharCode(c);
-        }
-        else if((c > 127) && (c < 2048)) {
-            utftext += String.fromCharCode((c >> 6) | 192);
-            utftext += String.fromCharCode((c & 63) | 128);
-        }
-        else {
-            utftext += String.fromCharCode((c >> 12) | 224);
-            utftext += String.fromCharCode(((c >> 6) & 63) | 128);
-            utftext += String.fromCharCode((c & 63) | 128);
-        }
-
-    }
-
-    return utftext;
-}
-
-function Authenticate()
-{
-	var pass = $("#authfield").val();
-	
-	var authHash = CryptoJS.SHA256(utf8_encode(pass) + utf8_encode(authSalt)).toString(CryptoJS.enc.Base64);
-		
-	var authResp = CryptoJS.SHA256(utf8_encode(authHash) + utf8_encode(authChallenge)).toString(CryptoJS.enc.Base64);
-	
-	var myJSONRequest = {};
-	myJSONRequest["request-type"] = "Authenticate";
-	
-	myJSONRequest["auth"] = authResp;
-	
-	sendMessage(myJSONRequest, authenticationResponse);
-}
-
-function authenticationResponse(resp)
-{
-	if(resp["status"] == "ok")
-	{
-		$( "#auth-dialog-form" ).dialog( "close" );
-		onConnectInitilization();
-	}
-	else
-	{
-		/* auth failed */
-	}
 }
 
 function onConnectInitilization()

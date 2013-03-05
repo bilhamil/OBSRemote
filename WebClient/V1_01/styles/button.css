@@ -1,0 +1,48 @@
+.button {
+	display:block;
+	width:auto;
+	line-height: 30px;
+	height:30px;
+	margin-top: 8px;
+	margin-bottom: 8px;
+	margin-left: 10px;
+	
+	padding-left: 10px;
+	padding-right: 10px;
+	top: 0px;
+	background: #555555;
+	border:1px solid;
+	border-radius:3px;
+	border-color: #333333;
+	text-align: center;
+}
+
+#button1, #button2{
+	position: relative;
+}
+
+.button:hover {
+	background: #444444;
+	border-color: #CC6600;
+	cursor: pointer;
+}
+
+.button:active {
+	border-color: #FF9900;
+	cursor: pointer;
+}
+
+.button p{
+	margin: 0px;
+	font-family: Verdana;
+	font-weight: bold;
+	font-size: 16px;
+	color: #DDDDDD;
+	-webkit-user-select: none;  /* Chrome all / Safari all */
+  	-moz-user-select: none;     /* Firefox all */
+  	-ms-user-select: none;      /* IE 10+ */
+}
+
+.button:hover p{
+	color: #BBBBBB;
+}

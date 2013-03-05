@@ -91,6 +91,46 @@ void Config::setAuth(bool _useAuth, const char *pass)
     }
 }
 
+std::string Config::getChallenge()
+{
+    unsigned char challenge[32];
+    unsigned char challenge64[64];
+    size_t challenge64Size = 64;
+    havege_random((void*)&(this->havegeState), challenge, 32);
+    base64_encode(challenge64, &challenge64Size,challenge, 32);
+    challenge64[challenge64Size] = 0;
+
+    std::string ret = (char *) challenge64;
+
+    return ret;
+}
+
+bool Config::checkChallengeAuth(const char *response, const char *challenge)
+{
+    size_t challengeLength = strlen(challenge);
+    size_t authHashLength = this->authHash.length();
+    size_t authPlusChallengeSize = authHashLength + challengeLength;
+    char* authPlusChallenge = (char*)malloc(authPlusChallengeSize);
+
+    /* concat authHash and challenge string */
+    memcpy(authPlusChallenge, this->authHash.c_str(), authHashLength);
+    memcpy(authPlusChallenge + authHashLength, challenge, challengeLength);
+
+    unsigned char respHash[32];
+    unsigned char respHash64[64];
+    size_t respHash64Size = 64;
+
+    /* hash concatenated authHash and string and base 64 encode */
+    sha2((unsigned char *)authPlusChallenge, authPlusChallengeSize, respHash, 0);
+    base64_encode(respHash64, &respHash64Size, respHash, 32);
+    respHash64[respHash64Size] = 0;
+
+    free(authPlusChallenge);
+
+    /* compare against response */
+    return strcmp((char*)respHash64, response) == 0;
+}
+
 void Config::save(const char *path)
 {
     json_t* json = json_object();

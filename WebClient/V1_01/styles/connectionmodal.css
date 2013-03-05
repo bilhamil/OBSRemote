@@ -1,0 +1,124 @@
+#connection-form {
+	background: #111111;
+	position: absolute;
+	bottom: 48px;
+	left: 0px;
+	width: 400px;
+	height: 150px;
+	display:none;
+	z-index: 100;
+	
+	border-top-right-radius: 5px;
+}
+
+#popup-stats {
+	position: absolute;
+	left: 0px;
+	right: 110px;
+	top: 80px;	
+	bottom: 0px;
+	height: auto;
+}
+
+#popup-stats table {
+	width: 100%;
+}
+#popup-stats td{
+	font-family: Verdana;
+	font-size: 10px;
+	font-weight: normal;
+	
+	color: #888888;
+	text-align: right;
+	width: 50%;
+}
+
+
+#popup-stats td:hover{
+	cursor: default;
+}
+
+#popup-stats td.green{
+	color: #16cb1a;
+}
+
+#popup-stats td.red{
+	color: #d70a02;
+}
+
+#popup-stats td.PopupStatLabel{
+	font-weight: bold;
+	text-align: left;
+}
+
+#formcontainer {
+	position: absolute;
+	width: 100%;
+	height: 70px;
+	top: 0px;
+}
+
+#formcontainer input{
+	font-family: Verdana;
+	font-size: 17px;
+	font-weight: normal;
+	
+	margin: 5px;
+	
+	padding: .4em;
+	
+	position: absolute;
+	left: 0px;
+	width: 260px;
+	top: auto;
+	bottom: 0px;
+}
+
+#formcontainer label{
+	margin-left: 5px;
+	font-family: Verdana;
+	font-weight: normal;
+	font-size: 17px;
+	color: #888888;
+	
+	position: absolute;
+	bottom: 45px;
+}
+
+#connectionbutton {
+	
+	height: 34px;
+	line-height: 36px;
+	
+	position: absolute;
+	bottom: 0px;
+	top: auto;
+	right: 5px;
+	
+	margin: 5px;
+}
+
+#connectionbutton p {
+	font-weight: normal;
+	color: #111111;
+}
+
+#closeconnectionform {
+	position:absolute;
+	top: 0px;
+	right: 0px;
+	width: 20px;
+	
+	text-align: center;
+	
+	font-family: Verdana;
+	font-weight: normal;
+	font-size: 17px;
+	color: #888888;
+}
+
+#closeconnectionform:hover{
+	cursor: pointer;
+	color: #FF9900;
+}
+

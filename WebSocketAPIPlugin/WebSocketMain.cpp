@@ -205,9 +205,12 @@ callback_obsapi(struct libwebsocket_context *context,
 
     case LWS_CALLBACK_BROADCAST:
         /* should get called with update messages */
-        n = libwebsocket_write(wsi,(unsigned char *) in, len, LWS_WRITE_TEXT);
-        if (n < 0)
-            fprintf(stderr, "update write failed\n");
+        if(messageHandler->authenticated)
+        {
+            n = libwebsocket_write(wsi,(unsigned char *) in, len, LWS_WRITE_TEXT);
+            if (n < 0)
+                fprintf(stderr, "update write failed\n");
+        }
         break;
 
     case LWS_CALLBACK_RECEIVE:

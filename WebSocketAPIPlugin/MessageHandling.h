@@ -23,9 +23,13 @@
 #include "jansson.h"
 #include <deque>
 #include <hash_map>
+#include <hash_set>
 #include <string>
+#include "Configuration.h"
 
 #define REQ_GET_VERSION "GetVersion"
+#define REQ_GET_AUTH_REQUIRED "GetAuthRequired"
+#define REQ_AUTHENTICATE "Authenticate"
 
 #define REQ_GET_CURRENT_SCENE "GetCurrentScene"
 #define REQ_GET_SCENE_LIST "GetSceneList"
@@ -56,12 +60,18 @@ struct eqstr
 struct OBSAPIMessageHandler
 {
     /*Message ID to Function Map*/
-    stdext::hash_map<std::string, MessageFunction> messageMap; 
+    stdext::hash_map<std::string, MessageFunction> messageMap;
+    stdext::hash_set<std::string> messagesNotRequiringAuth; 
+    std::string challenge;
+
     bool mapInitialized;
     void initializeMessageMap();
+    bool authenticated;
 
     /* Message Handlers */
     static json_t* HandleGetVersion(OBSAPIMessageHandler* handler, json_t* message);
+    static json_t* HandleGetAuthRequired(OBSAPIMessageHandler* handler, json_t* message);
+    static json_t* HandleAuthenticate(OBSAPIMessageHandler* handler, json_t* message);
     static json_t* HandleGetCurrentScene(OBSAPIMessageHandler* handler, json_t* message);
     static json_t* HandleGetSceneList(OBSAPIMessageHandler* handler, json_t* message);
     static json_t* HandleSetCurrentScene(OBSAPIMessageHandler* handler, json_t* message);

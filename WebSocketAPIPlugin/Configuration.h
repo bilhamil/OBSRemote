@@ -38,6 +38,9 @@ public:
 
     void save(const char *path);
     void load(const char *path);
+
+    std::string getChallenge();
+    bool checkChallengeAuth(const char* response, const char* challenge);    
 };
 
 Config* getRemoteConfig();

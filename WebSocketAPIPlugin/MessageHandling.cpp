@@ -22,6 +22,8 @@
 void OBSAPIMessageHandler::initializeMessageMap()
 {
     messageMap[REQ_GET_VERSION] =                       OBSAPIMessageHandler::HandleGetVersion;
+    messageMap[REQ_GET_AUTH_REQUIRED] =                 OBSAPIMessageHandler::HandleGetAuthRequired;
+    messageMap[REQ_AUTHENTICATE] =                      OBSAPIMessageHandler::HandleAuthenticate;
     messageMap[REQ_GET_CURRENT_SCENE] =                 OBSAPIMessageHandler::HandleGetCurrentScene;
     messageMap[REQ_GET_SCENE_LIST] =                    OBSAPIMessageHandler::HandleGetSceneList;
     messageMap[REQ_SET_CURRENT_SCENE] =                 OBSAPIMessageHandler::HandleSetCurrentScene;
@@ -34,6 +36,10 @@ void OBSAPIMessageHandler::initializeMessageMap()
     messageMap[REQ_GET_VOLUMES] =                       OBSAPIMessageHandler::HandleGetVolumes;
     messageMap[REQ_SET_VOLUME] =                        OBSAPIMessageHandler::HandleSetVolume;
 
+    messagesNotRequiringAuth.insert(REQ_GET_VERSION);
+    messagesNotRequiringAuth.insert(REQ_GET_AUTH_REQUIRED);
+    messagesNotRequiringAuth.insert(REQ_AUTHENTICATE);
+
     mapInitialized = true;
 }
 
@@ -43,6 +49,9 @@ OBSAPIMessageHandler::OBSAPIMessageHandler(struct libwebsocket *ws):wsi(ws), map
     {
         initializeMessageMap();
     }
+    authenticated = false;
+
+    challenge = getRemoteConfig()->getChallenge();
 }
 
 json_t* GetOkResponse(json_t* id = NULL)
@@ -95,7 +104,16 @@ bool OBSAPIMessageHandler::HandleReceivedMessage(void *in, size_t len)
     
     if(messageFunc != NULL)
     {
-        ret = messageFunc(this, message);
+        if(!getRemoteConfig()->useAuth || 
+            this->authenticated || 
+            messagesNotRequiringAuth.find(requestType) != messagesNotRequiringAuth.end())
+        {
+            ret = messageFunc(this, message);
+        }
+        else
+        {
+            ret = GetErrorResponse("Not Authenticated", id);
+        }
     }
     else
     {
@@ -200,6 +218,45 @@ json_t* OBSAPIMessageHandler::HandleGetVersion(OBSAPIMessageHandler* handler, js
     json_object_set_new(ret, "version", json_real(OBS_REMOTE_VERSION));
     
     return ret;
+}
+
+json_t* OBSAPIMessageHandler::HandleGetAuthRequired(OBSAPIMessageHandler* handler, json_t* message)
+{
+    json_t* ret = GetOkResponse();
+
+    json_object_set_new(ret, "authRequired", json_boolean(getRemoteConfig()->useAuth));
+    
+    if(getRemoteConfig()->useAuth)
+    {
+        json_object_set_new(ret, "challenge", json_string(handler->challenge.c_str()));
+        json_object_set_new(ret, "salt", json_string(getRemoteConfig()->authSalt.c_str()));
+    }
+
+    return ret;
+}
+
+json_t* OBSAPIMessageHandler::HandleAuthenticate(OBSAPIMessageHandler* handler, json_t* message)
+{
+    json_t* auth = json_object_get(message, "auth");
+    if(auth == NULL || !json_is_string(auth))
+    {
+        return GetErrorResponse("auth not specified!");
+    }
+    
+    bool authCheck = getRemoteConfig()->checkChallengeAuth(json_string_value(auth), handler->challenge.c_str());
+
+    if(authCheck)
+    {
+        json_t* ret = GetOkResponse();
+        handler->authenticated = true;
+
+        return ret;
+    }
+    else
+    {
+        json_t* ret = GetErrorResponse("Authentication Failed");
+        return ret;
+    }
 }
 
 json_t* OBSAPIMessageHandler::HandleGetCurrentScene(OBSAPIMessageHandler* handler, json_t* message)
