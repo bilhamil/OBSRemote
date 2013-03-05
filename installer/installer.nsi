@@ -77,7 +77,10 @@ Section "OBS Remote" Section1
   SetOverwrite on
   
   ; Enable firewall port opening. Needs http://nsis.sourceforge.net/NSIS_Simple_Firewall_Plugin
-  SimpleFC::AddPort 4444 "OBS Remote" 6 0 2 "" 1
+  #SimpleFC::AddPort 4444 "OBS Remote" 6 3 2 "" 1
+  SimpleFC::AdvAddRule "OBS Remote" "Allow OBS Remote Connections" "6" "1" "1" "2147483647" "1" "$INSTDIR\OBS.exe" "" "$INSTDIR\OBS.exe,-10000" "4444" "" "" ""
+  
+  SimpleFC::AdvAddRule "OBS Remote x64" "Allow OBS Remote Connections" "6" "1" "1" "2147483647" "1" "$INSTDIR\64bit\OBS.exe" "" "$INSTDIR\64bit\OBS.exe,-10000" "4444" "" "" ""
   
   WriteUninstaller "$INSTDIR\UninstallOBSRemote.exe"
   CreateShortCut "$SMPROGRAMS\Open Broadcaster Software\UninstallOBSRemote.lnk" "$INSTDIR\UninstallOBSRemote.exe"
@@ -121,7 +124,9 @@ Section Uninstall
     RMDir /r "$INSTDIR\64bit\plugins\WebSocketAPIPlugin"
   ${endif}
   
-  SimpleFC::RemovePort 4444 6
+  #SimpleFC::RemovePort 4444 6
+  SimpleFC::AdvRemoveRule "OBS Remote"
+  SimpleFC::AdvRemoveRule "OBS Remote x64"
   
 SectionEnd
 
