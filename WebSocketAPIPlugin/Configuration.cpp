@@ -24,6 +24,8 @@ HINSTANCE hinstMain = NULL;
 Config *config = NULL;
 LPSTR configPath = NULL;
 
+#define DEFAULT_PASS_TEXT TEXT("asdfasdf")
+
 LPSTR getPluginConfigPath()
 {
     if(configPath == NULL)
@@ -54,36 +56,39 @@ void Config::setAuth(bool _useAuth, const char *pass)
     size_t passLength = strlen(pass);
 
     this->useAuth = _useAuth;
-
-    unsigned char salt[32];
-    unsigned char salt64[64];
-    size_t salt64Size = 64;
-    havege_random((void*)&(this->havegeState), salt, 32);
-    base64_encode(salt64, &salt64Size, salt, 32);
-    salt64[salt64Size] = 0;
-
-    int saltPlusPassSize = salt64Size + passLength;
-
-    char* saltPlusPass = (char*)malloc(saltPlusPassSize);
-
-    memcpy(saltPlusPass, pass, passLength);
-    memcpy(saltPlusPass + passLength, salt64, salt64Size);
-
-    unsigned char passHash[32];
-    unsigned char passHash64[64];
-    size_t passHash64Size = 64;
-
-    sha2((unsigned char *)saltPlusPass, saltPlusPassSize, passHash, 0);
-
-    zero(saltPlusPass, saltPlusPassSize);
-    free(saltPlusPass);
     
-    base64_encode(passHash64, &passHash64Size, passHash, 32);
+    if(useAuth)
+    {
+        unsigned char salt[32];
+        unsigned char salt64[64];
+        size_t salt64Size = 64;
+        havege_random((void*)&(this->havegeState), salt, 32);
+        base64_encode(salt64, &salt64Size, salt, 32);
+        salt64[salt64Size] = 0;
 
-    passHash64[passHash64Size] = 0;
+        int saltPlusPassSize = salt64Size + passLength;
 
-    this->authHash = (char *)passHash64;
-    this->authSalt = (char *)salt64;
+        char* saltPlusPass = (char*)malloc(saltPlusPassSize);
+
+        memcpy(saltPlusPass, pass, passLength);
+        memcpy(saltPlusPass + passLength, salt64, salt64Size);
+
+        unsigned char passHash[32];
+        unsigned char passHash64[64];
+        size_t passHash64Size = 64;
+
+        sha2((unsigned char *)saltPlusPass, saltPlusPassSize, passHash, 0);
+
+        zero(saltPlusPass, saltPlusPassSize);
+        free(saltPlusPass);
+        
+        base64_encode(passHash64, &passHash64Size, passHash, 32);
+
+        passHash64[passHash64Size] = 0;
+
+        this->authHash = (char *)passHash64;
+        this->authSalt = (char *)salt64;
+    }
 }
 
 void Config::save(const char *path)
@@ -97,7 +102,7 @@ void Config::save(const char *path)
         json_object_set_new(json, "authSalt", json_string(this->authSalt.c_str()));
     }
 
-    json_dump_file(json, path, 0);
+    json_dump_file(json, path, JSON_INDENT(2));
 
     json_decref(json);
 }
@@ -106,8 +111,7 @@ void Config::load(const char *path)
 {
     json_error_t error;
     json_t* json = json_load_file(path, 0, &error);
-    
-    
+        
     this->useAuth = false;
     this->authHash = "";
     this->authSalt = "";
@@ -148,8 +152,15 @@ INT_PTR CALLBACK ConfigDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
     {
         case WM_INITDIALOG:
         {
+            Config* _config = getRemoteConfig();
+            HWND checkBox = GetDlgItem(hwnd, ID_USEPASSWORDAUTH);
+            SendMessage(checkBox, BM_SETCHECK, 
+                (_config->useAuth)?BST_CHECKED:BST_UNCHECKED, 0);
+            
+
             HWND editBox = GetDlgItem(hwnd, IDC_AUTH_EDIT);
-            SetWindowText(editBox, TEXT("asdfasdf"));
+            EnableWindow(editBox, _config->useAuth);
+            SetWindowText(editBox, DEFAULT_PASS_TEXT);
         }
         case WM_COMMAND:
 			switch(LOWORD(wParam))
@@ -160,19 +171,27 @@ INT_PTR CALLBACK ConfigDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
                         HWND editBox = GetDlgItem(hwnd, IDC_AUTH_EDIT);
                         GetWindowText(editBox, buff, 1024);
                         
-                        size_t wcharLen = slen(buff);
-                        size_t curLength = (UINT)wchar_to_utf8_len(buff, wcharLen, 0);
-                        char *utf8Pass = (char *) malloc((curLength+1));
-                        wchar_to_utf8(buff,wcharLen, utf8Pass, curLength + 1, 0);
-                        utf8Pass[curLength] = 0;
-
                         HWND checkBox = GetDlgItem(hwnd, ID_USEPASSWORDAUTH);
                         bool useAuth = SendMessage(checkBox, BM_GETCHECK, 0, 0) == BST_CHECKED;
                         
-                        config->setAuth(useAuth, utf8Pass);
-                        config->save(getPluginConfigPath());
+                        Config* _config = getRemoteConfig();
 
-                        free(utf8Pass);
+                        if(!useAuth || scmp(buff, DEFAULT_PASS_TEXT) != 0)
+                        {
+                            size_t wcharLen = slen(buff);
+                            size_t curLength = (UINT)wchar_to_utf8_len(buff, wcharLen, 0);
+                            char *utf8Pass = (char *) malloc((curLength+1));
+                            wchar_to_utf8(buff,wcharLen, utf8Pass, curLength + 1, 0);
+                            utf8Pass[curLength] = 0;
+
+                            Config* _config = getRemoteConfig();
+                            _config->setAuth(useAuth, utf8Pass);
+                            _config->save(getPluginConfigPath());
+
+                            free(utf8Pass);
+                        }
+
+                        EndDialog(hwnd, LOWORD(wParam));
                     }
                     break;
 
