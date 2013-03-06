@@ -9,12 +9,11 @@
 		<link rel="stylesheet" type="text/css" href="styles/scenelist.css"/>
 		<link rel="stylesheet" type="text/css" href="styles/sourcelist.css"/>
 		<link rel="stylesheet" type="text/css" href="styles/button.css"/>
-		<link rel="stylesheet" type="text/css" href="styles/streamconfig.css"/>
 		<link rel="stylesheet" type="text/css" href="styles/volumebar.css"/>
 		<link rel="stylesheet" type="text/css" href="styles/connectionmodal.css"/>
 		
 		<link rel="stylesheet" type="text/css" href="styles/custom-theme/jquery-ui-1.10.0.custom.min.css"/>
-			
+		<link rel="stylesheet" type="text/css" href="styles/dialog.css"/>	
 	</head>
 	
 	<body>
@@ -119,7 +118,7 @@
 		</div>
 	</div>	
 	
-	<div id="dialog-form" title="Stream Preview Options">
+	<div id="dialog-form" class="dialog-form" title="Stream Preview Options">
 	  
 	  <form>
 	  
@@ -156,15 +155,16 @@
 	  
 	</div>
 	
-	<div id="auth-dialog-form" title="Password Authentication">
+	<div id="auth-dialog-form" class="dialog-form" title="Password Authentication">
 	  
 	  <form>
-	  
-	  	<label for="authfield">Please Authenticate</label>
-	    <input type="password" name="authfield" id="authfield" class="text ui-widget-content ui-corner-all" />
-	  
+	  	    <input type="password" name="authfield" id="authfield" class="text ui-widget-content ui-corner-all" />
 	  </form>
-	  
+	  <p id="authdiagerror" class="diagerror"> </p>
+	</div>
+	
+	<div id="oldversion-dialog-form" class="dialog-form" title="Detected Old Plugin Version">
+	  <p id="version-notif" class="diagnotif"> </p>
 	</div>
 	
 	<div id="connection-form">

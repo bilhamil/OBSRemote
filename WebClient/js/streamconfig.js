@@ -9,7 +9,7 @@ $(function() {
 	/* initialize dialog */
 	$( "#dialog-form" ).dialog({
       autoOpen: false,
-      height: 370,
+      height: 265,
       width: 500,
       modal: true,
       buttons: {
@@ -26,7 +26,14 @@ $(function() {
         $( "#dialog-form" ).dialog( "open" );
       });
     
-    
+   $("#username").keydown(function(event) {
+    	if(event.keyCode == 13)
+    	{
+    		event.preventDefault();
+    		return false;
+    	}
+    });
+        
     if(localStorage["service"])
     {
     	service = localStorage["service"];

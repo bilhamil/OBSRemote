@@ -1,6 +1,7 @@
 $(function() {
 	
-		
+	console.log("connection modal onLoad");
+	
 	$( "#Lights" ).on("click", function() {
         showConnectToHostDialog();
       });

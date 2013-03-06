@@ -7,21 +7,50 @@ var authSalt = "";
 var authChallenge = "";
 
 $(function() {
+	/* select nothing but inputs */
+	$('body *').not(':has(input)').not('input').disableSelection();
+	
 	$("#button1").on("click", startStreaming);
 	$("#button2").on("click", startPreview);
 	
-	/* initialize dialog */
+	/* initialize auth dialog */
 	$( "#auth-dialog-form" ).dialog({
       autoOpen: false,
-      height: 370,
-      width: 500,
+      height: 180,
+      width: 350,
       modal: true,
+      closeOnEscape: false,
       buttons: {
         "Ok": Authenticate,
       },
-      beforeclose: function(){ return false },
+      beforeclose: function(){ return false; },
       close: function() {
         }
+    });
+    
+    /* initialize auth dialog */
+	$( "#oldversion-dialog-form" ).dialog({
+      autoOpen: false,
+      height: 220,
+      width: 530,
+      modal: true,
+      closeOnEscape: false,
+      buttons: {
+        "Use Old Client": NavigateToOldClient,
+        "Get Latest Plugin": NavigateToLatestPlugin
+      },
+      beforeclose: function(){ return false; },
+      close: function() {
+        }
+    });
+    
+    $("#authfield").keydown(function(event) {
+    	if(event.keyCode == 13)
+    	{
+    		event.preventDefault();
+    		Authenticate();
+    		return false;
+    	}
     });
 });
 
@@ -51,9 +80,11 @@ function checkVersion()
 	sendMessage(myJSONRequest, versionResponse);
 }
 
+var pluginVersion = 0;
+
 function versionResponse(resp)
 {
-	var pluginVersion = resp["version"];
+	pluginVersion = resp["version"];
 	
 	console.log("plugin version: v" + pluginVersion );
 	
@@ -69,9 +100,23 @@ function versionResponse(resp)
 	}
 }
 
-function oldVersionFound(plugin)
+function oldVersionFound()
 {
 	console.log("found old plugin version" );
+	
+	$("#version-notif").text("You are using an old version of the plugin (version " + pluginVersion.toFixed(2) + ")");
+
+	$("#oldversion-dialog-form").dialog("open");
+}
+
+function NavigateToOldClient()
+{
+	window.location.href = oldPluginUrls[pluginVersion.toFixed(2)];
+}
+
+function NavigateToLatestPlugin()
+{
+	window.location.href = "http://www.obsremote.com/download.html";
 }
 
 function checkAuthentication()
@@ -101,6 +146,7 @@ function authenticationRequiredResponse(resp)
 function startAuth()
 {
 	$( "#auth-dialog-form" ).dialog( "open" );
+	$("#authdiagerror").text("");
 }
 
 function utf8_encode (string) {
@@ -150,11 +196,13 @@ function authenticationResponse(resp)
 	if(resp["status"] == "ok")
 	{
 		$( "#auth-dialog-form" ).dialog( "close" );
+		$("#authfield").val("");
 		onConnectInitilization();
 	}
 	else
 	{
 		/* auth failed */
+		$("#authdiagerror").text("Authentication Failed");
 	}
 }
 

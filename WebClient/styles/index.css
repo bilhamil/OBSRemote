@@ -7,25 +7,25 @@ body {
 }
 
 /* select nothing */
-* {
+/** {
 	-webkit-user-select: none;
 	-khtml-user-select: none;
 	-moz-user-select: -moz-none;
 	-ms-user-select: none;
 	user-select: none;
-}
+}*/
 
 a {
 	color: #888888;
 }
 
-input {
+/*input {
 	-webkit-user-select: text;
 	-khtml-user-select: text;
 	-moz-user-select: text;
 	-ms-user-select: text;
 	user-select: text;
-}
+}*/
 
 #headband {
 	background: #222222;
@@ -80,9 +80,6 @@ input {
 	color: #222222;
 	width: 140px;
 	
-	-webkit-user-select: none;  /* Chrome all / Safari all */
-	-moz-user-select: -moz-none;     /* Firefox all */
-	-ms-user-select: none;      /* IE 10+ */
 }
 
 #OBSHeader {
@@ -99,9 +96,6 @@ input {
 	color: #DDDDDD;
 	margin: 0px;
 	
-	-webkit-user-select: none;  /* Chrome all / Safari all */
-	-moz-user-select: -moz-none;     /* Firefox all */
-	-ms-user-select: none;      /* IE 10+ */
 }
 
 #OBSHeader:hover {

@@ -1,17 +1,53 @@
 /* make sure dialog is inivisible at first */
-#dialog-form {
+.dialog-form {
 	display: none;
-	
 }
 
-#dialog-form label, input {
+.dialog-form label, input {
 	display: block;
 }
 
-#dialog-form input.text {
+.dialog-form input.text {
 	margin-bottom: 12px;
 	width: 95%;
 	padding: .4em;
+}
+
+p.diagerror {
+	color: rgb(128, 20, 20);
+	font-family: Verdana, Arial, sans-serif;
+	font-weight: bold;
+	font-size: 12px;
+	
+	margin-top: 5px;
+	margin-bottom: 0px;
+	
+	width: auto;
+}
+
+button.ui-dialog-titlebar-close {
+    display: none;
+}
+
+div.ui-dialog {
+	border-radius: 0px;
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+	
+	border:none;
+}
+
+div.ui-widget-header {
+	border: none;
+	margin: -.2em;
+	background: #222222;
+}
+
+.ui-dialog .ui-dialog-buttonpane {
+	border: none;
+	margin: -.2em;
+	padding-top: 0px;
+	padding-bottom: 0px;
 }
 
 #streamservice {
