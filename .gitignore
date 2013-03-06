@@ -4,6 +4,17 @@
 installer/32bit
 installer/64bit
 
+ipch/
+Debug/
+Release/
+
+*.sdf
+*.opensdf
+*.xml
+*.ipch
+*.filters
+*.css
+*.xslt
 *.aps
 *.suo
 *.ncb
