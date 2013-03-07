@@ -2,7 +2,7 @@
 
 ; Define your application name
 !define APPNAME "OBS Remote"
-!define APPVERSION "1.0"
+!define APPVERSION "1.1"
 !define APPNAMEANDVERSION "OBS Remote ${APPVERSION}"
 
 ; Additional script dependencies
@@ -55,6 +55,14 @@ FunctionEnd
 
 Section "OBS Remote" Section1
 
+  ; Check for prior installation
+  ReadRegStr $0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "UninstallString"
+  
+  ${If} $0 != "";
+    ExecWait '"$0 /S"' $0
+    DetailPrint "Uninstalled Previous Version"
+  ${EndIf}
+  
   ; Set Section properties
   SetOverwrite on
 
@@ -65,16 +73,7 @@ Section "OBS Remote" Section1
   ${if} ${RunningX64}
     SetOutPath "$INSTDIR\64bit\plugins\"
     File "..\WebSocketAPIPlugin\Output\x64\Release\WebSocketAPIPlugin.dll"
-    SetOutPath "$INSTDIR\64bit\plugins\WebSocketAPIPlugin\"
-    SetOverwrite off
-    File "..\.hosts"
-    SetOverwrite on
   ${endif}
-  
-  SetOutPath "$INSTDIR\plugins\WebSocketAPIPlugin\"
-  SetOverwrite off
-  File "..\.hosts"
-  SetOverwrite on
   
   ; Enable firewall port opening. Needs http://nsis.sourceforge.net/NSIS_Simple_Firewall_Plugin
   #SimpleFC::AddPort 4444 "OBS Remote" 6 3 2 "" 1
@@ -117,11 +116,9 @@ Section Uninstall
 
   ; Clean up OBS Remote
   Delete "$INSTDIR\plugins\WebSocketAPIPlugin.dll"
-  RMDir /r "$INSTDIR\plugins\WebSocketAPIPlugin"
   
   ${if} ${RunningX64}
     Delete "$INSTDIR\64bit\plugins\WebSocketAPIPlugin.dll"
-    RMDir /r "$INSTDIR\64bit\plugins\WebSocketAPIPlugin"
   ${endif}
   
   #SimpleFC::RemovePort 4444 6
