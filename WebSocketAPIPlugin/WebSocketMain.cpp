@@ -21,7 +21,6 @@
 #include "WebSocketMain.h"
 #include "MessageHandling.h"
 #include "libwebsockets.h"
-#include "AccessList.h"
 
 extern "C" __declspec(dllexport) bool LoadPlugin();
 extern "C" __declspec(dllexport) void UnloadPlugin();
@@ -33,8 +32,6 @@ HANDLE WebSocketThread;
 const int port = 4444;
 bool running;
 WebSocketOBSTriggerHandler* triggerHandler;
-AccessList *accesslist = NULL;
-
 
 enum demo_protocols {
     /* always first */
@@ -43,24 +40,6 @@ enum demo_protocols {
 };
 
 #define LOCAL_RESOURCE_PATH INSTALL_DATADIR"/plugins/WebSocketAPIPlugin"
-
-/* use inetntop to get ip address of connecting client */
-bool libwebsockets_get_peer_addresses(int fd, TSTR rip, size_t rip_len)
-{
-    int len;
-	struct sockaddr_in sin;
-	
-    len = sizeof sin;
-	if (getpeername(fd, (struct sockaddr *) &sin, &len) < 0) {
-		return false;
-	}
-
-    if(!InetNtop(sin.sin_family, (void*)&(sin.sin_addr), (PWSTR)rip, rip_len))
-    {
-        return false;
-    }
-    return true;
-}
 
 /* http protocol handling */
 int callback_http(struct libwebsocket_context *context,
@@ -131,16 +110,7 @@ int callback_http(struct libwebsocket_context *context,
          */
 
         case LWS_CALLBACK_FILTER_NETWORK_CONNECTION:
-            /*Using my own ip address lookup since the libwebsocket one seems to be deficient*/
-            libwebsockets_get_peer_addresses((int)(long)user, client_ip, sizeof(client_ip));
-            
-            if(!accesslist->acceptHost(client_ip))
-            {
-                /*ip not on the access list disconnect immediately*/
-                OSDebugOut(TEXT("Denying network connect from (%s)\n"), client_ip);
-                return 1;
-            }
-
+                        
             break;
 
         default:
@@ -330,13 +300,6 @@ bool LoadPlugin()
     running = true;
     DWORD dummy; 
 
-    /* load .hosts file for access control list */
-    accesslist = AccessList::createAccessList("./plugins/WebSocketAPIPlugin/.hosts");
-    if(!accesslist)
-    {
-        return false;
-    }
-
     /* initialize and register trigger handler */
     triggerHandler = new WebSocketOBSTriggerHandler();
     API->AddOBSEventListener(triggerHandler);
@@ -351,7 +314,6 @@ void UnloadPlugin()
     DWORD exitStatus;
     OSWaitForThread(WebSocketThread, &exitStatus);
 
-    delete accesslist;
     delete triggerHandler;
 }
 

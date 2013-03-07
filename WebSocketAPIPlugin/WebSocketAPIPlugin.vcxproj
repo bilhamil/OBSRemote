@@ -98,8 +98,6 @@
     </Link>
     <PostBuildEvent>
       <Command>copy $(OutDir)$(ProjectName).dll ..\..\OBS\rundir\plugins\
-mkdir ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\
-copy ..\.hosts ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -131,8 +129,6 @@ copy ..\.hosts ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\
     </Link>
     <PostBuildEvent>
       <Command>copy $(OutDir)$(ProjectName).dll ..\..\OBS\rundir\plugins\
-mkdir ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\
-copy ..\.hosts ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -161,8 +157,6 @@ copy ..\.hosts ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\
     </Link>
     <PostBuildEvent>
       <Command>copy $(OutDir)$(ProjectName).dll ..\..\OBS\rundir\plugins\
-mkdir ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\
-copy ..\.hosts ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -193,19 +187,15 @@ copy ..\.hosts ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\
     </Link>
     <PostBuildEvent>
       <Command>copy $(OutDir)$(ProjectName).dll ..\..\OBS\rundir\plugins\
-mkdir ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\
-copy ..\.hosts ..\..\OBS\rundir\plugins\WebSocketAPIPlugin\
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AccessList.cpp" />
     <ClCompile Include="Configuration.cpp" />
     <ClCompile Include="MessageHandling.cpp" />
     <ClCompile Include="WebSocketMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AccessList.h" />
     <ClInclude Include="Configuration.h" />
     <ClInclude Include="MessageHandling.h" />
     <ClInclude Include="OBSRemote.h" />
