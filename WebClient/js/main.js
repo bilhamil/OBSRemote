@@ -16,8 +16,8 @@ $(function() {
 	/* initialize auth dialog */
 	$( "#auth-dialog-form" ).dialog({
       autoOpen: false,
-      height: 180,
-      width: 350,
+      height: 220,
+      width: 450,
       modal: true,
       closeOnEscape: false,
       buttons: {
@@ -202,7 +202,7 @@ function authenticationResponse(resp)
 	else
 	{
 		/* auth failed */
-		$("#authdiagerror").text("Authentication Failed");
+		$("#authdiagerror").text(resp["error"]);
 	}
 }
 

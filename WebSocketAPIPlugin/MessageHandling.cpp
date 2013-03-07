@@ -19,6 +19,8 @@
 
 #include "MessageHandling.h"
 
+int failedAuthAttempts = 0;
+
 void OBSAPIMessageHandler::initializeMessageMap()
 {
     messageMap[REQ_GET_VERSION] =                       OBSAPIMessageHandler::HandleGetVersion;
@@ -245,16 +247,31 @@ json_t* OBSAPIMessageHandler::HandleAuthenticate(OBSAPIMessageHandler* handler, 
     
     bool authCheck = getRemoteConfig()->checkChallengeAuth(json_string_value(auth), handler->challenge.c_str());
 
-    if(authCheck)
+    if(authCheck && failedAuthAttempts < OBS_REMOTE_MAX_FAILED_AUTH_ATTEMPTS)
     {
         json_t* ret = GetOkResponse();
         handler->authenticated = true;
+
+		failedAuthAttempts = 0;
 
         return ret;
     }
     else
     {
-        json_t* ret = GetErrorResponse("Authentication Failed");
+		failedAuthAttempts++;
+		json_t* ret = NULL;
+
+		if(failedAuthAttempts >= OBS_REMOTE_MAX_FAILED_AUTH_ATTEMPTS)
+		{
+			ret = GetErrorResponse("OBS Remote Locked: Maximum failed authentication attempts reached. Please Restart OBS to Unlock.");
+		}
+		else
+		{
+			char buf[64];
+			_snprintf(buf, 64, "Authentication Failed. Attempts Remaining: %d", OBS_REMOTE_MAX_FAILED_AUTH_ATTEMPTS - failedAuthAttempts);
+			ret = GetErrorResponse(buf);
+		}
+		
         return ret;
     }
 }
