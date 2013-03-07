@@ -219,6 +219,9 @@ function onWebSocketClose()
 	$("#Lights").attr("class", "disconnected");
 	connectionPopupConnectionStatusChange(false);
 	$("#Lights").attr("title", "Manage Connection:\nDisconnected from OBS");
+	
+	$( "#auth-dialog-form" ).dialog( "close" );
+	$("#oldversion-dialog-form").dialog("close");
 }
 
 function strainToColor(strain)
