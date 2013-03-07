@@ -188,6 +188,7 @@ void Config::load(const char *path)
 
 INT_PTR CALLBACK ConfigDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	static bool edited = false;
 	switch(message)
     {
         case WM_INITDIALOG:
@@ -201,6 +202,11 @@ INT_PTR CALLBACK ConfigDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
             HWND editBox = GetDlgItem(hwnd, IDC_AUTH_EDIT);
             EnableWindow(editBox, _config->useAuth);
             SetWindowText(editBox, DEFAULT_PASS_TEXT);
+
+			HWND okButton = GetDlgItem(hwnd, IDOK);
+            EnableWindow(okButton, false);
+
+			edited = false;
         }
         case WM_COMMAND:
 			switch(LOWORD(wParam))
@@ -216,7 +222,7 @@ INT_PTR CALLBACK ConfigDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
                         
                         Config* _config = getRemoteConfig();
 
-                        if(!useAuth || scmp(buff, DEFAULT_PASS_TEXT) != 0)
+                        if(!useAuth || edited)
                         {
                             size_t wcharLen = slen(buff);
                             size_t curLength = (UINT)wchar_to_utf8_len(buff, wcharLen, 0);
@@ -231,12 +237,14 @@ INT_PTR CALLBACK ConfigDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
                             free(utf8Pass);
                         }
 
+						edited = false;
                         EndDialog(hwnd, LOWORD(wParam));
                     }
                     break;
 
 				case IDCANCEL:
 					EndDialog(hwnd, LOWORD(wParam));
+					break;
                 case ID_USEPASSWORDAUTH:
                     {
                         if(HIWORD(wParam) == BN_CLICKED)
@@ -245,9 +253,25 @@ INT_PTR CALLBACK ConfigDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
 
                             HWND editBox = GetDlgItem(hwnd, IDC_AUTH_EDIT);
                             EnableWindow(editBox, useAuth);
+
+							HWND okButton = GetDlgItem(hwnd, IDOK);
+							EnableWindow(okButton, (edited && useAuth) || (!useAuth && useAuth != getRemoteConfig()->useAuth));
                         }
                     }
                     break;
+				case IDC_AUTH_EDIT:
+					{
+						if(HIWORD(wParam) == EN_CHANGE)
+                        {
+							if(!edited)
+							{
+								edited = true;
+								HWND okButton = GetDlgItem(hwnd, IDOK);
+								EnableWindow(okButton, true);
+							}
+                        }
+						break;
+					}
 
 			}
 			break;
