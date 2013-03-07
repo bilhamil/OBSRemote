@@ -22,9 +22,12 @@
 #include "WebSocketMain.h"
 #include "jansson.h"
 
-#include "polarssl/havege.h""
+#include "polarssl/havege.h"
 #include "polarssl/sha2.h"
 #include "polarssl/base64.h"
+
+#define OBS_REMOTE_MAX_FAILED_AUTH_ATTEMPTS 10
+#define OBS_REMOTE_DEFAULT_PASSWORD "admin"
 
 class Config
 {

@@ -20,6 +20,4 @@
 #define OBS_REMOTE_VERSION 1.1
 #define OBS_REMOTE_FULLNAME "OBS Remote v1.1"
 
-#define OBS_REMOTE_MAX_FAILED_AUTH_ATTEMPTS 10
-
 #include "resource.h"

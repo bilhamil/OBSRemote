@@ -157,6 +157,9 @@ void Config::load(const char *path)
     this->authSalt = "";
 
     if(!json) {
+		/* didn't find config file, setup default password */
+		setAuth(true, OBS_REMOTE_DEFAULT_PASSWORD);
+		save(path);
         return;        
     }
 
