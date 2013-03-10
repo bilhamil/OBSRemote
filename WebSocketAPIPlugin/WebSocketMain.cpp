@@ -175,7 +175,7 @@ callback_obsapi(struct libwebsocket_context *context,
 
     case LWS_CALLBACK_BROADCAST:
         /* should get called with update messages */
-        if(messageHandler->authenticated)
+		if(!getRemoteConfig()->useAuth || messageHandler->authenticated)
         {
             n = libwebsocket_write(wsi,(unsigned char *) in, len, LWS_WRITE_TEXT);
             if (n < 0)

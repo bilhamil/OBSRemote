@@ -47,9 +47,30 @@
 	
 		<div id="streamView">
 			<div id = "sourcesBox">
-				<div id="configuregear" title="Configure Stream Preview"> </div>
 				<div id="streambox">
 					
+				</div>
+				<div id="configureheadband">
+					<table>
+						<tr>
+							<td>
+								<div id="configuregear" title="Configure Stream Preview"> </div>
+							</td>
+							<td>
+								<img src="http://ttv-api.s3.amazonaws.com/assets/connect_dark.png" id="twitch-connect" href="#" />
+							</td>
+							
+							<td>
+								<label for="status" class="config">Status:</label>
+								<input type="text" class="config" name="status" id="streamstatus" class="" />
+							</td>
+							
+							<td>
+								<label for="status" class="config">Game:</label>
+								<input type="text" class="config" name="status" id="game" class="" />
+							</td>
+						</tr>
+					</table>
 				</div>
 			</div>
 			<div id="SourceSceneMenus">
@@ -128,8 +149,11 @@
 		  <option value="own3d">Own3d.tv</option>
 		</select>-->
 		
-	    <label for="username">Twitch Username</label>
+	    <!--<label for="username">Twitch Username</label>
 	    <input type="text" name="username" id="username" class="text ui-widget-content ui-corner-all" />
+	    -->
+	    
+	    <!--<img src="http://ttv-api.s3.amazonaws.com/assets/connect_dark.png" class="twitch-connect" href="#" />-->
 	    
 	    <table>
 	    	<tr>
@@ -195,6 +219,9 @@
 	
 	<script type="text/JavaScript" src="js/jquery-1.9.0.js"></script>
 	<script type="text/JavaScript" src="js/jquery-ui-1.10.0.custom.min.js"></script>
+	
+	<script type="text/JavaScript"src="https://ttv-api.s3.amazonaws.com/twitch.min.js"></script>
+	<script type="text/JavaScript" src="js/twitch.js"></script> 
 	
 	<script type="text/JavaScript" src="js/cryptojs/sha256.js"></script>
 	<script type="text/JavaScript" src="js/cryptojs/enc-base64-min.js"></script>

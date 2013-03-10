@@ -26,41 +26,54 @@ $(function() {
         $( "#dialog-form" ).dialog( "open" );
       });
     
-   $("#username").keydown(function(event) {
+   /*$("#username").keydown(function(event) {
     	if(event.keyCode == 13)
     	{
     		event.preventDefault();
     		return false;
     	}
-    });
+    });*/
         
-    if(localStorage["service"])
-    {
-    	service = localStorage["service"];
-    	username = localStorage["username"];
-    	showstream = localStorage["showstream"] == "true";
-    	showchat = localStorage["showchat"] == "true";
-    	if(localStorage["onlywhenstreaming"] == undefined)
-    	{
-    		localStorage["onlywhenstreaming"] = "true";
-    	}
-    	onlywhenstreaming = localStorage["onlywhenstreaming"] == "true";
-    	
-    	
-    	
-    	$("#username").val(username);
-    	$("#showstream").attr("checked", showstream);
-    	$("#showchat").attr("checked", showchat);
-    	$("#onlywhenstreaming").attr("checked", onlywhenstreaming);
-    	
-    	loadStreamAndOrChat(service, username, showstream, showchat, onlywhenstreaming);
-    }
+    
 });
+
+function initializeOnGetUser(_username)
+{
+	username = _username;
+	
+	if(localStorage["showstream"] == undefined)
+	{
+		localStorage["showstream"] = "true";
+	}
+	showstream = localStorage["showstream"] == "true";
+	
+	if(localStorage["showstream"] == undefined)
+	{
+		localStorage["showchat"] = "true";
+	}
+	showchat = localStorage["showchat"] == "true";
+	
+	if(localStorage["onlywhenstreaming"] == undefined)
+	{
+		localStorage["onlywhenstreaming"] = "true";
+	}
+	onlywhenstreaming = localStorage["onlywhenstreaming"] == "true";
+	
+	
+	
+	//$("#username").val(username);
+	$("#showstream").attr("checked", showstream);
+	$("#showchat").attr("checked", showchat);
+	$("#onlywhenstreaming").attr("checked", onlywhenstreaming);
+	
+	loadStreamAndOrChat("Twitch.tv", username, showstream, showchat, onlywhenstreaming);
+    
+}
 
 function StreamConfDiagOk()
 {
 	service = "Twitch.tv";
-	username = $("#username").val();
+	//username = $("#username").val();
 	showstream = $("#showstream").is(':checked');
 	showchat = $("#showchat").is(':checked');
 	onlywhenstreaming = $("#onlywhenstreaming").is(":checked");
@@ -79,7 +92,6 @@ var currentlyShowingUsername = "";
 function loadStreamAndOrChat(service, username, showstream, showchat, onlywhenstreaming)
 {
 	localStorage["service"] = service;
-	localStorage["username"] = username;
 	localStorage["showstream"] = (showstream)?"true":"false";
 	localStorage["showchat"] = (showchat)?"true":"false";
 	localStorage["onlywhenstreaming"] = onlywhenstreaming;

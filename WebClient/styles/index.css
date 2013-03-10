@@ -324,21 +324,66 @@ a {
 	z-index: 90;
 }
 
-#configuregear{
+#configureheadband {
 	position: absolute;
+	top: 0px;
+	height: 35px;
+	left: 0px;
+	right: 0px;
+	z-index: 91;
+}
+
+#configureheadband table
+{
+	position: absolute;
+	height: 100%;
+}
+
+#configureheadband * {
+	z-index: 91;
+}
+
+#configureheadband td {
+	padding: 0px;
+	vertical-align:middle;
+}
+
+#configuregear{
 	width: 25px;
 	height: 25px;
-	top: 5px;
-	left: 5px;
-	
 	background:url("../imgs/gearsprite.png") 0px 0px;	
-	
-	z-index: 91;
+}
+
+.config {
+	font-family: Verdana;
+	font-size: 13px;
+	font-weight: bold;
+	display: none;
+}
+
+label.config {
+    display: block;
+    float: left;
+    text-align: right;
+    padding-right: 10px;
+    padding-left: 10px;
+    
+    line-height: 40px;
+}
+
+input.config {
+    float: left;
+    margin-top: 9px;
+    margin-bottom: 9px;
 }
 
 #configuregear:hover{
 	background-position: 0px 25px;
 	cursor: pointer;
+}
+
+#twitch-connect {
+	margin: 1.5px;
 }
 
 .resizeBarVert {

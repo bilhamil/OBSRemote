@@ -248,8 +248,6 @@ function strainToColor(strain)
 
 function onStreamStatus(update)
 {
-	console.log("stream status");
-	
 	var newStreaming = update["streaming"];
 	
 	if(newStreaming && !(currentlyStreaming || currentlyPreviewing))
