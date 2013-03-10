@@ -57,14 +57,8 @@ function showConnectToHostDialog()
 {
 	if($("#connection-form").css("display") == "none")
 	{
-		if(getOBSHost())
-		{
-			$("#hostname").val(getOBSHost());
-		}
-		else
-		{
-			$("#hostname").val("localhost");
-		}
+		var hostname = getOBSHost() || "localhost";
+		$("#hostname").val(hostname);
 	}
 	
 	
