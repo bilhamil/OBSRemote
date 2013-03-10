@@ -10,7 +10,7 @@ body {
 * {
 	-webkit-user-select: none;
 	-khtml-user-select: none;
-	-moz-user-select: none;
+	-moz-user-select: -moz-none;
 	-ms-user-select: none;
 	user-select: none;
 }
@@ -20,11 +20,11 @@ a {
 }
 
 input {
-	-webkit-user-select: all;
-	-khtml-user-select: all;
-	-moz-user-select: all;
-	-ms-user-select: all;
-	user-select: element;
+	-webkit-user-select: text;
+	-khtml-user-select: text;
+	-moz-user-select: text;
+	-ms-user-select: text;
+	user-select: text;
 }
 
 #headband {
@@ -81,8 +81,8 @@ input {
 	width: 140px;
 	
 	-webkit-user-select: none;  /* Chrome all / Safari all */
-  	-moz-user-select: none;     /* Firefox all */
-  	-ms-user-select: none;      /* IE 10+ */
+	-moz-user-select: -moz-none;     /* Firefox all */
+	-ms-user-select: none;      /* IE 10+ */
 }
 
 #OBSHeader {
@@ -100,8 +100,8 @@ input {
 	margin: 0px;
 	
 	-webkit-user-select: none;  /* Chrome all / Safari all */
-  	-moz-user-select: none;     /* Firefox all */
-  	-ms-user-select: none;      /* IE 10+ */
+	-moz-user-select: -moz-none;     /* Firefox all */
+	-ms-user-select: none;      /* IE 10+ */
 }
 
 #OBSHeader:hover {
