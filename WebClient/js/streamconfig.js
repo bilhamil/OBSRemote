@@ -26,21 +26,20 @@ $(function() {
         $( "#dialog-form" ).dialog( "open" );
       });
     
-   /*$("#username").keydown(function(event) {
+   $("#username").keydown(function(event) {
     	if(event.keyCode == 13)
     	{
     		event.preventDefault();
     		return false;
     	}
-    });*/
-        
-    
-});
+    });
 
-function initializeOnGetUser(_username)
-{
-	username = _username;
-	
+	if(localStorage["username"] == undefined)
+	{
+		localStorage["username"] = "";
+	}
+	username = localStorage["username"];
+        	
 	if(localStorage["showstream"] == undefined)
 	{
 		localStorage["showstream"] = "true";
@@ -61,19 +60,18 @@ function initializeOnGetUser(_username)
 	
 	
 	
-	//$("#username").val(username);
+	$("#username").val(username);
 	$("#showstream").attr("checked", showstream);
 	$("#showchat").attr("checked", showchat);
 	$("#onlywhenstreaming").attr("checked", onlywhenstreaming);
 	
 	loadStreamAndOrChat("Twitch.tv", username, showstream, showchat, onlywhenstreaming);
-    
-}
+});
 
 function StreamConfDiagOk()
 {
 	service = "Twitch.tv";
-	//username = $("#username").val();
+	username = $("#username").val();
 	showstream = $("#showstream").is(':checked');
 	showchat = $("#showchat").is(':checked');
 	onlywhenstreaming = $("#onlywhenstreaming").is(":checked");
@@ -92,6 +90,7 @@ var currentlyShowingUsername = "";
 function loadStreamAndOrChat(service, username, showstream, showchat, onlywhenstreaming)
 {
 	localStorage["service"] = service;
+	localStorage["username"] = username;
 	localStorage["showstream"] = (showstream)?"true":"false";
 	localStorage["showchat"] = (showchat)?"true":"false";
 	localStorage["onlywhenstreaming"] = onlywhenstreaming;
@@ -108,6 +107,11 @@ function loadStreamAndOrChat(service, username, showstream, showchat, onlywhenst
 		{
 			$("#streambox").empty();
 			currentlyShowingStream = false;
+		}
+		
+		if(currentlyStreaming)
+		{
+			restartViewerCountUpdate();
 		}
 		
 		if(showchat && (!currentlyShowingChat || currentlyShowingUsername != username))
@@ -131,6 +135,8 @@ function loadStreamAndOrChat(service, username, showstream, showchat, onlywhenst
 }
 
 var showStreamTimeoutVariable = null;
+var viewerCountIntervalVariable = null;
+
 function streamConfigStartStreaming()
 {
 	showStreamTimeoutVariable = setTimeout(function() {
@@ -143,7 +149,41 @@ function streamConfigStartStreaming()
 		showStreamTimeoutVariable = null;
 	}, 6000);
 	
+	startViewerCountUpdate();
+	
 	_gaq.push(['_trackEvent', 'Streaming', 'Start Streaming', username]);
+}
+
+function startViewerCountUpdate()
+{
+	twitchUpdateViewerCount(username);
+	
+	$("#viewercount").css("display","block");
+	
+	viewerCountIntervalVariable = setInterval(function() {
+		twitchUpdateViewerCount(username);
+	}, 60000);
+}
+
+function stopViewerCountUpdate()
+{
+	
+	$("#viewercount").css("display","none");
+	
+	if(viewerCountIntervalVariable)
+	{
+		window.clearTimeout(viewerCountIntervalVariable);
+		viewerCountIntervalVariable = null;
+	}
+}
+
+function restartViewerCountUpdate()
+{
+	if(viewerCountIntervalVariable)
+	{
+		stopViewerCountUpdate();
+		startViewerCountUpdate();
+	}
 }
 
 function streamConfigStopStreaming(secondsStreamed)
@@ -158,6 +198,8 @@ function streamConfigStopStreaming(secondsStreamed)
 		window.clearTimeout(showStreamTimeoutVariable);
 		showStreamTimeoutVariable = null;
 	}
+	
+	stopViewerCountUpdate();
 	
 	_gaq.push(['_trackEvent', 'Streaming', 'Stop Streaming', username, secondsStreamed]);
 }

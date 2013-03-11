@@ -24,6 +24,14 @@ $(function() {
 	
 	$('#twitch-connect').click(function() {
 	  Twitch.login({scope: [ 'user_read', 'channel_read', 'channel_editor', 'channel_commercial']});
+	});
+	
+	$("#game").click(function() {
+   		$(this).select();
+	});
+	
+	$("#streamstatus").click(function() {
+   		$(this).select();
 	});	
 });
 
@@ -36,8 +44,43 @@ function channelResponse(error, channel)
 {
 	if(!error)
 	{
+		$('#game').autocomplete({source: function(request, response) {
+			if(request.term)
+			{
+				Twitch.api({method:"/search/games", params:{query:request.term, type:"suggest"}},
+					function (error, searchresults) 
+					{
+						if(error)
+						{
+							response([]);
+						}
+						else
+						{
+							var results = [];
+							for(i = 0; i < searchresults.games.length; i++)
+							{
+								var gameTitle = searchresults.games[i].name;
+								var gameThumb = searchresults.games[i].logo.small;
+								results.push({label:gameTitle,
+											  icon:gameThumb,
+											  value:gameTitle});
+							}
+							response(results);
+						}
+					});
+			}
+			else
+			{
+				response([]);
+			}
+		}})
+		.data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+	    	  return $( "<li>" )
+	        		.append( "<a>" + "<img src=\""+item.icon+"\"/> <div>" + item.label + "</div></a>" )
+	        		.appendTo( ul );
+	        };
+		
 		console.log("Got channel: " + channel["name"]);
-		initializeOnGetUser(channel["name"]);
 		
 		$("#twitch-connect").css("display", "none");
 		$(".config").css("display", "block");
@@ -45,8 +88,24 @@ function channelResponse(error, channel)
 		$("#streamstatus").val(channel.status);
 		if(channel.game)
 		{
-			$("#streamstatus").val(channel.game);	
+			$("#game").val(channel.game);	
 		}
 	}
 }
+
+function twitchUpdateViewerCount(username)
+{
+	Twitch.api({method: 'streams/' + username }, function(error, stream) {
+		if(error)
+		{
+			console.log("Error Getting Viewer Count: " + error);
+			return;
+		}
+		else if(stream.stream.viewers)
+		{
+			$("#viewercount").text("" + stream.stream.viewers);
+		}
+	});
+}
+
 

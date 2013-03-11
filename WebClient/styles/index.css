@@ -27,6 +27,11 @@ a {
 	user-select: text;
 }*/
 
+/*Change color of highlighted text*/
+::-moz-selection {
+color: Black !important;  /*Colour of text*/
+background: #3399CC !important;  /*Highlighting colour*/} 
+
 #headband {
 	background: #222222;
 	width:100%;
@@ -314,7 +319,8 @@ a {
 
 #streambox {
 	position: absolute;
-	height: 100%;
+	bottom: 0px;
+	top: 35px;
 	width: 100%;
 	
 	z-index: 90;
@@ -337,6 +343,10 @@ a {
 {
 	position: absolute;
 	height: 100%;
+	border-collapse: collapse;
+	
+	margin: 0px;
+	padding: 0px;
 }
 
 #configureheadband * {
@@ -351,7 +361,33 @@ a {
 #configuregear{
 	width: 25px;
 	height: 25px;
+	margin-left: 5px;
 	background:url("../imgs/gearsprite.png") 0px 0px;	
+}
+
+#configuregear:hover{
+	background-position: 0px 25px;
+	cursor: pointer;
+}
+
+#viewercount {
+	position: absolute;
+	background: url("../imgs/live_viewers.png") no-repeat left center;
+	right: 0px;
+	height: 100%;
+	width: auto;
+	
+	display: none;
+	
+	font-family: Verdana;
+	font-size: 16px;
+	font-weight: normal;
+	
+	text-align: right;
+	line-height: 35px;
+	
+	padding-left: 20px;
+	padding-right: 10px;
 }
 
 .config {
@@ -362,24 +398,62 @@ a {
 }
 
 label.config {
-    display: block;
+    
     float: left;
     text-align: right;
-    padding-right: 10px;
-    padding-left: 10px;
+    padding-right: 5px;
+    padding-left: 5px;
     
-    line-height: 40px;
+    line-height: 35px;
 }
 
 input.config {
     float: left;
-    margin-top: 9px;
-    margin-bottom: 9px;
+   	vertical-align: middle;
+    font-weight: normal;
+    
+    margin-top: 6.5px;
+    margin-bottom: 6.5px;
+    
+    background: #777777;
+    
+    border: 1px solid black;
 }
 
-#configuregear:hover{
-	background-position: 0px 25px;
-	cursor: pointer;
+.ui-autocomplete {
+    max-height: 96px;
+    width: 350px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+  }
+
+ul.ui-autocomplete li.ui-menu-item a{
+	height: 24px;
+	padding: 0px;
+}
+
+ul.ui-autocomplete li.ui-menu-item a div{
+	float: left;
+	
+	vertical-align: middle;
+	height: 24px;
+	line-height: 24px;	
+	font-family: Verdana;
+	font-size: 13px;
+	
+	max-width: 290px;
+	
+	overflow: hidden;
+	white-space: nowrap;
+	text-wrap: none;
+	text-overflow: ellipsis;
+}
+
+ul.ui-autocomplete li a img{
+	float: left;
+	margin: 2px;
+	height: 20px;
 }
 
 #twitch-connect {
