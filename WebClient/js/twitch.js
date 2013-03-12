@@ -1,3 +1,6 @@
+var twitchUserName = null;
+var currentStatus = null;
+var currentGame = null;
 
 $(function() {
 	
@@ -13,17 +16,71 @@ $(function() {
 	  	// the sdk is now loaded
 	  	if (status.authenticated) 
 	  	{
-	    	// user is currently logged in
-	    	console.log("Twitch Authenticated!");
-	    	
-	    	Twitch.api({method: 'user' }, userResponse);
-	    	Twitch.api({method: 'channel'}, channelResponse);
+	    	onLogon();
 	  	}
 	});
 
+	Twitch.events.addListener('auth.login', onLogon);
+	Twitch.events.addListener('auth.logout'. onLogout);
 	
 	$('#twitch-connect').click(function() {
-	  Twitch.login({scope: [ 'user_read', 'channel_read', 'channel_editor', 'channel_commercial']});
+	  	Twitch.login({scope: [ 'user_read', 'channel_read', 'channel_editor', 'channel_commercial']});
+	});
+	
+	$("#logouttwitch").click(function() {
+		Twitch.logout(function(error){
+			if(!error)
+			{
+				onLogout();
+			}
+		});
+	});
+	
+	var checkForChange = function(event) {
+		if($("#game").val() != currentGame || $("#streamstatus").val() != currentStatus)
+		{
+			$("#updatetwitch").css("display","block");
+		}
+		else
+		{
+			$("#updatetwitch").css("display","none");
+		}
+	}
+	
+	$("input.config").on("change.twitchupdate", checkForChange);
+	
+	$("input.config").on("keyup.twitchupdate", checkForChange);
+	
+	$("#updatetwitch").click(function() {
+		if(twitchUserName)
+		{
+			var game = $("#game").val().replace(/^\s+|\s+$/g, '');
+			var status = $("#streamstatus").val();
+			var myparams = {channel:{}};
+			myparams.channel.status = status;
+			myparams.channel.game = null;
+			if(game && game != "")
+			{
+				myparams.channel.game = game;
+			}
+			
+			Twitch.api({method:"channels/" + twitchUserName, params:myparams, verb:"PUT"}, function(error, channel) {
+				if(!error)
+				{
+					$("#streamstatus").val(channel.status);
+					currentStatus = channel.status;
+					
+					currentGame = null;
+					if(channel.game)
+					{
+						$("#game").val(channel.game);
+						currentGame = channel.game;	
+					}
+					
+					$("#updatetwitch").css("display","none");
+				}
+			});
+		}
 	});
 	
 	$("#game").click(function() {
@@ -35,6 +92,23 @@ $(function() {
 	});	
 });
 
+function onLogon()
+{
+	// user is currently logged in
+	console.log("Twitch Authenticated!");
+	
+	Twitch.api({method: 'channel'}, channelResponse);
+}
+
+function onLogout()
+{
+	$("#twitch-connect").css("display", "block");
+				
+	$(".config").not("#updatetwitch").css("display", "none");
+	
+	twitchUserName = null;
+}
+
 function userResponse(error, user)
 {
 	console.log("Got user: " + user);
@@ -44,6 +118,8 @@ function channelResponse(error, channel)
 {
 	if(!error)
 	{
+		twitchUserName = channel.name;
+		
 		$('#game').autocomplete({source: function(request, response) {
 			if(request.term)
 			{
@@ -83,12 +159,19 @@ function channelResponse(error, channel)
 		console.log("Got channel: " + channel["name"]);
 		
 		$("#twitch-connect").css("display", "none");
-		$(".config").css("display", "block");
+		$("#logouttwitch").text("Logout " + channel.display_name);
+		
+		$(".config").not("#updatetwitch").css("display", "block");
+		
 		
 		$("#streamstatus").val(channel.status);
+		currentStatus = channel.status;
+		
+		currentGame = null;
 		if(channel.game)
 		{
-			$("#game").val(channel.game);	
+			$("#game").val(channel.game);
+			currentGame = channel.game;	
 		}
 	}
 }

@@ -420,6 +420,25 @@ input.config {
     border: 1px solid black;
 }
 
+div.configbutton {
+	display:none;
+	
+	height: 17px;
+	line-height: 17px;
+	margin-top: 6px;
+    margin-bottom: 6px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    
+    border-width: 1px;
+    
+    font-weight: normal;
+}
+
+div.configbutton:hover {
+	background: #777777;
+}
+
 .ui-autocomplete {
     max-height: 96px;
     width: 350px;
