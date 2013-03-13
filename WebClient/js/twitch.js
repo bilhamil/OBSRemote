@@ -3,8 +3,9 @@ var currentStatus = null;
 var currentGame = null;
 
 var twitchKeys = {
-	"http://client.obsremote.com": "ks67o3uccvz4d0bn9oafusvnud0kyp6",
-	"http://client.obsremote.com/test/": "86ga5ffa6d4xpjtc3kvpbjnkll1sr8o",
+	"http://client.obsremote.com/": "ks67o3uccvz4d0bn9oafusvnud0kyp6",
+	"http://test.obsremote.com/": "86ga5ffa6d4xpjtc3kvpbjnkll1sr8o",
+	/*put local dev key here*/
 	"default": "b8is94zcag2kzmq4kju5kyfb8rq27ow"	
 }
 
