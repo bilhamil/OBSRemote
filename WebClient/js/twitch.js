@@ -2,9 +2,20 @@ var twitchUserName = null;
 var currentStatus = null;
 var currentGame = null;
 
+var twitchKeys = {
+	"http://client.obsremote.com": "ks67o3uccvz4d0bn9oafusvnud0kyp6",
+	"http://client.obsremote.com/test/": "86ga5ffa6d4xpjtc3kvpbjnkll1sr8o",
+	"default": "b8is94zcag2kzmq4kju5kyfb8rq27ow"	
+}
+
+function getAPIKey()
+{
+	return twitchKeys[window.location.href.replace(/#.*$/, '')] || twitchKeys["default"];
+}
+
 $(function() {
 	
-	Twitch.init({clientId: 'b8is94zcag2kzmq4kju5kyfb8rq27ow'}, function(error, status) {
+	Twitch.init({clientId: getAPIKey()}, function(error, status) {
 		// the sdk is now loaded
 		console.log("Twitch API Loaded");
 		
