@@ -59,7 +59,7 @@ Section "OBS Remote" Section1
   ReadRegStr $0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "UninstallString"
   
   ${If} $0 != "";
-    ExecWait '"$0 /S"' $0
+    ExecWait '"$0" /S _?=$INSTDIR'
     DetailPrint "Uninstalled Previous Version"
   ${EndIf}
   
