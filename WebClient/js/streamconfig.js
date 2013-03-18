@@ -25,7 +25,7 @@ $(function() {
     $( "#configuregear" ).on("click", function() {
         $( "#dialog-form" ).dialog( "open" );
       });
-    
+   
    $("#username").keydown(function(event) {
     	if(event.keyCode == 13)
     	{
@@ -67,6 +67,13 @@ $(function() {
 	
 	loadStreamAndOrChat("Twitch.tv", username, showstream, showchat, onlywhenstreaming);
 });
+
+function updateUserName(_username)
+{
+	username = _username;
+	$("#username").val(username);
+	loadStreamAndOrChat("Twitch.tv", username, showstream, showchat, onlywhenstreaming);
+}
 
 function StreamConfDiagOk()
 {

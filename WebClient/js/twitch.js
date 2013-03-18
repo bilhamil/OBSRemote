@@ -33,7 +33,7 @@ $(function() {
 	});
 
 	Twitch.events.addListener('auth.login', onLogon);
-	Twitch.events.addListener('auth.logout'. onLogout);
+	Twitch.events.addListener('auth.logout', onLogout);
 	
 	$('#twitch-connect').click(function() {
 	  	Twitch.login({scope: [ 'user_read', 'channel_read', 'channel_editor', 'channel_commercial']});
@@ -132,6 +132,9 @@ function channelResponse(error, channel)
 	{
 		twitchUserName = channel.name;
 		
+		/* set username to channel name */
+		updateUserName(channel.name);
+		
 		$('#game').autocomplete({source: function(request, response) {
 			if(request.term)
 			{
@@ -148,7 +151,7 @@ function channelResponse(error, channel)
 							for(i = 0; i < searchresults.games.length; i++)
 							{
 								var gameTitle = searchresults.games[i].name;
-								var gameThumb = searchresults.games[i].logo.small;
+								var gameThumb = searchresults.games[i].box.small;
 								results.push({label:gameTitle,
 											  icon:gameThumb,
 											  value:gameTitle});
