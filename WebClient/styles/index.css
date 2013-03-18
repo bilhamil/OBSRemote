@@ -319,9 +319,9 @@ background: #3399CC !important;  /*Highlighting colour*/}
 
 #streambox {
 	position: absolute;
-	bottom: 0px;
-	top: 35px;
 	width: 100%;
+	top: 35px;
+	bottom: 0px;
 	
 	z-index: 90;
 }
@@ -331,37 +331,22 @@ background: #3399CC !important;  /*Highlighting colour*/}
 }
 
 #configureheadband {
-	position: absolute;
-	top: 0px;
-	height: 35px;
+	position: relative;
 	left: 0px;
-	right: 0px;
 	z-index: 91;
-}
-
-#configureheadband table
-{
-	position: absolute;
-	height: 100%;
-	border-collapse: collapse;
+	min-height: 35px;
 	
-	margin: 0px;
-	padding: 0px;
-}
-
-#configureheadband * {
-	z-index: 91;
-}
-
-#configureheadband td {
-	padding: 0px;
-	vertical-align:middle;
+	background: #555555;
+	
+	overflow: auto;
+	
+	overflow-y: hidden;
 }
 
 #configuregear{
 	width: 25px;
 	height: 25px;
-	margin-left: 5px;
+	margin: 5px;
 	background:url("../imgs/gearsprite.png") 0px 0px;	
 }
 
@@ -370,11 +355,19 @@ background: #3399CC !important;  /*Highlighting colour*/}
 	cursor: pointer;
 }
 
+.configdiv {
+	float: left;
+}
+
+.inputconfigdiv {
+	min-width: 230px;
+}
+
 #viewercount {
-	position: absolute;
+	position: relative;
 	background: url("../imgs/live_viewers.png") no-repeat left center;
 	right: 0px;
-	height: 100%;
+	height: 35px;
 	width: auto;
 	
 	display: none;
@@ -388,6 +381,8 @@ background: #3399CC !important;  /*Highlighting colour*/}
 	
 	padding-left: 20px;
 	padding-right: 10px;
+	
+	float: right;
 }
 
 .config {
@@ -433,6 +428,9 @@ div.configbutton {
     border-width: 1px;
     
     font-weight: normal;
+    
+    white-space: nowrap;
+    text-overflow: clip;
 }
 
 div.configbutton:hover {

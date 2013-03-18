@@ -48,40 +48,34 @@
 	
 		<div id="streamView">
 			<div id = "sourcesBox">
-				<div id="streambox">
+				
+				<div id="configureheadband">
+					
+					<div id="configuregear" class="configdiv" title="Configure Stream Preview"> </div>
+					<div id="viewercount">0</div>
+					<div class="configdiv">
+						<img src="http://ttv-api.s3.amazonaws.com/assets/connect_dark.png" id="twitch-connect" href="#" />
+					</div>
+					
+					<div class="configdiv inputconfigdiv">
+						<label for="streamstatus" class="config">Status:</label>
+						<input type="text" class="config" name="status" id="streamstatus" class="" />
+					</div>
+					
+					<div class="configdiv inputconfigdiv">
+						<label for="game" class="config">Game:</label>
+						<input type="text" class="config" name="status" id="game" class="" />
+					</div>		
+					
+					<div id="updatetwitch" class="button config configbutton configdiv">Update</div>
+					<div id="logouttwitch" class="button config configbutton configdiv">Logout Twitch</div>
+					
+					
 					
 				</div>
-				<div id="configureheadband">
-					<table>
-						<tr>
-							<td>
-								<div id="configuregear" title="Configure Stream Preview"> </div>
-							</td>
-							<td>
-								<img src="http://ttv-api.s3.amazonaws.com/assets/connect_dark.png" id="twitch-connect" href="#" />
-							</td>
-							
-							<td>
-								<label for="streamstatus" class="config">Status:</label>
-								<input type="text" class="config" name="status" id="streamstatus" class="" />
-							</td>
-							
-							<td>
-								<label for="game" class="config">Game:</label>
-								<input type="text" class="config" name="status" id="game" class="" />
-							</td>
-							
-							<td>
-								<div id="updatetwitch" class="button config configbutton">Update</div>
-							</td>
-							
-							<td>
-								<div id="logouttwitch" class="button config configbutton">Logout Twitch</div>
-							</td>
-						</tr>
-					</table>
+				
+				<div id="streambox">
 					
-					<div id="viewercount">0</div>
 				</div>
 			</div>
 			<div id="SourceSceneMenus">
