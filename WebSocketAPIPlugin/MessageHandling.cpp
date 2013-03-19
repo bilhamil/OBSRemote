@@ -513,6 +513,24 @@ WebSocketOBSTriggerHandler::~WebSocketOBSTriggerHandler()
     OSCloseMutex(updateQueueMutex);
 }
 
+/* Declare OBS Event Handlers */
+extern "C" __declspec(dllexport) void OnStartStream();
+extern "C" __declspec(dllexport) void OnStopStream();
+extern "C" __declspec(dllexport) void OnStreamStatus(bool, bool, UINT, double, UINT, UINT, UINT, UINT);
+extern "C" __declspec(dllexport) void OnSceneSwitch(CTSTR);
+extern "C" __declspec(dllexport) void OnScenesChanged();
+extern "C" __declspec(dllexport) void OnSourceOrderChanged();
+extern "C" __declspec(dllexport) void OnSourceChanged(CTSTR sourceName, XElement* source);
+extern "C" __declspec(dllexport) void OnSourcesAddedOrRemoved();
+extern "C" __declspec(dllexport) void OnMicVolumeChanged(float level, bool muted, bool finalValue);
+extern "C" __declspec(dllexport) void OnDesktopVolumeChanged(float level, bool muted, bool finalValue);
+
+void OnStartStream()
+{
+    if(triggerHandler)
+        triggerHandler->StreamStarting(OBSGetPreviewOnly());
+}
+
 void WebSocketOBSTriggerHandler::StreamStarting(bool previewOnly)
 {
     json_t* update = json_object();
@@ -524,6 +542,12 @@ void WebSocketOBSTriggerHandler::StreamStarting(bool previewOnly)
     OSLeaveMutex(this->updateQueueMutex);
 }
 
+void OnStopStream()
+{
+    if(triggerHandler)
+        triggerHandler->StreamStopping(OBSGetPreviewOnly());
+}
+
 void WebSocketOBSTriggerHandler::StreamStopping(bool previewOnly)
 {
     json_t* update = json_object();
@@ -533,6 +557,16 @@ void WebSocketOBSTriggerHandler::StreamStopping(bool previewOnly)
     OSEnterMutex(this->updateQueueMutex);
     this->updates.Add(update);
     OSLeaveMutex(this->updateQueueMutex);
+}
+
+void OnStreamStatus(bool streaming, bool previewOnly, 
+                  UINT bytesPerSec, double strain, 
+                  UINT totalStreamtime, UINT numTotalFrames,
+                  UINT numDroppedFrames, UINT fps)
+{
+    if(triggerHandler)
+        triggerHandler->StreamStatus(streaming, previewOnly, bytesPerSec, strain,
+                                     totalStreamtime, numTotalFrames, numDroppedFrames, fps);
 }
 
 void WebSocketOBSTriggerHandler::StreamStatus(bool streaming, bool previewOnly, 
@@ -556,6 +590,12 @@ void WebSocketOBSTriggerHandler::StreamStatus(bool streaming, bool previewOnly,
     OSLeaveMutex(this->updateQueueMutex);
 }
 
+void OnSceneSwitch(CTSTR scene)
+{
+    if(triggerHandler)
+        triggerHandler->ScenesSwitching(scene);
+}
+
 void WebSocketOBSTriggerHandler::ScenesSwitching(CTSTR scene)
 {
     json_t* update = json_object();
@@ -567,6 +607,12 @@ void WebSocketOBSTriggerHandler::ScenesSwitching(CTSTR scene)
     OSLeaveMutex(this->updateQueueMutex);
 }
 
+void OnScenesChanged()
+{
+    if(triggerHandler)
+        triggerHandler->ScenesChanged();
+}
+
 void WebSocketOBSTriggerHandler::ScenesChanged()
 {
     json_t* update = json_object();
@@ -575,6 +621,12 @@ void WebSocketOBSTriggerHandler::ScenesChanged()
     OSEnterMutex(this->updateQueueMutex);
     this->updates.Add(update);
     OSLeaveMutex(this->updateQueueMutex);
+}
+
+void OnSourceOrderChanged()
+{
+    if(triggerHandler)
+        triggerHandler->SourceOrderChanged();
 }
 
 void WebSocketOBSTriggerHandler::SourceOrderChanged()
@@ -599,6 +651,12 @@ void WebSocketOBSTriggerHandler::SourceOrderChanged()
     OSLeaveMutex(this->updateQueueMutex);
 }
 
+void OnSourcesAddedOrRemoved()
+{
+    if(triggerHandler)
+        triggerHandler->SourcesAddedOrRemoved();
+}
+
 void WebSocketOBSTriggerHandler::SourcesAddedOrRemoved()
 {
     json_t* update = json_object();
@@ -621,6 +679,12 @@ void WebSocketOBSTriggerHandler::SourcesAddedOrRemoved()
     OSLeaveMutex(this->updateQueueMutex);
 }
 
+void OnSourceChanged(CTSTR sourceName, XElement* source)
+{
+    if(triggerHandler)
+        triggerHandler->SourceChanged(sourceName, source);
+}
+
 void WebSocketOBSTriggerHandler::SourceChanged(CTSTR sourceName, XElement* source)
 {
     json_t* update = json_object();
@@ -637,6 +701,12 @@ void WebSocketOBSTriggerHandler::SourceChanged(CTSTR sourceName, XElement* sourc
     OSLeaveMutex(this->updateQueueMutex);
 }
 
+void OnMicVolumeChanged(float level, bool muted, bool finalValue)
+{
+    if(triggerHandler)
+        triggerHandler->MicVolumeChanged(level, muted, finalValue);
+}
+
 void WebSocketOBSTriggerHandler::MicVolumeChanged(float level, bool muted, bool finalValue)
 {
     json_t* update = json_object();
@@ -651,6 +721,12 @@ void WebSocketOBSTriggerHandler::MicVolumeChanged(float level, bool muted, bool 
     this->updates.Add(update);
     OSLeaveMutex(this->updateQueueMutex);
 } 
+
+void OnDesktopVolumeChanged(float level, bool muted, bool finalValue)
+{
+    if(triggerHandler)
+        triggerHandler->DesktopVolumeChanged(level, muted, finalValue);
+}
 
 void WebSocketOBSTriggerHandler::DesktopVolumeChanged(float level, bool muted, bool finalValue)
 {

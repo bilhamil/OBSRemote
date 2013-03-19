@@ -31,7 +31,7 @@ HANDLE WebSocketThread;
 
 const int port = 4444;
 bool running;
-WebSocketOBSTriggerHandler* triggerHandler;
+WebSocketOBSTriggerHandler* triggerHandler = NULL;
 
 enum demo_protocols {
     /* always first */
@@ -302,8 +302,7 @@ bool LoadPlugin()
 
     /* initialize and register trigger handler */
     triggerHandler = new WebSocketOBSTriggerHandler();
-    API->AddOBSEventListener(triggerHandler);
-
+    
     WebSocketThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)MainWebSocketThread, NULL, 0, &dummy);
     return true;
 }
@@ -315,6 +314,7 @@ void UnloadPlugin()
     OSWaitForThread(WebSocketThread, &exitStatus);
 
     delete triggerHandler;
+    triggerHandler = NULL;
 }
 
 

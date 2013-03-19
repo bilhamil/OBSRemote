@@ -93,7 +93,7 @@ struct OBSAPIMessageHandler
     bool HandleReceivedMessage(void *in, size_t len);
 };
 
-class WebSocketOBSTriggerHandler : public OBSTriggerHandler
+class WebSocketOBSTriggerHandler
 {
     HANDLE updateQueueMutex;
     List<json_t*> updates;
@@ -103,10 +103,10 @@ public:
     virtual void StreamStarting(bool previewOnly);
     virtual void StreamStopping(bool previewOnly);
 
-    virtual void StreamStatus(bool streaming, bool previewOnly = false, 
-                              UINT bytesPerSec = 0, double strain = 0, 
-                              UINT totalStreamtime = 0, UINT numTotalFrames = 0,
-                              UINT numDroppedFrames = 0, UINT fps = 0);
+    virtual void StreamStatus(bool streaming, bool previewOnly, 
+                              UINT bytesPerSec, double strain, 
+                              UINT totalStreamtime, UINT numTotalFrames,
+                              UINT numDroppedFrames, UINT fps);
     
     virtual void ScenesSwitching(CTSTR scene);
     virtual void ScenesChanged();
@@ -119,3 +119,5 @@ public:
 
     json_t* popUpdate();
 };
+
+extern WebSocketOBSTriggerHandler* triggerHandler;
