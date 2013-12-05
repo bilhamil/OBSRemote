@@ -4,7 +4,8 @@ import java.lang.reflect.Type;
 
 import android.util.Log;
 
-import com.bilhamil.obsremote.state.OBSRemoteApplication;
+import com.bilhamil.obsremote.OBSRemoteApplication;
+import com.bilhamil.obsremote.messages.responses.Response;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;

@@ -1,5 +1,6 @@
-package com.bilhamil.obsremote.messages;
+package com.bilhamil.obsremote.messages.responses;
 
+import com.bilhamil.obsremote.messages.IncomingMessage;
 import com.google.gson.annotations.SerializedName;
 
 public class Response implements IncomingMessage
@@ -8,7 +9,7 @@ public class Response implements IncomingMessage
     public static final String ERROR = "error";
     
     @SerializedName("message-id")
-    protected int messageID;
+    protected String messageID;
     
     protected String status;
     
@@ -19,6 +20,11 @@ public class Response implements IncomingMessage
     {
         //this is a response so return false
         return false;
+    }
+    
+    public String getID()
+    {
+        return messageID;
     }
     
     public boolean isError()

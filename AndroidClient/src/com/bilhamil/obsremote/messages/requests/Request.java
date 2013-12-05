@@ -9,8 +9,12 @@ public class Request
     @SerializedName("message-id")
     public String messageId;
     
-    public Request()
+    @SerializedName("request-type")
+    public String requestType;
+    
+    public Request(String requestType)
     {
+        this.requestType = requestType;
         messageId = (nextID++) + "";
     }
 }

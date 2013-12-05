@@ -1,6 +1,8 @@
-package com.bilhamil.obsremote;
+package com.bilhamil.obsremote.activities;
 
 import com.bilhamil.obsremote.R;
+import com.bilhamil.obsremote.R.layout;
+import com.bilhamil.obsremote.R.menu;
 
 import android.os.Bundle;
 import android.app.Activity;
