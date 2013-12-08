@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:background="@color/darkgray">
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/hostentry"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/splashheader"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:contentDescription="@string/logo"
+        android:src="@drawable/remotelogo" />
+ 
+    <EditText
+        android:id="@+id/hostentry"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+		android:layout_above="@+id/splashconnectbutton"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_toRightOf="@+id/hostLabel"
+		android:text="@string/hostname"
+		android:inputType="text"
+		
+		style="@style/TextFieldStyle"
+        />
+
+    <TextView
+        android:id="@+id/splashheader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:text="@string/app_name"
+        android:textColor="@color/textgray"
+        android:textSize="45sp" />
+
+    <Button
+        android:id="@+id/splashconnectbutton"
+        style="@style/ButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/hostLabel"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/hostentry"
+        android:layout_marginBottom="17dp"
+        android:clickable="true"
+        android:text="@string/connect" 
+        android:onClick="connect"/>
+
+    <TextView
+        android:id="@+id/hostLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/hostentry"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/imageView1"
+        android:text="@string/hostlabel"
+        android:gravity="center_vertical"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="5dp"
+        android:textAppearance="@style/RemoteText" />
+
+</RelativeLayout>

@@ -10,7 +10,6 @@ Release/
 
 *.sdf
 *.opensdf
-*.xml
 *.ipch
 *.filters
 *.css

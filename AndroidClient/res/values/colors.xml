@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="darkgray">#222222</color>
+    <color name="textgray">#dddddd</color>
+    <color name="textfieldgray">#777777</color>
+    
+    <color name="buttonbackground">#666666</color>
+    <color name="buttonbackgroundpressed">#888888</color>
+
+    
+    <color name="datorange">#ff9900</color>
+    <color name="errorred">#801414</color>
+</resources>
