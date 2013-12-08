@@ -31,12 +31,15 @@ public class OBSRemoteApplication extends Application
     
     /* Preference names */
     private static final String HOST = "hostname";
+    private static final String REMEMBERPASSWORD = "rememberPassword";
     private static final String SALT = "salt";
-        
+    private static final String SALTED = "salted";
+
+    
     private Gson gson;
-    public String connectingHostname;
     private String authChallenge;
-    private String authSalt;	
+    private String authSalt;
+    public WebSocketService service = null;
     
 	public OBSRemoteApplication()
 	{
@@ -66,6 +69,23 @@ public class OBSRemoteApplication extends Application
 
 	    prefEdit.commit();
 	}
+	
+	public boolean getRememberPassword()
+    {
+	    SharedPreferences prefMgr = PreferenceManager.getDefaultSharedPreferences(this);
+        return prefMgr.getBoolean(REMEMBERPASSWORD, false);
+    }
+	
+    public void setRememberPass(boolean rememberPassword)
+    {
+        SharedPreferences prefMgr = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        Editor prefEdit = prefMgr.edit();
+
+        prefEdit.putBoolean(REMEMBERPASSWORD, rememberPassword);
+
+        prefEdit.commit();
+    }
 	
 	public static String sign(String password, String salt)
     {
@@ -98,6 +118,22 @@ public class OBSRemoteApplication extends Application
         return prefMgr.getString(SALT, "");
     }
 	
+    public void setAuthSalted(String salted)
+    {
+        SharedPreferences prefMgr = PreferenceManager.getDefaultSharedPreferences(this);
+        Editor prefEdit = prefMgr.edit();
+
+        prefEdit.putString(SALTED, salted);
+
+        prefEdit.commit();
+    }
+    
+    public String getAuthSalted()
+    {
+        SharedPreferences prefMgr = PreferenceManager.getDefaultSharedPreferences(this);
+        return prefMgr.getString(SALTED, "");
+    }
+    
 	public void setAuthChallenge(String challenge)
 	{
 	    this.authChallenge = challenge;
@@ -107,6 +143,4 @@ public class OBSRemoteApplication extends Application
 	{
 	    return authChallenge;
 	}
-	
-	
 }

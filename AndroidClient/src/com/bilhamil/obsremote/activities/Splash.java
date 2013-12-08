@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -34,9 +35,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v4.app.DialogFragment;
@@ -45,8 +50,10 @@ import android.support.v4.app.FragmentActivity;
 public class Splash extends FragmentActivity implements RemoteUpdateListener
 {
 	
-	protected WebSocketService mService = null;
-    protected boolean mBound = false;
+    private boolean busy;
+    private String salted;
+    protected boolean authRequired = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) 
@@ -65,7 +72,13 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
         
         //Set hostname to saved hostname
         EditText hostnameEdit = (EditText)findViewById(R.id.hostentry);
-        hostnameEdit.setText(getApp().getDefaultHostname());
+        
+        String defaultHostname = getApp().getDefaultHostname();
+        hostnameEdit.setText(defaultHostname);
+        
+        /* Startup the service */
+        Intent intent = new Intent(this, WebSocketService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 	
 	/** Defines callbacks for service binding, passed to bindService() */
@@ -76,42 +89,83 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
                 IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             LocalBinder binder = (LocalBinder) service;
-            mService = binder.getService();
-            mService.addUpdateListener(Splash.this);
-            mBound  = true;
+            getApp().service = binder.getService();
+            getApp().service.addUpdateListener(Splash.this);
             
-            if(mService.isConnected())
+            if(getApp().service.isConnected())
             {
-                startAuthentication();
+                checkAuthRequired();
+            }
+            else
+            {
+                setNotBusy();
+                defaultConnect();
             }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
-            mService.removeUpdateListener(Splash.this);
-            mService = null;
-            mBound = false;
+            getApp().service.removeUpdateListener(Splash.this);
+            getApp().service = null;
+            
+            setNotBusy();
         }
     };
-	
+    
 	@Override
 	protected void onStart()
 	{
 	    super.onStart();
+	    WebSocketService service = getApp().service;
+	    if(service != null)
+	    {
+	        service.addUpdateListener(this);
+	        if(!service.isConnected())
+	        {
+	            setNotBusy();
+	        }
+	    }
 	    
-	    Intent intent = new Intent(this, WebSocketService.class);
-	    boolean bound = bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+	    
 	}
+	
+	@Override
+	protected void onResume()
+	{
+	    super.onResume();
+	    if(busy)
+	    {
+	        this.setBusy();
+	    }
+	}
+	
+	@Override
+    protected void onPause()
+    {
+        super.onResume();
+        if(busy)
+        {
+            ImageView icon = (ImageView)findViewById(R.id.splashLogo);
+            icon.setAnimation(null);
+        }
+    }
 	
 	@Override
 	protected void onStop()
 	{
 	    super.onStop();
-	    if(mService != null)
-	        mService.removeUpdateListener(this);
-	    unbindService(mConnection);
+	    if(getApp().service != null)
+            getApp().service.removeUpdateListener(this);
 	}
 	
+	@Override
+	protected void onDestroy()
+	{
+	    super.onDestroy();
+	    
+        unbindService(mConnection);
+        getApp().service = null;
+	}
 	
 	public OBSRemoteApplication getApp()
 	{
@@ -125,14 +179,59 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
 		getApp().setDefaultHostname(hostname);
 		
 		/* Get the service going */
-		mService.connect();
+		getApp().service.connect();
+		
+		setBusy();
+	}
+	
+	public void defaultConnect()
+	{
+	    /* Get the service going */
+        getApp().service.connect();
+        
+        setBusy();
 	}
 
+	public void setBusy()
+	{
+	    this.busy = true;
+	    Button connectButton = (Button)findViewById(R.id.splashconnectbutton);
+	    connectButton.setVisibility(View.INVISIBLE);
+	    
+	    ImageView icon = (ImageView)findViewById(R.id.splashLogo);
+	    
+	    RotateAnimation anim = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+	    anim.setInterpolator(new LinearInterpolator());
+	    anim.setRepeatCount(Animation.INFINITE);
+	    anim.setDuration(1500);
+	    
+	    icon.startAnimation(anim);
+	}
+	
+	public void setNotBusy()
+	{
+	    this.busy = false;
+	    Button connectButton = (Button)findViewById(R.id.splashconnectbutton);
+        connectButton.setVisibility(View.VISIBLE);
+        
+        ImageView icon = (ImageView)findViewById(R.id.splashLogo);
+        icon.setAnimation(null);
+	}
+	
 	//Called after authentication is successful
 	public void authenticated()
 	{
+	    if(authRequired && getApp().getRememberPassword())
+	    {
+	        getApp().setAuthSalted(salted);
+	    }
+	    
 	    Toast toast = Toast.makeText(Splash.this, "Authenticated!", Toast.LENGTH_LONG);
         toast.show();
+        
+        /* Startup the remote since we're ready to go */
+        Intent intent = new Intent(this, Remote.class);
+        startActivity(intent);
 	}
 	
 	public void startAuthentication()
@@ -148,17 +247,31 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
 	    frag.show(this.getSupportFragmentManager(), OBSRemoteApplication.TAG);
 	}
 	
+	public void autoAuthenticate()
+	{
+	    salted = getApp().getAuthSalted();
+	    authenticateWithSalted(salted);
+	}
+	
 	public void authenticate(String password)
 	{
-	    String salted, hashed;
+	    String hashed;
 
 	    String salt = getApp().getAuthSalt();
         String challenge = getApp().getAuthChallenge();
 	        
-        salted = OBSRemoteApplication.sign(password, salt);
-        hashed = OBSRemoteApplication.sign(salted,  challenge);
+        salted = OBSRemoteApplication.sign(password, salt);      
+        authenticateWithSalted(salted);
+	}
+	
+	public void authenticateWithSalted(String salted)
+	{
+	    String challenge = getApp().getAuthChallenge();
+	    String hashed;
+	    
+	    hashed = OBSRemoteApplication.sign(salted,  challenge);
         
-	    mService.sendRequest(new Authenticate(hashed), new ResponseHandler() {
+        getApp().service.sendRequest(new Authenticate(hashed), new ResponseHandler() {
 
             @Override
             public void handleResponse(String jsonMessage)
@@ -174,13 +287,14 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
                     Toast toast = Toast.makeText(Splash.this, "Auth failed: " + resp.getError(), Toast.LENGTH_LONG);
                     toast.show();
                     
+                    getApp().setAuthSalted("");
+                    
                     // try authenticating again
                     startAuthentication(resp.getError());
                 }
             }
         
         });
-	    
 	}
 	
 	public static class AuthDialogFragment extends DialogFragment {
@@ -196,6 +310,8 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
 	        // Get the layout inflater
 	        LayoutInflater inflater = getActivity().getLayoutInflater();
 	        View dialogView = inflater.inflate(R.layout.password_dialog, null);
+	        CheckBox rememberCheckbox = (CheckBox) dialogView.findViewById(R.id.rememberPassword);
+	        rememberCheckbox.setChecked(splash.getApp().getRememberPassword());
 	        
 	        //Set Error message
 	        if(message != null)
@@ -209,12 +325,18 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
 	                   public void onClick(DialogInterface dialog, int id) {
 	                       String password = ((EditText)AuthDialogFragment.this.getDialog().findViewById(R.id.password)).getText().toString();
 	                       boolean rememberPassword = ((CheckBox)AuthDialogFragment.this.getDialog().findViewById(R.id.rememberPassword)).isChecked();
+	                       
+	                       splash.getApp().setRememberPass(rememberPassword);
 	                       splash.authenticate(password);
 	                   }
 	               })
 	               .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
 	                   public void onClick(DialogInterface dialog, int id) {
 	                       // User cancelled the dialog, shutdown everything
+	                       if(splash.getApp().service != null)
+	                       {
+	                           splash.getApp().service.disconnect();
+	                       }
 	                   }
 	               });
 	        // Create the AlertDialog object and return it
@@ -230,19 +352,33 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
 
     private void checkAuthRequired()
     {
-        mService.sendRequest(new GetAuthRequired(), new ResponseHandler() {
+        getApp().service.sendRequest(new GetAuthRequired(), new ResponseHandler() {
 
             @Override
             public void handleResponse(String jsonMessage)
             {
                 AuthRequiredResp resp = getApp().getGson().fromJson(jsonMessage, AuthRequiredResp.class);
-                
-                if(resp.authRequired)
+                Splash.this.authRequired = resp.authRequired;
+                               
+                if(authRequired)
                 {
                     getApp().setAuthChallenge(resp.challenge);
-                    getApp().setAuthSalt(resp.salt);
                     
-                    startAuthentication();
+                    if(getApp().getAuthSalt().equals(resp.salt) && 
+                       getApp().getRememberPassword() && 
+                       !getApp().getAuthSalted().equals(""))
+                    {
+                        /* circumstances right to try auto authenticate */
+                        autoAuthenticate();
+                    }
+                    else
+                    {
+                        /* else just startup dialog authentication */
+                        getApp().setAuthSalt(resp.salt);
+                        
+                        startAuthentication();
+                    }
+                    
                 }
                 else
                 {
@@ -257,6 +393,14 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
     @Override
     public void onConnectionClosed(int code, String reason)
     {
-        
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run()
+            {
+                setNotBusy();
+            }
+            
+        });
     }
 }

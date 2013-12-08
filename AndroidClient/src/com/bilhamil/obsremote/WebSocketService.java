@@ -2,6 +2,8 @@ package com.bilhamil.obsremote;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.bilhamil.obsremote.messages.IncomingMessage;
 import com.bilhamil.obsremote.messages.ResponseHandler;
@@ -27,12 +29,9 @@ public class WebSocketService extends Service
 
     private final WebSocketConnection remoteConnection = new WebSocketConnection();
 
-    private ArrayList<RemoteUpdateListener> listeners = new ArrayList<RemoteUpdateListener>();
+    private Set<RemoteUpdateListener> listeners = new HashSet<RemoteUpdateListener>();
     private HashMap<String, ResponseHandler> responseHandlers = new HashMap<String, ResponseHandler>(); 
 
-    
-    
-    
     public void connect() 
     {
         String hostname = getApp().getDefaultHostname();
@@ -47,6 +46,23 @@ public class WebSocketService extends Service
 
             Log.d(OBSRemoteApplication.TAG, e.toString());
         }
+    }
+    
+    public void disconnect()
+    {
+        remoteConnection.disconnect();
+    }
+    
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        
+        Log.d(OBSRemoteApplication.TAG, "WebSocketService stopped");
+        this.notifyOnClose(0, "Service destroyed");
+        
+        listeners.clear();
+        remoteConnection.disconnect();
     }
     
     public OBSRemoteApplication getApp()
@@ -145,7 +161,7 @@ public class WebSocketService extends Service
 
     public void addUpdateListener(RemoteUpdateListener listener)
     {
-        this.listeners .add(listener);
+        this.listeners.add(listener);
     }
     
     public void removeUpdateListener(RemoteUpdateListener listener)
@@ -161,8 +177,6 @@ public class WebSocketService extends Service
     /* methods for updating listeners */
     private void notifyOnOpen()
     {
-        getApp().setDefaultHostname(getApp().connectingHostname);
-        
         for(RemoteUpdateListener listener: listeners)
         {
             listener.onConnectionOpen();
