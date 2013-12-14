@@ -1,9 +1,12 @@
 package com.bilhamil.obsremote.messages.updates;
 
 import com.bilhamil.obsremote.WebSocketService;
+import com.google.gson.annotations.SerializedName;
 
-public class SourceChanged extends Update
+public class StreamStarting extends Update
 {
+    @SerializedName("preview-only")
+    public boolean previewOnly;
 
     @Override
     public void dispatchUpdate(WebSocketService serv)
@@ -11,5 +14,4 @@ public class SourceChanged extends Update
         // TODO Auto-generated method stub
         
     }
-
 }

@@ -1,9 +1,10 @@
 package com.bilhamil.obsremote.messages.updates;
 
+import com.bilhamil.obsremote.WebSocketService;
 import com.bilhamil.obsremote.messages.IncomingMessage;
 import com.google.gson.annotations.SerializedName;
 
-public class Update implements IncomingMessage
+public abstract class Update implements IncomingMessage
 {
     @SerializedName("update-type")
     protected String updateType;
@@ -19,5 +20,6 @@ public class Update implements IncomingMessage
         return true;
     }
     
+    public abstract void dispatchUpdate(WebSocketService serv);
     
 }

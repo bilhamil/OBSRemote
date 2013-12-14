@@ -30,7 +30,9 @@ public class WebSocketService extends Service
     private final WebSocketConnection remoteConnection = new WebSocketConnection();
 
     private Set<RemoteUpdateListener> listeners = new HashSet<RemoteUpdateListener>();
-    private HashMap<String, ResponseHandler> responseHandlers = new HashMap<String, ResponseHandler>(); 
+    private HashMap<String, ResponseHandler> responseHandlers = new HashMap<String, ResponseHandler>();
+
+    public boolean streaming; 
 
     public void connect() 
     {
@@ -140,6 +142,9 @@ public class WebSocketService extends Service
     public void handleIncomingMessage(String message)
     {
         IncomingMessage inc = getApp().getGson().fromJson(message, IncomingMessage.class);
+        if(inc == null)
+            return;
+        
         if(inc.isUpdate())
         {
             Update update = (Update)inc;
@@ -149,12 +154,22 @@ public class WebSocketService extends Service
         else
         {
             //it's a response
-            Response resp = (Response) inc;
+            Response resp = null;
+            try
+            {
+                resp = (Response) inc;
+            }
+            catch(ClassCastException e)
+            {
+                Log.e(OBSRemoteApplication.TAG, "Failed to cast response.");
+                return;
+            }
+            
             String messageId = resp.getID();
             ResponseHandler handler = responseHandlers.get(messageId); 
             if(handler != null)
             {
-                handler.handleResponse(message);
+                handler.handleResponse(resp, message);
             } 
         }
     }
@@ -188,6 +203,16 @@ public class WebSocketService extends Service
         for(RemoteUpdateListener listener: listeners)
         {
             listener.onConnectionClosed(code, reason);
+        }
+    }
+    
+    public void notifyOnStreamStarting()
+    {
+        this.streaming = true;
+        
+        for(RemoteUpdateListener listener: listeners)
+        {
+            listener.onStreamStarting();
         }
     }
 

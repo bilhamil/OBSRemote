@@ -17,6 +17,7 @@ import com.bilhamil.obsremote.messages.requests.GetAuthRequired;
 import com.bilhamil.obsremote.messages.requests.GetVersion;
 import com.bilhamil.obsremote.messages.responses.AuthRequiredResp;
 import com.bilhamil.obsremote.messages.responses.Response;
+import com.bilhamil.obsremote.messages.updates.StreamStatus;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -274,9 +275,8 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
         getApp().service.sendRequest(new Authenticate(hashed), new ResponseHandler() {
 
             @Override
-            public void handleResponse(String jsonMessage)
+            public void handleResponse(Response resp, String jsonMessage)
             {
-                Response resp = getApp().getGson().fromJson(jsonMessage, Response.class);
                 
                 if(resp.isOk())
                 {
@@ -355,16 +355,16 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
         getApp().service.sendRequest(new GetAuthRequired(), new ResponseHandler() {
 
             @Override
-            public void handleResponse(String jsonMessage)
+            public void handleResponse(Response resp, String jsonMessage)
             {
-                AuthRequiredResp resp = getApp().getGson().fromJson(jsonMessage, AuthRequiredResp.class);
-                Splash.this.authRequired = resp.authRequired;
+                AuthRequiredResp authResp = getApp().getGson().fromJson(jsonMessage, AuthRequiredResp.class);
+                Splash.this.authRequired = authResp.authRequired;
                                
                 if(authRequired)
                 {
-                    getApp().setAuthChallenge(resp.challenge);
+                    getApp().setAuthChallenge(authResp.challenge);
                     
-                    if(getApp().getAuthSalt().equals(resp.salt) && 
+                    if(getApp().getAuthSalt().equals(authResp.salt) && 
                        getApp().getRememberPassword() && 
                        !getApp().getAuthSalted().equals(""))
                     {
@@ -374,7 +374,7 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
                     else
                     {
                         /* else just startup dialog authentication */
-                        getApp().setAuthSalt(resp.salt);
+                        getApp().setAuthSalt(authResp.salt);
                         
                         startAuthentication();
                     }
@@ -402,5 +402,25 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
             }
             
         });
+    }
+
+    @Override
+    public void onStreamStarting()
+    {
+        // Do nothing
+    }
+
+    @Override
+    public void onStreamStopping()
+    {
+        // Do nothing
+        
+    }
+
+    @Override
+    public void onStreamStatus(StreamStatus status)
+    {
+        // Do nothing
+        
     }
 }
