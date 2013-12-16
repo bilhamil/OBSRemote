@@ -5,9 +5,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.bilhamil.obsremote.activities.Splash;
 import com.bilhamil.obsremote.messages.IncomingMessage;
 import com.bilhamil.obsremote.messages.ResponseHandler;
+import com.bilhamil.obsremote.messages.requests.Authenticate;
+import com.bilhamil.obsremote.messages.requests.GetAuthRequired;
 import com.bilhamil.obsremote.messages.requests.Request;
+import com.bilhamil.obsremote.messages.responses.AuthRequiredResp;
 import com.bilhamil.obsremote.messages.responses.Response;
 import com.bilhamil.obsremote.messages.updates.Update;
 
@@ -22,6 +26,7 @@ import android.content.ServiceConnection;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 public class WebSocketService extends Service
 {
@@ -32,7 +37,13 @@ public class WebSocketService extends Service
     private Set<RemoteUpdateListener> listeners = new HashSet<RemoteUpdateListener>();
     private HashMap<String, ResponseHandler> responseHandlers = new HashMap<String, ResponseHandler>();
 
-    public boolean streaming; 
+    /* status members */
+    public boolean streaming;
+    public Object previewOnly; 
+        
+    private String salted;
+    private boolean authRequired;
+    private boolean authenticated;
 
     public void connect() 
     {
@@ -53,6 +64,18 @@ public class WebSocketService extends Service
     public void disconnect()
     {
         remoteConnection.disconnect();
+        resetState();
+    }
+    
+    private void resetState()
+    {
+        responseHandlers.clear();
+        streaming = false;
+        previewOnly = false;
+                
+        salted = "";
+        authRequired = false;
+        authenticated = false;
     }
     
     @Override
@@ -99,7 +122,7 @@ public class WebSocketService extends Service
         public void onOpen()
         {
             Log.d(OBSRemoteApplication.TAG, "Status: Connected");
-            notifyOnOpen();
+            checkAuthRequired();
         }
         
         @Override
@@ -148,8 +171,9 @@ public class WebSocketService extends Service
         if(inc.isUpdate())
         {
             Update update = (Update)inc;
-            // TODO write update code
-            
+
+            /* polymorphic update dispatch */
+            update.dispatchUpdate(this);
         }
         else
         {
@@ -174,6 +198,95 @@ public class WebSocketService extends Service
         }
     }
 
+    /* auth stuff */
+    public void autoAuthenticate()
+    {
+        salted = getApp().getAuthSalted();
+        authenticateWithSalted(salted);
+    }
+    
+    public void authenticate(String password)
+    {
+        String hashed;
+
+        String salt = getApp().getAuthSalt();
+        String challenge = getApp().getAuthChallenge();
+            
+        salted = OBSRemoteApplication.sign(password, salt);      
+        authenticateWithSalted(salted);
+    }
+    
+    public void authenticateWithSalted(String salted)
+    {
+        String challenge = getApp().getAuthChallenge();
+        String hashed;
+        
+        hashed = OBSRemoteApplication.sign(salted,  challenge);
+        
+        getApp().service.sendRequest(new Authenticate(hashed), new ResponseHandler() {
+
+            @Override
+            public void handleResponse(Response resp, String jsonMessage)
+            {
+                
+                if(resp.isOk())
+                {
+                    notifyOnAuthenticated();
+                }
+                else
+                {
+                    Toast toast = Toast.makeText(getApp(), "Auth failed: " + resp.getError(), Toast.LENGTH_LONG);
+                    toast.show();
+                    
+                    getApp().setAuthSalted("");
+                    
+                    // try authenticating again
+                    notifyOnFailedAuthentication(resp.getError());
+                }
+            }
+        
+        });
+    }
+    
+    private void checkAuthRequired()
+    {
+        getApp().service.sendRequest(new GetAuthRequired(), new ResponseHandler() {
+
+            @Override
+            public void handleResponse(Response resp, String jsonMessage)
+            {
+                AuthRequiredResp authResp = getApp().getGson().fromJson(jsonMessage, AuthRequiredResp.class);
+                authRequired = authResp.authRequired;
+                               
+                if(authRequired)
+                {
+                    getApp().setAuthChallenge(authResp.challenge);
+                    
+                    if(getApp().getAuthSalt().equals(authResp.salt) && 
+                       getApp().getRememberPassword() && 
+                       !getApp().getAuthSalted().equals(""))
+                    {
+                        /* circumstances right to try auto authenticate */
+                        autoAuthenticate();
+                    }
+                    else
+                    {
+                        /* else notify authentication needed */
+                        getApp().setAuthSalt(authResp.salt);
+                        
+                        notifyNeedsAuthentication();
+                    }
+                    
+                }
+                else
+                {
+                    notifyOnAuthenticated();
+                }
+            }
+        
+        });
+    }
+    
     public void addUpdateListener(RemoteUpdateListener listener)
     {
         this.listeners.add(listener);
@@ -189,30 +302,111 @@ public class WebSocketService extends Service
         return this.remoteConnection.isConnected();
     }
     
+    /* is everything ready for normal operation */
+    public boolean isReady()
+    {
+        return isConnected() && (!authRequired || authenticated);
+    }
+    
+    public boolean needsAuth()
+    {
+        return authRequired;
+    }
+    
+    public boolean authenticated()
+    {
+        return authenticated;
+    }
     /* methods for updating listeners */
-    private void notifyOnOpen()
+    private void notifyNeedsAuthentication()
     {
         for(RemoteUpdateListener listener: listeners)
         {
-            listener.onConnectionOpen();
+            listener.onNeedsAuthentication();
+        }
+    }
+    
+    private void notifyOnAuthenticated()
+    {
+        this.authenticated = true;
+        
+        if(authRequired && getApp().getRememberPassword())
+        {
+            getApp().setAuthSalted(salted);
+        }
+        
+        Toast toast = Toast.makeText(this, "Authenticated!", Toast.LENGTH_LONG);
+        toast.show();
+        
+        for(RemoteUpdateListener listener: listeners)
+        {
+            listener.onConnectionAuthenticated();
+        }
+    }
+    
+    private void notifyOnFailedAuthentication(String message)
+    {
+        for(RemoteUpdateListener listener: listeners)
+        {
+            listener.onFailedAuthentication(message);
         }
     }
     
     private void notifyOnClose(int code, String reason)
     {
+        this.resetState();
+        
         for(RemoteUpdateListener listener: listeners)
         {
             listener.onConnectionClosed(code, reason);
         }
     }
     
-    public void notifyOnStreamStarting()
+    public void notifyOnStreamStarting(boolean previewOnly)
     {
         this.streaming = true;
+        this.previewOnly = true;
         
         for(RemoteUpdateListener listener: listeners)
         {
-            listener.onStreamStarting();
+            listener.onStreamStarting(previewOnly);
+        }
+    }
+
+    public void notifyOnStreamStopping()
+    {
+        this.streaming = false;
+        this.previewOnly = false;
+        
+        for(RemoteUpdateListener listener: listeners)
+        {
+            listener.onStreamStopping();
+        }
+    }
+
+    public void notifyStreamStatusUpdate(int totalStreamTime, int fps,
+            float strain, int numDroppedFrames, int numTotalFrames, int bps)
+    {
+               
+        for(RemoteUpdateListener listener: listeners)
+        {
+            listener.notifyStreamStatusUpdate(totalStreamTime, fps, strain, numDroppedFrames, numTotalFrames, bps);
+        }
+    }
+
+    public void notifyOnSceneSwitch(String sceneName)
+    {
+        for(RemoteUpdateListener listener: listeners)
+        {
+            listener.notifySceneSwitch(sceneName);
+        }
+    }
+
+    public void notifyOnScenesChanged()
+    {
+        for(RemoteUpdateListener listener: listeners)
+        {
+            listener.notifyScenesChanged();
         }
     }
 

@@ -2,96 +2,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    
     tools:context=".Remote" 
     android:background="@color/darkgray">
 
     <Button
-        android:id="@+id/startbutton"
+        android:id="@+id/startstopbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:text="@string/startstreaming" />
-
-    <RelativeLayout
-        android:id="@+id/statspanel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="0dp" >
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:orientation="vertical" >
-
-            <RelativeLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5" >
-
-                <TextView
-                    android:id="@+id/timeLbl"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:text="Time Running:" />
-
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
-                    android:text="TextView" />
-
-                <TextView
-                    android:id="@+id/textView5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_toLeftOf="@+id/textView4"
-                    android:text="TextView" />
-
-                <TextView
-                    android:id="@+id/timeValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_toRightOf="@+id/timeLbl"
-                    android:text="00:00:00" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5" >
-
-            </RelativeLayout>
-
-        </LinearLayout>
-
-    </RelativeLayout>
+        android:layout_marginBottom="7dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        
+        android:text="@string/startstreaming"
+        style="@style/ButtonStyle"
+        android:onClick="startStopStreaming"/>
 
     <LinearLayout
         android:id="@+id/columns"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:layout_above="@+id/statspanel"
-        android:layout_alignLeft="@+id/button1"
-        android:layout_alignRight="@+id/button1"
-        android:layout_below="@+id/button1"
-        android:orientation="horizontal" >
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/startstopbutton"
+        android:baselineAligned="true"
+        android:orientation="horizontal">
 
         <RelativeLayout
             android:id="@+id/ScenesColumn"
@@ -105,10 +45,12 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="true"
+                android:layout_marginBottom="3dp"
                 android:gravity="center_horizontal"
                 android:text="@string/scenes"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/textgray" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textStyle="bold"
+                android:textColor="@color/listlabelgray" />
 
             <ListView
                 android:id="@+id/ScenesListView"
@@ -117,7 +59,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="true"
-                android:layout_below="@+id/textView1" >
+                android:layout_below="@+id/ScenesText" >
 
             </ListView>
 
@@ -127,7 +69,8 @@
             android:id="@+id/SourcesColumn"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="0.50" >
+            android:layout_weight="0.50" 
+            android:background="@color/sourcesgray">
 
             <TextView
                 android:id="@+id/SourcesText"
@@ -136,10 +79,12 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
+                android:layout_marginBottom="3dp"
                 android:gravity="center_horizontal"
                 android:text="@string/sources"
-                android:textAppearance="?android:attr/textAppearanceSmall" 
-                android:textColor="@color/textgray"/>
+                android:textAppearance="?android:attr/textAppearanceMedium" 
+                android:textStyle="bold"
+                android:textColor="@color/listlabelgray"/>
 
             <ListView
                 android:id="@+id/listView1"
@@ -148,11 +93,121 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="true"
-                android:layout_below="@+id/TextView01" >
+                android:layout_below="@+id/SourcesText" >
 
             </ListView>
 
         </RelativeLayout>
+
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/statspanel"
+        android:layout_margin="0dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical" 
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:background="@color/verydarkgray"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/timeLbl"
+                android:layout_height="wrap_content"
+                android:text="@string/timerunning" 
+                android:textColor="@color/textgray"
+                android:typeface="sans"
+                android:layout_width="0dp"
+                android:gravity="right"
+                android:layout_weight=".25"/>
+
+            <TextView
+                android:id="@+id/timeValue"
+                android:layout_height="wrap_content"
+                android:text="00:00:00"
+                android:textColor="@color/textgray"
+                android:typeface="sans" 
+                android:layout_width="0dp"
+                android:gravity="left"
+                android:layout_marginLeft="3dp"
+                android:layout_weight=".25"/>
+
+            <TextView
+                android:id="@+id/fpsLbl"
+                android:layout_height="wrap_content"
+                android:text="@string/fps"
+                android:textColor="@color/textgray"
+                android:typeface="sans" 
+                android:layout_width="0dp"
+                android:gravity="right"
+                android:layout_weight=".25"/>
+
+            <TextView
+                android:id="@+id/fpsValue"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="@color/textgray"
+                android:typeface="sans" 
+                android:layout_width="0dp"
+                android:gravity="left"
+                android:layout_marginLeft="3dp"
+                android:layout_weight=".25"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/droppedLbl"
+                android:layout_height="wrap_content"
+                android:text="@string/droppedframes" 
+                android:textColor="@color/textgray"
+                android:typeface="sans"
+                android:layout_width="0dp"
+                android:gravity="right"
+                android:layout_weight=".25"/>
+
+            <TextView
+                android:id="@+id/droppedValue"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="@color/textgray"
+                android:typeface="sans" 
+                android:layout_width="0dp"
+                android:gravity="left"
+                android:layout_marginLeft="3dp"
+                android:layout_weight=".25"/>
+
+            <TextView 
+                android:id="@+id/bitrateLbl"
+                android:layout_height="wrap_content"
+                android:text="@string/bitrate"
+                android:textColor="@color/textgray"
+                android:typeface="sans" 
+                android:layout_width="0dp"
+                android:gravity="right"
+                android:layout_weight=".25"/>
+
+            <TextView
+                android:id="@+id/bitrateValue"
+                android:layout_height="wrap_content"
+                android:text="0 kb/s"
+                android:textColor="@color/textgray"
+                android:typeface="sans" 
+                android:layout_width="0dp"
+                android:gravity="left"
+                android:layout_marginLeft="3dp"
+                android:layout_weight=".25"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

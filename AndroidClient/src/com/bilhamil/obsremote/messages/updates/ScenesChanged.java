@@ -9,7 +9,7 @@ public class ScenesChanged extends Update
     public void dispatchUpdate(WebSocketService serv)
     {
         // TODO Auto-generated method stub
-        
+        serv.notifyOnScenesChanged();
     }
 
 }

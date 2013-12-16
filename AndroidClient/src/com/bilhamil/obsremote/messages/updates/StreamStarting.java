@@ -11,7 +11,6 @@ public class StreamStarting extends Update
     @Override
     public void dispatchUpdate(WebSocketService serv)
     {
-        // TODO Auto-generated method stub
-        
+        serv.notifyOnStreamStarting(previewOnly);
     }
 }

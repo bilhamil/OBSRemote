@@ -31,12 +31,12 @@ public class IncomingMessageAdapter implements JsonDeserializer<IncomingMessage>
             Class<?> updateClass = null;
             try 
             {
-                updateClass = Class.forName("com.bilhamil.obsremote.messages.updates"+updateName);
+                updateClass = Class.forName("com.bilhamil.obsremote.messages.updates."+updateName);
             }
             catch (ClassNotFoundException e)
             {
                 Log.e(OBSRemoteApplication.TAG, "Couldn't map update: " + updateName, e);
-                throw new JsonParseException(e);
+                return null;
             }
             
             return context.deserialize(jsonObject, updateClass);

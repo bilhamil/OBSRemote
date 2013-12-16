@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="verydarkgray">#111111</color>
+    <color name="sourcesgray">#303030</color>
+    <color name="listlabelgray">#888</color>
     <color name="darkgray">#222222</color>
     <color name="textgray">#dddddd</color>
     <color name="textfieldgray">#777777</color>

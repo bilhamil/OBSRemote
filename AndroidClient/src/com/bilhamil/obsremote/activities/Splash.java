@@ -95,7 +95,8 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
             
             if(getApp().service.isConnected())
             {
-                checkAuthRequired();
+                if(getApp().service.needsAuth())
+                    AuthDialogFragment.startAuthentication(Splash.this,getApp());
             }
             else
             {
@@ -219,176 +220,13 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
         icon.setAnimation(null);
 	}
 	
-	//Called after authentication is successful
-	public void authenticated()
-	{
-	    if(authRequired && getApp().getRememberPassword())
-	    {
-	        getApp().setAuthSalted(salted);
-	    }
-	    
-	    Toast toast = Toast.makeText(Splash.this, "Authenticated!", Toast.LENGTH_LONG);
-        toast.show();
-        
+	@Override
+    public void onConnectionAuthenticated()
+    {
         /* Startup the remote since we're ready to go */
         Intent intent = new Intent(this, Remote.class);
         startActivity(intent);
-	}
-	
-	public void startAuthentication()
-	{
-	    this.startAuthentication(null);
-	}
-	
-	public void startAuthentication(String errorMessage)
-	{
-	    AuthDialogFragment frag = new AuthDialogFragment();
-	    frag.splash = this;
-	    frag.message = errorMessage;
-	    frag.show(this.getSupportFragmentManager(), OBSRemoteApplication.TAG);
-	}
-	
-	public void autoAuthenticate()
-	{
-	    salted = getApp().getAuthSalted();
-	    authenticateWithSalted(salted);
-	}
-	
-	public void authenticate(String password)
-	{
-	    String hashed;
-
-	    String salt = getApp().getAuthSalt();
-        String challenge = getApp().getAuthChallenge();
-	        
-        salted = OBSRemoteApplication.sign(password, salt);      
-        authenticateWithSalted(salted);
-	}
-	
-	public void authenticateWithSalted(String salted)
-	{
-	    String challenge = getApp().getAuthChallenge();
-	    String hashed;
-	    
-	    hashed = OBSRemoteApplication.sign(salted,  challenge);
-        
-        getApp().service.sendRequest(new Authenticate(hashed), new ResponseHandler() {
-
-            @Override
-            public void handleResponse(Response resp, String jsonMessage)
-            {
-                
-                if(resp.isOk())
-                {
-                    authenticated();
-                }
-                else
-                {
-                    Toast toast = Toast.makeText(Splash.this, "Auth failed: " + resp.getError(), Toast.LENGTH_LONG);
-                    toast.show();
-                    
-                    getApp().setAuthSalted("");
-                    
-                    // try authenticating again
-                    startAuthentication(resp.getError());
-                }
-            }
-        
-        });
-	}
-	
-	public static class AuthDialogFragment extends DialogFragment {
-	    
-	    public String message;
-        public Splash splash;
-	    
-	    @Override
-	    public Dialog onCreateDialog(Bundle savedInstanceState) {
-	        // Use the Builder class for convenient dialog construction
-	        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-	        
-	        // Get the layout inflater
-	        LayoutInflater inflater = getActivity().getLayoutInflater();
-	        View dialogView = inflater.inflate(R.layout.password_dialog, null);
-	        CheckBox rememberCheckbox = (CheckBox) dialogView.findViewById(R.id.rememberPassword);
-	        rememberCheckbox.setChecked(splash.getApp().getRememberPassword());
-	        
-	        //Set Error message
-	        if(message != null)
-	            ((TextView)dialogView.findViewById(R.id.authErrorView)).setText(message);
-	        
-	        builder.setView(dialogView);
-	        
-	        
-	        builder.setMessage(R.string.authenticate)
-	               .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-	                   public void onClick(DialogInterface dialog, int id) {
-	                       String password = ((EditText)AuthDialogFragment.this.getDialog().findViewById(R.id.password)).getText().toString();
-	                       boolean rememberPassword = ((CheckBox)AuthDialogFragment.this.getDialog().findViewById(R.id.rememberPassword)).isChecked();
-	                       
-	                       splash.getApp().setRememberPass(rememberPassword);
-	                       splash.authenticate(password);
-	                   }
-	               })
-	               .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-	                   public void onClick(DialogInterface dialog, int id) {
-	                       // User cancelled the dialog, shutdown everything
-	                       if(splash.getApp().service != null)
-	                       {
-	                           splash.getApp().service.disconnect();
-	                       }
-	                   }
-	               });
-	        // Create the AlertDialog object and return it
-	        return builder.create();
-	    }
-	}
-	
-    @Override
-    public void onConnectionOpen()
-    {
-        checkAuthRequired();
     }
-
-    private void checkAuthRequired()
-    {
-        getApp().service.sendRequest(new GetAuthRequired(), new ResponseHandler() {
-
-            @Override
-            public void handleResponse(Response resp, String jsonMessage)
-            {
-                AuthRequiredResp authResp = getApp().getGson().fromJson(jsonMessage, AuthRequiredResp.class);
-                Splash.this.authRequired = authResp.authRequired;
-                               
-                if(authRequired)
-                {
-                    getApp().setAuthChallenge(authResp.challenge);
-                    
-                    if(getApp().getAuthSalt().equals(authResp.salt) && 
-                       getApp().getRememberPassword() && 
-                       !getApp().getAuthSalted().equals(""))
-                    {
-                        /* circumstances right to try auto authenticate */
-                        autoAuthenticate();
-                    }
-                    else
-                    {
-                        /* else just startup dialog authentication */
-                        getApp().setAuthSalt(authResp.salt);
-                        
-                        startAuthentication();
-                    }
-                    
-                }
-                else
-                {
-                    authenticated();
-                }
-            }
-        
-        });
-    }
-
 
     @Override
     public void onConnectionClosed(int code, String reason)
@@ -405,7 +243,7 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
     }
 
     @Override
-    public void onStreamStarting()
+    public void onStreamStarting(boolean previewOnly)
     {
         // Do nothing
     }
@@ -422,5 +260,36 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
     {
         // Do nothing
         
+    }
+
+    @Override
+    public void onFailedAuthentication(String message)
+    {
+        AuthDialogFragment.startAuthentication(this, getApp(), message);
+    }
+
+    @Override
+    public void onNeedsAuthentication()
+    {
+        AuthDialogFragment.startAuthentication(this, getApp());
+    }
+
+    @Override
+    public void notifyStreamStatusUpdate(int totalStreamTime, int fps,
+            float strain, int numDroppedFrames, int numTotalFrames, int bps)
+    {
+        // do nothing
+    }
+
+    @Override
+    public void notifySceneSwitch(String sceneName)
+    {
+        // do nothing
+    }
+
+    @Override
+    public void notifyScenesChanged()
+    {
+        // do nothing
     }
 }

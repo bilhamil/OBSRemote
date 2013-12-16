@@ -5,9 +5,10 @@
     <string name="service_name">OBS Remote Websocket Connection</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-	<string name="scenes">Scenes</string>
-	<string name="sources">Sources</string>
+	<string name="scenes">SCENES</string>
+	<string name="sources">SOURCES</string>
 	<string name="startstreaming">Start Streaming</string>
+	<string name="stopstreaming">Stop Streaming</string>
 	<string name="logo">OBS Remote Logo</string>
 	<string name="connect">Connect</string>
 	<string name="hostlabel">OBS Host: </string>
@@ -17,7 +18,9 @@
 	<string name="authenticate">Authenticate</string>
 	<string name="ok">OK</string>
 	<string name="cancel">Cancel</string>
-	
-	
+	<string name="timerunning">Time: </string>
+	<string name="droppedframes">Dropped: </string>
+	<string name="fps">FPS: </string>
+	<string name="bitrate">Bitrate: </string>
 </resources>
 

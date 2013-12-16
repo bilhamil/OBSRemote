@@ -23,11 +23,13 @@ public class StreamStatus extends Update
     @SerializedName("num-dropped-frames")
     public int numDroppedFrames;
 
+    @SerializedName("bytes-per-sec")
+    public int bytesPerSecond;
+    
     @Override
     public void dispatchUpdate(WebSocketService serv)
     {
-        // TODO Auto-generated method stub
-        
+        serv.notifyStreamStatusUpdate(totalStreamTime, fps, strain, numDroppedFrames, numTotalFrames, bytesPerSecond);
     }
     
 }
