@@ -1,6 +1,9 @@
 package com.bilhamil.obsremote;
 
+import java.util.ArrayList;
+
 import com.bilhamil.obsremote.messages.updates.StreamStatus;
+import com.bilhamil.obsremote.messages.util.Source;
 
 public interface RemoteUpdateListener
 {
@@ -18,10 +21,16 @@ public interface RemoteUpdateListener
 
     public void onNeedsAuthentication();
 
-    public void notifyStreamStatusUpdate(int totalStreamTime, int fps,
+    public void onStreamStatusUpdate(int totalStreamTime, int fps,
             float strain, int numDroppedFrames, int numTotalFrames, int bps);
 
-    public void notifySceneSwitch(String sceneName);
+    public void onSceneSwitch(String sceneName);
 
-    public void notifyScenesChanged();
+    public void onScenesChanged();
+
+    public void onSourceChanged(String sourceName, Source source);
+
+    public void onSourceOrderChanged(ArrayList<String> sources);
+
+    public void onRepopulateSources(ArrayList<Source> sources);
 }

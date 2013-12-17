@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/sceneunselected">
+    android:background="@drawable/sourceon">
 
     <TextView
         android:padding="5dp"
@@ -14,7 +14,7 @@
         android:layout_alignParentTop="true"
         
         
-        android:id="@+id/scenename"
+        android:id="@+id/sourcename"
         android:ellipsize="end"
         android:maxLines="2"
         android:minLines="2"

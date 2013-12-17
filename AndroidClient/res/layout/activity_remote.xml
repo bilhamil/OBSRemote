@@ -70,7 +70,7 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="0.50" 
-            android:background="@color/sourcesgray">
+            android:background="@color/sceneselected">
 
             <TextView
                 android:id="@+id/SourcesText"
@@ -84,10 +84,10 @@
                 android:text="@string/sources"
                 android:textAppearance="?android:attr/textAppearanceMedium" 
                 android:textStyle="bold"
-                android:textColor="@color/listlabelgray"/>
+                android:textColor="@color/darkgray"/>
 
             <ListView
-                android:id="@+id/listView1"
+                android:id="@+id/SourcesListView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"

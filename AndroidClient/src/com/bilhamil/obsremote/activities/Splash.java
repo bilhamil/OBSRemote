@@ -3,6 +3,7 @@ package com.bilhamil.obsremote.activities;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 import com.bilhamil.obsremote.OBSRemoteApplication;
 import com.bilhamil.obsremote.R;
@@ -18,6 +19,7 @@ import com.bilhamil.obsremote.messages.requests.GetVersion;
 import com.bilhamil.obsremote.messages.responses.AuthRequiredResp;
 import com.bilhamil.obsremote.messages.responses.Response;
 import com.bilhamil.obsremote.messages.updates.StreamStatus;
+import com.bilhamil.obsremote.messages.util.Source;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -275,21 +277,41 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
     }
 
     @Override
-    public void notifyStreamStatusUpdate(int totalStreamTime, int fps,
+    public void onStreamStatusUpdate(int totalStreamTime, int fps,
             float strain, int numDroppedFrames, int numTotalFrames, int bps)
     {
         // do nothing
     }
 
     @Override
-    public void notifySceneSwitch(String sceneName)
+    public void onSceneSwitch(String sceneName)
     {
         // do nothing
     }
 
     @Override
-    public void notifyScenesChanged()
+    public void onScenesChanged()
     {
         // do nothing
     }
+
+    @Override
+    public void onSourceChanged(String sourceName, Source source)
+    {
+        // do nothing
+    }
+
+    @Override
+    public void onSourceOrderChanged(ArrayList<String> sources)
+    {
+        // do nothing        
+    }
+
+    @Override
+    public void onRepopulateSources(ArrayList<Source> sources)
+    {
+        // do nothing
+    }
+    
+    
 }

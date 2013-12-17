@@ -6,7 +6,7 @@ public class Scene
 {
     public String name;
     
-    ArrayList<Source> sources;
+    public ArrayList<Source> sources;
     
     @Override
     public String toString()

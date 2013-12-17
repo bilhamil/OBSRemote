@@ -13,12 +13,14 @@ import com.bilhamil.obsremote.messages.ResponseHandler;
 import com.bilhamil.obsremote.messages.requests.GetSceneList;
 import com.bilhamil.obsremote.messages.requests.GetStreamingStatus;
 import com.bilhamil.obsremote.messages.requests.SetCurrentScene;
+import com.bilhamil.obsremote.messages.requests.SetSourceRender;
 import com.bilhamil.obsremote.messages.requests.StartStopStreaming;
 import com.bilhamil.obsremote.messages.responses.GetSceneListResponse;
 import com.bilhamil.obsremote.messages.responses.Response;
 import com.bilhamil.obsremote.messages.responses.StreamStatusResponse;
 import com.bilhamil.obsremote.messages.updates.StreamStatus;
 import com.bilhamil.obsremote.messages.util.Scene;
+import com.bilhamil.obsremote.messages.util.Source;
 
 import android.os.Bundle;
 import android.os.IBinder;
@@ -48,6 +50,9 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
     private SceneAdapter sceneAdapter;
     private ArrayList<Scene> scenes;
 
+    private Scene currentScene;
+    
+    private SourceAdapter sourceAdapter;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) 
@@ -66,7 +71,16 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
         
         ColorDrawable darkgray = new ColorDrawable(this.getResources().getColor(R.color.darkgray));
         sceneView.setDivider(darkgray);
-        sceneView.setDividerHeight(3);
+        sceneView.setDividerHeight(8);
+        
+        /* setup source adapter */
+        sourceAdapter = new SourceAdapter(this, new ArrayList<Source>());
+        ListView sourcesView = (ListView)findViewById(R.id.SourcesListView);
+        sourcesView.setAdapter(sourceAdapter);
+        
+        ColorDrawable lightgray = new ColorDrawable(this.getResources().getColor(R.color.buttonbackground));
+        sourcesView.setDivider(lightgray);
+        sourcesView.setDividerHeight(8);
     }
 
     protected void onStart()
@@ -128,7 +142,7 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
             finish();
         }
     };
-
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -175,7 +189,8 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
                     Remote.this.scenes = scenesResp.scenes;
                     
                     sceneAdapter.setScenes(scenes);
-                    sceneAdapter.setCurrentScene(scenesResp.currentScene);
+                    
+                    setScene(scenesResp.currentScene);
                 }
             }
         });
@@ -238,6 +253,63 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
         }        
     }
     
+    public class SourceAdapter extends ArrayAdapter<Source>
+    {
+        public SourceAdapter(Context context,  ArrayList<Source> sources)
+        {
+            super(context, R.layout.source_item, R.id.sourcename, sources);
+        }
+        
+        public void setSources(ArrayList<Source> sources)
+        {
+            this.clear();
+            for(Source source: sources)
+            {
+                this.add(source);
+            }
+        }
+        
+        public class SourceOnClickListener implements OnClickListener
+        {
+            Source source;
+            
+            public SourceOnClickListener(Source source)
+            {
+                this.source = source;
+            }
+            
+            @Override
+            public void onClick(View v)
+            {
+                getApp().service.sendRequest(new SetSourceRender(source.name, !source.render));
+            }
+        }
+        
+        public View getView(int position, View convertView, ViewGroup parent)
+        {
+            View view = super.getView(position, convertView, parent);
+            TextView text = (TextView) view.findViewById(R.id.sourcename);
+            
+            if(getItem(position).render)
+            {
+                view.setBackgroundResource(R.drawable.sourceon);
+                text.setTextColor(getResources().getColor(R.color.textgray));
+            }
+            else
+            {
+                view.setBackgroundResource(R.drawable.sourceoff);
+                text.setTextColor(getResources().getColor(R.color.textgraydisabled));
+            }
+            
+            OnClickListener listener = new SourceOnClickListener(getItem(position));
+            
+            view.setOnClickListener(listener);
+            
+                        
+            return view;
+        }        
+    }
+    
     public void updateStreaming(boolean streaming, boolean previewOnly)
     {
         WebSocketService serv = getApp().service;
@@ -259,6 +331,20 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
         {
             toggleStreamingButton.setText(R.string.startstreaming);
             statsPanel.setVisibility(View.GONE);
+        }
+    }
+    
+    private void setScene(String sceneName)
+    {
+        this.sceneAdapter.setCurrentScene(sceneName);
+        
+        for(Scene scene:scenes)
+        {
+            if(scene.name.equals(sceneName))
+            {
+                this.sourceAdapter.setSources(scene.sources);
+                this.currentScene = scene;
+            }
         }
     }
     
@@ -348,7 +434,7 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
     }
     
     @Override
-    public void notifyStreamStatusUpdate(int totalTimeStreaming, int fps,
+    public void onStreamStatusUpdate(int totalTimeStreaming, int fps,
             float strain, int numDroppedFrames, int numTotalFrames, int bps)
     {
         TextView droppedFrames = (TextView)findViewById(R.id.droppedValue);
@@ -374,15 +460,73 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
     }
 
     @Override
-    public void notifySceneSwitch(String sceneName)
+    public void onSceneSwitch(String sceneName)
     {
-        this.sceneAdapter.setCurrentScene(sceneName);
+        setScene(sceneName);
     }
 
     @Override
-    public void notifyScenesChanged()
+    public void onScenesChanged()
     {
         this.updateScenes();
     }
+
+    @Override
+    public void onSourceChanged(String sourceName, Source source)
+    {
+        /* find current scene */
+        if(currentScene == null)
+            return;
+        
+        for(Source s : this.currentScene.sources)
+        {
+            if(sourceName.equals(s.name))
+            {
+                s.conform(source);
+                break;
+            }
+        }
+        
+        this.sourceAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onSourceOrderChanged(ArrayList<String> sources)
+    {
+        /* find current scene */
+        if(currentScene == null)
+            return;
+        
+        ArrayList<Source> newSources = new ArrayList<Source>();
+        
+        for(int x = 0; x < sources.size(); x++)
+        {
+            for(Source oldSource: currentScene.sources)
+            {
+                if(oldSource.name.equals(sources.get(x)))
+                {
+                    newSources.add(oldSource);
+                    break;
+                }
+            }
+        }
+        
+        currentScene.sources = newSources;
+        
+        this.sourceAdapter.setSources(currentScene.sources);
+    }
+
+    @Override
+    public void onRepopulateSources(ArrayList<Source> sources)
+    {
+        if(this.currentScene == null)
+            return;
+        
+        this.currentScene.sources = sources;
+        
+        this.sourceAdapter.setSources(sources);
+    }
+
+    
     
 }

@@ -14,6 +14,7 @@ import com.bilhamil.obsremote.messages.requests.Request;
 import com.bilhamil.obsremote.messages.responses.AuthRequiredResp;
 import com.bilhamil.obsremote.messages.responses.Response;
 import com.bilhamil.obsremote.messages.updates.Update;
+import com.bilhamil.obsremote.messages.util.Source;
 
 import de.tavendo.autobahn.WebSocket;
 import de.tavendo.autobahn.WebSocketConnection;
@@ -390,7 +391,7 @@ public class WebSocketService extends Service
                
         for(RemoteUpdateListener listener: listeners)
         {
-            listener.notifyStreamStatusUpdate(totalStreamTime, fps, strain, numDroppedFrames, numTotalFrames, bps);
+            listener.onStreamStatusUpdate(totalStreamTime, fps, strain, numDroppedFrames, numTotalFrames, bps);
         }
     }
 
@@ -398,7 +399,7 @@ public class WebSocketService extends Service
     {
         for(RemoteUpdateListener listener: listeners)
         {
-            listener.notifySceneSwitch(sceneName);
+            listener.onSceneSwitch(sceneName);
         }
     }
 
@@ -406,7 +407,31 @@ public class WebSocketService extends Service
     {
         for(RemoteUpdateListener listener: listeners)
         {
-            listener.notifyScenesChanged();
+            listener.onScenesChanged();
+        }
+    }
+
+    public void notifySourceChange(String sourceName, Source source)
+    {
+        for(RemoteUpdateListener listener: listeners)
+        {
+            listener.onSourceChanged(sourceName, source);
+        }
+    }
+
+    public void notifySourceOrderChanged(ArrayList<String> sources)
+    {
+        for(RemoteUpdateListener listener: listeners)
+        {
+            listener.onSourceOrderChanged(sources);
+        }
+    }
+
+    public void notifyRepopulateSources(ArrayList<Source> sources)
+    {
+        for(RemoteUpdateListener listener: listeners)
+        {
+            listener.onRepopulateSources(sources);
         }
     }
 

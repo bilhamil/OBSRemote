@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android" >
-    <solid android:color="@color/buttonbackground"/>
-    
-    <corners android:topLeftRadius="5dp" android:bottomLeftRadius="5dp"/>
-    
-    <stroke android:width="2px" android:color="@color/datorange"/>
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:left="3dp" android:right="-10dp">
+		<shape xmlns:android="http://schemas.android.com/apk/res/android" >
+		    <solid android:color="@color/sceneselected"/>
+		    
+		    <corners android:topLeftRadius="5dp" android:bottomLeftRadius="5dp"/>
+		    
+<!-- 		    <stroke android:width="2px" android:color="@color/datorange"/> -->
+		</shape>
+	</item>
+</layer-list>
