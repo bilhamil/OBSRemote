@@ -22,5 +22,6 @@
 	<string name="droppedframes">Dropped: </string>
 	<string name="fps">FPS: </string>
 	<string name="bitrate">Bitrate: </string>
+	<string name="obsremote">OBS Remote</string>
 </resources>
 

@@ -15,8 +15,6 @@ public interface RemoteUpdateListener
     
     public void onStreamStopping();
     
-    public void onStreamStatus(StreamStatus status);
-
     public void onFailedAuthentication(String message);
 
     public void onNeedsAuthentication();

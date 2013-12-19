@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="64dp" >
+
+    <ImageView
+        android:id="@+id/notificationicon"
+        android:contentDescription="Notification Icon"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:layout_marginRight="5dp"
+        android:scaleType="fitCenter"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/ic_launcher" />
+    
+    <LinearLayout
+        android:layout_toRightOf="@id/notificationicon"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="horizontal"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp">
+        
+        <LinearLayout android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:layout_marginRight="40dp">
+
+             <TextView
+                 android:id="@+id/notificationtime"
+                 style="@style/NotificationText"
+                 android:layout_width="wrap_content"
+                 android:layout_height="fill_parent"
+                 android:layout_weight="0.50"
+                 android:gravity="center_vertical"
+                 android:text="Streaming for 00:00:00" />
+             
+             <LinearLayout
+                 android:layout_width="wrap_content"
+                 android:layout_height="fill_parent"
+                 android:layout_weight="0.50"
+                 android:orientation="horizontal" >
+                 
+                 <TextView
+                 android:id="@+id/notificationbittratelbl"
+                 style="@style/NotificationText"
+                 android:layout_width="wrap_content"
+                 android:layout_height="fill_parent"
+                 android:gravity="center_vertical"
+                 android:text="Bitrate: " />
+                 
+                 <TextView
+                 android:id="@+id/notificationbittratevalue"
+                 style="@style/NotificationText"
+                 android:layout_width="wrap_content"
+                 android:layout_height="fill_parent"
+                 android:gravity="center_vertical"
+                 android:text="1000 kb/s" />
+                 
+             </LinearLayout>
+
+             
+
+        </LinearLayout>
+        
+        <LinearLayout android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:orientation="vertical">
+             
+            <TextView
+                android:id="@+id/notificationfps"
+                style="@style/NotificationText"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="0.50"
+                android:gravity="center_vertical"
+                android:text="FPS: 60" />
+
+            <TextView
+                android:id="@+id/notificationdropped"
+                style="@style/NotificationText"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="0.50"
+                android:gravity="center_vertical"
+                android:ellipsize="end"
+                android:maxLines="1"
+                
+                android:text="Dropped: 0" />
+            
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

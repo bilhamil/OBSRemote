@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.bilhamil.obsremote.activities.Remote;
 import com.bilhamil.obsremote.activities.Splash;
 import com.bilhamil.obsremote.messages.IncomingMessage;
 import com.bilhamil.obsremote.messages.ResponseHandler;
@@ -20,14 +21,21 @@ import de.tavendo.autobahn.WebSocket;
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
 import de.tavendo.autobahn.WebSocketOptions;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
+import android.widget.RemoteViews;
+import android.widget.RemoteViews.RemoteView;
 import android.widget.Toast;
+import android.support.v4.app.NotificationCompat.Builder;
 
 public class WebSocketService extends Service
 {
@@ -39,7 +47,7 @@ public class WebSocketService extends Service
     private HashMap<String, ResponseHandler> responseHandlers = new HashMap<String, ResponseHandler>();
 
     /* status members */
-    public boolean streaming;
+    private boolean streaming;
     public Object previewOnly; 
         
     private String salted;
@@ -71,7 +79,7 @@ public class WebSocketService extends Service
     private void resetState()
     {
         responseHandlers.clear();
-        streaming = false;
+        this.setStreaming(false);
         previewOnly = false;
                 
         salted = "";
@@ -109,13 +117,98 @@ public class WebSocketService extends Service
         return new LocalBinder();
     }
     
+    private Notification notification;
+    private NotificationManager notfManager;
+    private static final int NOTIFICATION_ID = 2106;
+    
+    public void setStreaming(boolean newStreaming)
+    {
+        if(!this.streaming && newStreaming)
+        {
+            notfManager = (NotificationManager) 
+                    getSystemService(NOTIFICATION_SERVICE);
+            
+            RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.remote_notification);
+            
+            Intent startRemote = new Intent(this, Remote.class);
+            startRemote.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            
+            // Gets a PendingIntent containing the entire back stack
+            PendingIntent resultPendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, startRemote, 0);
+            
+            Builder builder = new Builder(this);
+            // Set Icon
+            builder.setSmallIcon(R.drawable.notification_icon);
+            // Set Ticker Message
+            builder.setTicker("Stream Starting");
+            // Don't Dismiss Notification
+            builder.setAutoCancel(false);
+            // Set PendingIntent into Notification
+            builder.setContentIntent(resultPendingIntent);
+            // Set RemoteViews into Notification
+            builder.setContent(remoteViews);
+            
+            notification = builder.build();
+            
+            /* have to set this manually to deal with support library bug *facepalm* */
+            notification.contentView = remoteViews;
+            
+            this.startForeground(NOTIFICATION_ID, notification);
+        }
+        else if(this.streaming && !newStreaming)        {
+            //stop foreground
+            this.stopForeground(true);
+            notification = null;
+        }
+        
+        this.streaming = newStreaming;
+    }
+    
+    private long lastTimeUpdated = 0;
+    
+    public void updateNotification(int totalStreamTime, int fps,
+            float strain, int numDroppedFrames, int numTotalFrames, int bps)
+    {
+        if(notification != null)
+        {
+            
+            long currentTime = System.currentTimeMillis();
+            
+            if(currentTime - lastTimeUpdated < 250)
+                return;
+            
+            lastTimeUpdated = currentTime;
+            
+            notification.contentView.setTextViewText(R.id.notificationtime, getString(R.string.timerunning) + " " + Remote.getTimeString(totalStreamTime));
+            
+            notification.contentView.setTextViewText(R.id.notificationfps, getString(R.string.fps) + " " + fps);
+            
+            notification.contentView.setTextViewText(R.id.notificationbittratevalue, Remote.getBitrateString(bps));
+            
+            if(android.os.Build.VERSION.SDK_INT > 9)
+            {
+                notification.contentView.setTextColor(R.id.notificationbittratevalue, Remote.strainToColor(strain));
+            }
+            
+            notification.contentView.setTextViewText(R.id.notificationdropped, getString(R.string.droppedframes) + " " + numDroppedFrames);
+            
+            notfManager.notify(NOTIFICATION_ID, notification);
+            
+        }
+    }
+    
+    public boolean getStreaming()
+    {
+        return streaming;
+    }
+    
     private class WSHandler implements WebSocket.ConnectionHandler
     {
 
         @Override
         public void onTextMessage(String message)
         {
-            Log.d(OBSRemoteApplication.TAG, "Incoming Message: " + message);
+            //Log.d(OBSRemoteApplication.TAG, "Incoming Message: " + message);
             handleIncomingMessage(message);
         }
         
@@ -365,7 +458,7 @@ public class WebSocketService extends Service
     
     public void notifyOnStreamStarting(boolean previewOnly)
     {
-        this.streaming = true;
+        this.setStreaming(true);
         this.previewOnly = true;
         
         for(RemoteUpdateListener listener: listeners)
@@ -376,7 +469,7 @@ public class WebSocketService extends Service
 
     public void notifyOnStreamStopping()
     {
-        this.streaming = false;
+        this.setStreaming(false);
         this.previewOnly = false;
         
         for(RemoteUpdateListener listener: listeners)
@@ -388,7 +481,9 @@ public class WebSocketService extends Service
     public void notifyStreamStatusUpdate(int totalStreamTime, int fps,
             float strain, int numDroppedFrames, int numTotalFrames, int bps)
     {
-               
+        
+        updateNotification(totalStreamTime, fps, strain, numDroppedFrames, numTotalFrames, bps);
+        
         for(RemoteUpdateListener listener: listeners)
         {
             listener.onStreamStatusUpdate(totalStreamTime, fps, strain, numDroppedFrames, numTotalFrames, bps);

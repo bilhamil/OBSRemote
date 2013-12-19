@@ -52,4 +52,13 @@
     
     <style name="DialogBaseTheme" parent="android:Theme.Dialog"/>
     
+    <style name="NotificationTitle">
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="NotificationText">
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+    </style>
+    
 </resources>

@@ -314,7 +314,7 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
     {
         WebSocketService serv = getApp().service;
         
-        serv.streaming = streaming;
+        serv.setStreaming(streaming);
         serv.previewOnly = previewOnly;
         
         Button toggleStreamingButton = (Button) findViewById(R.id.startstopbutton);
@@ -322,7 +322,7 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
         
         toggleStreamingButton.setVisibility(View.VISIBLE);
         
-        if(serv.streaming)
+        if(serv.getStreaming())
         {
             toggleStreamingButton.setText(R.string.stopstreaming);
             statsPanel.setVisibility(View.VISIBLE);
@@ -395,13 +395,6 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
     }
 
     @Override
-    public void onStreamStatus(StreamStatus status)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
     public void onFailedAuthentication(String message)
     {
         AuthDialogFragment.startAuthentication(Remote.this,getApp(), message);
@@ -433,6 +426,19 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
         
     }
     
+    public static String getTimeString(int timeInMillisec)
+    {
+        int sec = timeInMillisec / 1000;
+        return String.format("%02d", sec / 3600) + ":" + 
+               String.format("%02d", (sec % 3600) / 60) + ":" + 
+               String.format("%02d", sec % 60);
+    }
+    
+    public static String getBitrateString(int bps)
+    {
+        return bps * 8 / 1000 + " kbps";
+    }
+    
     @Override
     public void onStreamStatusUpdate(int totalTimeStreaming, int fps,
             float strain, int numDroppedFrames, int numTotalFrames, int bps)
@@ -444,19 +450,19 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
         
         fpsLbl.setText(fps + "");
         
-        int sec = totalTimeStreaming / 1000;
+        timeStreaming.setText(getTimeString(totalTimeStreaming));
         
-        timeStreaming.setText(String.format("%02d", sec / 3600) + ":" + 
-                                String.format("%02d", (sec % 3600) / 60) + ":" + 
-                                String.format("%02d", sec % 60));
+        droppedFrames.setText(getDroppedFramesString(numDroppedFrames, numTotalFrames));
         
-        droppedFrames.setText(numDroppedFrames + "(" + 
-                              String.format("%.2f", ((float)numDroppedFrames) / numTotalFrames * 100) + 
-                              "%)");
-        
-        bitrate.setText(bps * 8 / 1000 + " kbps");
+        bitrate.setText(getBitrateString(bps));
         
         bitrate.setTextColor(strainToColor(strain));
+    }
+
+    public static String getDroppedFramesString(int numDroppedFrames,
+            int numTotalFrames)
+    {
+        return numDroppedFrames + "(" + String.format("%.2f", ((float)numDroppedFrames) / numTotalFrames * 100) + "%)";
     }
 
     @Override

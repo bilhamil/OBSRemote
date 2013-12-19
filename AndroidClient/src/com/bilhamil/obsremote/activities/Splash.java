@@ -258,13 +258,6 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
     }
 
     @Override
-    public void onStreamStatus(StreamStatus status)
-    {
-        // Do nothing
-        
-    }
-
-    @Override
     public void onFailedAuthentication(String message)
     {
         AuthDialogFragment.startAuthentication(this, getApp(), message);
