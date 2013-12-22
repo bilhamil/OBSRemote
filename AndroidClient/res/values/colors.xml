@@ -20,4 +20,7 @@
     
     <color name="datorange">#ff9900</color>
     <color name="errorred">#801414</color>
+    
+    <color name="volumered">#bf2020</color>
+    <color name="volumegray">#555555</color>
 </resources>

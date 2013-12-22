@@ -26,7 +26,7 @@
         android:id="@+id/columns"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/statspanel"
+        android:layout_above="@+id/volumepanel"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_below="@id/startstopbutton"
@@ -101,6 +101,21 @@
 
     </LinearLayout>
     
+    <RelativeLayout
+        android:id="@+id/volumepanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/statspanel"
+        
+        android:background="@color/datorange" >
+
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="28dp"
+            layout="@layout/volume_control" >
+        </include>
+    </RelativeLayout>
+    
     <LinearLayout
         android:id="@+id/statspanel"
         android:layout_margin="0dp"
@@ -111,7 +126,7 @@
         android:paddingTop="3dp"
         android:paddingBottom="3dp"
         android:background="@color/verydarkgray"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -160,7 +175,7 @@
                 android:layout_weight=".25"/>
 
         </LinearLayout>
-
+        
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" >

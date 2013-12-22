@@ -19,7 +19,7 @@
         android:maxLines="2"
         android:minLines="2"
         android:gravity="center_vertical"
-        android:text="SceneItem"
+        android:text="SourceItem"
         android:textAppearance="?android:attr/textAppearanceMedium" 
         android:textColor="@color/textgray"/>
     
