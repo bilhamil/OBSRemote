@@ -289,4 +289,8 @@ public class VolumeDialogFragment extends DialogFragment implements RemoteUpdate
             this.setMicVolume(volume);
         }
     }
+
+    @Override
+    public void onVersionMismatch(float version)
+    {}
 }

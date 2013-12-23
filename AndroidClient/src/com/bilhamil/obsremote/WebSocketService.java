@@ -10,9 +10,11 @@ import com.bilhamil.obsremote.messages.IncomingMessage;
 import com.bilhamil.obsremote.messages.ResponseHandler;
 import com.bilhamil.obsremote.messages.requests.Authenticate;
 import com.bilhamil.obsremote.messages.requests.GetAuthRequired;
+import com.bilhamil.obsremote.messages.requests.GetVersion;
 import com.bilhamil.obsremote.messages.requests.Request;
 import com.bilhamil.obsremote.messages.responses.AuthRequiredResp;
 import com.bilhamil.obsremote.messages.responses.Response;
+import com.bilhamil.obsremote.messages.responses.VersionResponse;
 import com.bilhamil.obsremote.messages.updates.Update;
 import com.bilhamil.obsremote.messages.util.Source;
 
@@ -34,6 +36,7 @@ import android.support.v4.app.NotificationCompat.Builder;
 
 public class WebSocketService extends Service
 {
+    public static final float appVersion = 1.1f;
     private static final String[] wsSubProtocols = {"obsapi"};
 
     private final WebSocketConnection remoteConnection = new WebSocketConnection();
@@ -211,6 +214,7 @@ public class WebSocketService extends Service
         public void onOpen()
         {
             Log.d(OBSRemoteApplication.TAG, "Status: Connected");
+            checkVersion();
             checkAuthRequired();
         }
         
@@ -332,6 +336,32 @@ public class WebSocketService extends Service
                 }
             }
         
+        });
+    }
+    
+    private void checkVersion()
+    {
+        getApp().service.sendRequest(new GetVersion(), new ResponseHandler()
+        {
+            
+            @Override
+            public void handleResponse(Response resp, String jsonMessage)
+            {
+                VersionResponse vResp = getApp().getGson().fromJson(jsonMessage, VersionResponse.class);
+                
+                if(vResp.version != appVersion)
+                {
+                    /* throw a fit */
+                    
+                    remoteConnection.disconnect();
+                    
+                    notifyOnVersionMismatch(vResp.version);
+                }
+                else
+                {
+                    checkAuthRequired();
+                }
+            }
         });
     }
     
@@ -532,4 +562,11 @@ public class WebSocketService extends Service
         }
     }
 
+    protected void notifyOnVersionMismatch(float version)
+    {
+        for(RemoteUpdateListener listener: listeners)
+        {
+            listener.onVersionMismatch(version);
+        }        
+    }
 }

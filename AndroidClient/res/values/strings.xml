@@ -25,5 +25,6 @@
 	<string name="bitrate">Bitrate: </string>
 	<string name="obsremote">OBS Remote</string>
 	<string name="adjustvolume">Adjust Stream Volume</string>
+	<string name="versionmismatch">Version Mismatch</string>
 </resources>
 

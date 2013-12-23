@@ -543,6 +543,12 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
         
     }
 
+    @Override
+    public void onVersionMismatch(float version)
+    {
+        // do nothing
+    }
+
     
     
 }

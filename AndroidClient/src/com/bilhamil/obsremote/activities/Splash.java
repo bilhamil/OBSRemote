@@ -9,6 +9,7 @@ import com.bilhamil.obsremote.WebSocketService;
 import com.bilhamil.obsremote.WebSocketService.LocalBinder;
 import com.bilhamil.obsremote.messages.util.Source;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -287,6 +288,23 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
             float volume, boolean muted)
     {
         // do nothing
+    }
+
+    @Override
+    public void onVersionMismatch(float version)
+    {
+        // Alert user of version mismatch
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        // 2. Chain together various setter methods to set the dialog characteristics
+        builder.setMessage("The App Version (" + WebSocketService.appVersion + ") does not match the plugin version (" + version + ")")
+               .setTitle(R.string.versionmismatch);
+        
+        builder.setPositiveButton(getString(R.string.ok), null);
+
+        AlertDialog dialog = builder.create();
+        
+        dialog.show();
     }
     
     

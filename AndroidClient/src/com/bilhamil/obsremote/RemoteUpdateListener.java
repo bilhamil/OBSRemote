@@ -33,4 +33,6 @@ public interface RemoteUpdateListener
 
     public void onVolumeChanged(String channel, boolean finalValue, float volume, boolean muted);
 
+    public void onVersionMismatch(float version);
+
 }
