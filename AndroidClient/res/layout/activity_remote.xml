@@ -20,6 +20,7 @@
         
         android:text="@string/startstreaming"
         style="@style/ButtonStyle"
+        android:background="@drawable/buttonselector"
         android:onClick="startStopStreaming"/>
 
     <ImageButton

@@ -322,11 +322,13 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
         if(serv.getStreaming())
         {
             toggleStreamingButton.setText(R.string.stopstreaming);
+            toggleStreamingButton.setBackgroundResource(R.drawable.button_streaming_selector);
             statsPanel.setVisibility(View.VISIBLE);
         }
         else
         {
             toggleStreamingButton.setText(R.string.startstreaming);
+            toggleStreamingButton.setBackgroundResource(R.drawable.buttonselector);
             statsPanel.setVisibility(View.GONE);
         }
     }
