@@ -6,8 +6,6 @@ import com.bilhamil.obsremote.OBSRemoteApplication;
 import com.bilhamil.obsremote.R;
 import com.bilhamil.obsremote.RemoteUpdateListener;
 import com.bilhamil.obsremote.WebSocketService;
-import com.bilhamil.obsremote.R.layout;
-import com.bilhamil.obsremote.R.menu;
 import com.bilhamil.obsremote.WebSocketService.LocalBinder;
 import com.bilhamil.obsremote.messages.ResponseHandler;
 import com.bilhamil.obsremote.messages.requests.GetSceneList;
@@ -18,13 +16,11 @@ import com.bilhamil.obsremote.messages.requests.StartStopStreaming;
 import com.bilhamil.obsremote.messages.responses.GetSceneListResponse;
 import com.bilhamil.obsremote.messages.responses.Response;
 import com.bilhamil.obsremote.messages.responses.StreamStatusResponse;
-import com.bilhamil.obsremote.messages.updates.StreamStatus;
 import com.bilhamil.obsremote.messages.util.Scene;
 import com.bilhamil.obsremote.messages.util.Source;
 
 import android.os.Bundle;
 import android.os.IBinder;
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -353,6 +349,12 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
         getApp().service.sendRequest(new StartStopStreaming());
     }
     
+    public void adjustVolume(View view)
+    {
+        // startup volume dialog
+        VolumeDialogFragment.startDialog(this);
+    }
+    
     public OBSRemoteApplication getApp()
     {
         return (OBSRemoteApplication)getApplicationContext();
@@ -531,6 +533,14 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
         this.currentScene.sources = sources;
         
         this.sourceAdapter.setSources(sources);
+    }
+
+    @Override
+    public void onVolumeChanged(String channel, boolean finalValue,
+            float volume, boolean muted)
+    {
+        // do nothing
+        
     }
 
     

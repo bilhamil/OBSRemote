@@ -1,60 +1,36 @@
 package com.bilhamil.obsremote.activities;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 import com.bilhamil.obsremote.OBSRemoteApplication;
 import com.bilhamil.obsremote.R;
 import com.bilhamil.obsremote.RemoteUpdateListener;
-import com.bilhamil.obsremote.R.id;
-import com.bilhamil.obsremote.R.layout;
 import com.bilhamil.obsremote.WebSocketService;
 import com.bilhamil.obsremote.WebSocketService.LocalBinder;
-import com.bilhamil.obsremote.messages.ResponseHandler;
-import com.bilhamil.obsremote.messages.requests.Authenticate;
-import com.bilhamil.obsremote.messages.requests.GetAuthRequired;
-import com.bilhamil.obsremote.messages.requests.GetVersion;
-import com.bilhamil.obsremote.messages.responses.AuthRequiredResp;
-import com.bilhamil.obsremote.messages.responses.Response;
-import com.bilhamil.obsremote.messages.updates.StreamStatus;
 import com.bilhamil.obsremote.messages.util.Source;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Base64;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 
 public class Splash extends FragmentActivity implements RemoteUpdateListener
 {
 	
     private boolean busy;
-    private String salted;
     protected boolean authRequired = false;
 
 
@@ -302,6 +278,13 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
 
     @Override
     public void onRepopulateSources(ArrayList<Source> sources)
+    {
+        // do nothing
+    }
+
+    @Override
+    public void onVolumeChanged(String channel, boolean finalValue,
+            float volume, boolean muted)
     {
         // do nothing
     }

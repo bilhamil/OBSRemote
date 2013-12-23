@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.bilhamil.obsremote.activities.Remote;
-import com.bilhamil.obsremote.activities.Splash;
 import com.bilhamil.obsremote.messages.IncomingMessage;
 import com.bilhamil.obsremote.messages.ResponseHandler;
 import com.bilhamil.obsremote.messages.requests.Authenticate;
@@ -25,15 +24,11 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.widget.RemoteViews;
-import android.widget.RemoteViews.RemoteView;
 import android.widget.Toast;
 import android.support.v4.app.NotificationCompat.Builder;
 
@@ -301,10 +296,8 @@ public class WebSocketService extends Service
     
     public void authenticate(String password)
     {
-        String hashed;
-
         String salt = getApp().getAuthSalt();
-        String challenge = getApp().getAuthChallenge();
+        getApp().getAuthChallenge();
             
         salted = OBSRemoteApplication.sign(password, salt);      
         authenticateWithSalted(salted);
@@ -527,6 +520,15 @@ public class WebSocketService extends Service
         for(RemoteUpdateListener listener: listeners)
         {
             listener.onRepopulateSources(sources);
+        }
+    }
+
+    public void notifyVolumeChanged(String channel, boolean finalValue,
+            float volume, boolean muted)
+    {
+        for(RemoteUpdateListener listener: listeners)
+        {
+            listener.onVolumeChanged(channel, finalValue, volume, muted);
         }
     }
 

@@ -9,6 +9,7 @@
 	<string name="sources">SOURCES</string>
 	<string name="startstreaming">Start Streaming</string>
 	<string name="stopstreaming">Stop Streaming</string>
+	<string name="volume">Volume</string>
 	<string name="logo">OBS Remote Logo</string>
 	<string name="connect">Connect</string>
 	<string name="hostlabel">OBS Host: </string>
@@ -23,5 +24,6 @@
 	<string name="fps">FPS: </string>
 	<string name="bitrate">Bitrate: </string>
 	<string name="obsremote">OBS Remote</string>
+	<string name="adjustvolume">Adjust Stream Volume</string>
 </resources>
 

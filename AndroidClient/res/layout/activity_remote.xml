@@ -11,22 +11,37 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/volumebutton"
         android:layout_marginBottom="7dp"
         android:layout_marginTop="5dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginRight="5dp"
         
         android:text="@string/startstreaming"
         style="@style/ButtonStyle"
         android:onClick="startStopStreaming"/>
 
+    <ImageButton
+            android:id="@+id/volumebutton"
+            android:contentDescription="@string/adjustvolume"
+            android:scaleType="fitCenter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/startstopbutton"
+            android:layout_alignBottom="@+id/startstopbutton"
+            android:background="@color/transparent"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/desktop_ons"
+            android:onClick="adjustVolume">
+                        
+    </ImageButton>
+    
     <LinearLayout
         android:id="@+id/columns"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/volumepanel"
+        android:layout_above="@+id/statspanel"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_below="@id/startstopbutton"
@@ -100,21 +115,6 @@
         </RelativeLayout>
 
     </LinearLayout>
-    
-    <RelativeLayout
-        android:id="@+id/volumepanel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/statspanel"
-        
-        android:background="@color/datorange" >
-
-        <include
-            android:layout_width="match_parent"
-            android:layout_height="28dp"
-            layout="@layout/volume_control" >
-        </include>
-    </RelativeLayout>
     
     <LinearLayout
         android:id="@+id/statspanel"

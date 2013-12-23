@@ -8,6 +8,7 @@
         android:orientation="horizontal" >
 	    
 	    <RelativeLayout 
+	        android:id="@+id/volume_red"
             android:layout_height="fill_parent"
             android:layout_width="0dp"
             android:layout_weight="0.5" 
@@ -15,6 +16,7 @@
         </RelativeLayout>
         
         <RelativeLayout
+            android:id="@+id/volume_gray"
             android:layout_height="fill_parent"
             android:layout_width="0dp" 
             android:layout_weight="0.5"
@@ -40,7 +42,8 @@
 	        
 	        <RelativeLayout android:layout_width="fill_parent"
 	            android:layout_height="0dp"
-	            android:layout_weight="0.1">
+	            android:layout_weight="0.1"
+	            android:background="@color/transparent">
 	        </RelativeLayout>
 	        
 	    </LinearLayout>
@@ -64,7 +67,8 @@
 	        
 	        <RelativeLayout android:layout_width="fill_parent"
 	            android:layout_height="0dp"
-	            android:layout_weight="0.2">
+	            android:layout_weight="0.2"
+	            android:background="@color/transparent">
 	        </RelativeLayout>
 	        
 	    </LinearLayout>
@@ -88,7 +92,8 @@
 	        
 	        <RelativeLayout android:layout_width="fill_parent"
 	            android:layout_height="0dp"
-	            android:layout_weight="0.3">
+	            android:layout_weight="0.3"
+	            android:background="@color/transparent">
 	        </RelativeLayout>
 	        
 	    </LinearLayout>
@@ -112,7 +117,8 @@
 	        
 	        <RelativeLayout android:layout_width="fill_parent"
 	            android:layout_height="0dp"
-	            android:layout_weight="0.4">
+	            android:layout_weight="0.4"
+	            android:background="@color/transparent">
 	        </RelativeLayout>
 	        
 	    </LinearLayout>
@@ -136,7 +142,8 @@
 	        
 	        <RelativeLayout android:layout_width="fill_parent"
 	            android:layout_height="0dp"
-	            android:layout_weight="0.5">
+	            android:layout_weight="0.5"
+	            android:background="@color/transparent">
 	        </RelativeLayout>
 	        
 	    </LinearLayout>
@@ -160,7 +167,8 @@
 	        
 	        <RelativeLayout android:layout_width="fill_parent"
 	            android:layout_height="0dp"
-	            android:layout_weight="0.6">
+	            android:layout_weight="0.6"
+	            android:background="@color/transparent">
 	        </RelativeLayout>
 	        
 	    </LinearLayout>
@@ -184,7 +192,8 @@
 	        
 	        <RelativeLayout android:layout_width="fill_parent"
 	            android:layout_height="0dp"
-	            android:layout_weight="0.7">
+	            android:layout_weight="0.7"
+	            android:background="@color/transparent">
 	        </RelativeLayout>
 	        
 	    </LinearLayout>
@@ -208,7 +217,8 @@
 	        
 	        <RelativeLayout android:layout_width="fill_parent"
 	            android:layout_height="0dp"
-	            android:layout_weight="0.8">
+	            android:layout_weight="0.8"
+	            android:background="@color/transparent">
 	        </RelativeLayout>
 	        
 	    </LinearLayout>
@@ -232,7 +242,8 @@
 	        
 	        <RelativeLayout android:layout_width="fill_parent"
 	            android:layout_height="0dp"
-	            android:layout_weight="0.9">
+	            android:layout_weight="0.9"
+	            android:background="@color/transparent">
 	        </RelativeLayout>
 	        
 	    </LinearLayout>
@@ -246,7 +257,8 @@
 	    <LinearLayout android:layout_weight="10" 
 	        android:layout_height="fill_parent"
 	        android:layout_width="0dp"
-	        android:orientation="vertical">
+	        android:orientation="vertical"
+	        android:background="@color/transparent">
 	    </LinearLayout>
 	</LinearLayout>
 </RelativeLayout>

@@ -1,7 +1,6 @@
 package com.bilhamil.obsremote.messages;
 
 import com.bilhamil.obsremote.messages.responses.Response;
-import com.google.gson.*;
 
 public interface ResponseHandler
 {

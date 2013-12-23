@@ -1,29 +1,18 @@
 package com.bilhamil.obsremote;
 
-import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
 
-import com.bilhamil.obsremote.messages.IncomingMessage;
-import com.bilhamil.obsremote.messages.IncomingMessageAdapter;
-import com.bilhamil.obsremote.messages.ResponseHandler;
-import com.bilhamil.obsremote.messages.requests.GetAuthRequired;
-import com.bilhamil.obsremote.messages.requests.Request;
-import com.bilhamil.obsremote.messages.responses.Response;
-import com.bilhamil.obsremote.messages.updates.Update;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import de.tavendo.autobahn.*;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.Toast;
+
+import com.bilhamil.obsremote.messages.IncomingMessage;
+import com.bilhamil.obsremote.messages.IncomingMessageAdapter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class OBSRemoteApplication extends Application 
 {
@@ -38,7 +27,6 @@ public class OBSRemoteApplication extends Application
     
     private Gson gson;
     private String authChallenge;
-    private String authSalt;
     public WebSocketService service = null;
     
 	public OBSRemoteApplication()

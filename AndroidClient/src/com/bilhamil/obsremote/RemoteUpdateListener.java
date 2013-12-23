@@ -2,7 +2,6 @@ package com.bilhamil.obsremote;
 
 import java.util.ArrayList;
 
-import com.bilhamil.obsremote.messages.updates.StreamStatus;
 import com.bilhamil.obsremote.messages.util.Source;
 
 public interface RemoteUpdateListener
@@ -31,4 +30,7 @@ public interface RemoteUpdateListener
     public void onSourceOrderChanged(ArrayList<String> sources);
 
     public void onRepopulateSources(ArrayList<Source> sources);
+
+    public void onVolumeChanged(String channel, boolean finalValue, float volume, boolean muted);
+
 }

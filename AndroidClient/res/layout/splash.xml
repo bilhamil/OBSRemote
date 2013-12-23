@@ -63,7 +63,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/hostentry"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/imageView1"
+        android:layout_below="@+id/splashLogo"
         android:text="@string/hostlabel"
         android:gravity="center_vertical"
         android:layout_marginLeft="20dp"

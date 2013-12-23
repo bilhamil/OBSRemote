@@ -1,28 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@color/darkgray">
 
-    <RelativeLayout android:layout_width="fill_parent" android:layout_height="56dp" android:layout_margin="5dp">
-        <include
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            layout="@layout/volume_control" >
-        </include>
-    </RelativeLayout>
-    
-    <RelativeLayout android:layout_width="fill_parent" android:layout_height="56dp" android:layout_margin="5dp">
-        <include
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            layout="@layout/volume_control" >
-        </include>
-        
-        <ImageButton>
-            
-        </ImageButton>
-    </RelativeLayout>
+    <include
+        android:id="@+id/desktop_meter"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignBottom="@+id/desktop_button"
+        android:layout_alignTop="@+id/desktop_button"
+        android:layout_margin="5dp"
+        android:layout_toLeftOf="@+id/desktop_button"
+        layout="@layout/volume_control" >
+    </include>
 
-</LinearLayout>
+    <ImageButton
+        android:id="@+id/desktop_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="20dp"
+        android:background="@color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/desktop_ons" >
+    </ImageButton>
+
+    <include
+        android:id="@+id/mic_meter"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignBottom="@+id/mic_button"
+        android:layout_alignTop="@+id/mic_button"
+        android:layout_margin="5dp"
+        android:layout_toLeftOf="@+id/mic_button"
+        layout="@layout/volume_control" >
+    </include>
+
+    <ImageButton
+        android:id="@+id/mic_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/desktop_button"
+        android:layout_alignParentRight="true"
+        android:layout_alignRight="@+id/desktop_button"
+        android:layout_below="@+id/desktop_button"
+        android:background="@color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/microphone_on" >
+    </ImageButton>
+
+</RelativeLayout>
