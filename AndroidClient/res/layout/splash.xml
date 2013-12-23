@@ -23,7 +23,7 @@
         android:id="@+id/hostentry"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-		android:layout_above="@+id/splashconnectbutton"
+		android:layout_above="@+id/button_area"
         android:layout_marginBottom="10dp"
         android:layout_marginRight="20dp"
         android:layout_toRightOf="@+id/hostLabel"
@@ -44,19 +44,6 @@
         android:textColor="@color/textgray"
         android:textSize="45sp" />
 
-    <Button
-        android:id="@+id/splashconnectbutton"
-        style="@style/ButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/hostLabel"
-        android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/hostentry"
-        android:layout_marginBottom="17dp"
-        android:clickable="true"
-        android:text="@string/connect" 
-        android:onClick="connect"/>
-
     <TextView
         android:id="@+id/hostLabel"
         android:layout_width="wrap_content"
@@ -69,5 +56,33 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="5dp"
         android:textAppearance="@style/RemoteText" />
+    
+    <RelativeLayout android:id="@+id/button_area"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="17dp">
 
+        <Button
+            android:id="@+id/splashconnectbutton"
+            style="@style/ButtonStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:onClick="connect"
+            android:text="@string/connect" 
+            android:layout_centerVertical="true"/>
+
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:visibility="invisible"/>
+        
+    </RelativeLayout>
+    
 </RelativeLayout>

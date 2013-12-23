@@ -326,9 +326,6 @@ public class WebSocketService extends Service
                 }
                 else
                 {
-                    Toast toast = Toast.makeText(getApp(), "Auth failed: " + resp.getError(), Toast.LENGTH_LONG);
-                    toast.show();
-                    
                     getApp().setAuthSalted("");
                     
                     // try authenticating again

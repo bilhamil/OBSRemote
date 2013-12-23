@@ -25,6 +25,7 @@ import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.support.v4.app.FragmentActivity;
 
@@ -179,14 +180,8 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
 	    Button connectButton = (Button)findViewById(R.id.splashconnectbutton);
 	    connectButton.setVisibility(View.INVISIBLE);
 	    
-	    ImageView icon = (ImageView)findViewById(R.id.splashLogo);
-	    
-	    RotateAnimation anim = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-	    anim.setInterpolator(new LinearInterpolator());
-	    anim.setRepeatCount(Animation.INFINITE);
-	    anim.setDuration(1500);
-	    
-	    icon.startAnimation(anim);
+	    ProgressBar spinner = (ProgressBar)findViewById(R.id.progressBar1);
+        spinner.setVisibility(View.VISIBLE);
 	}
 	
 	public void setNotBusy()
@@ -195,8 +190,8 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
 	    Button connectButton = (Button)findViewById(R.id.splashconnectbutton);
         connectButton.setVisibility(View.VISIBLE);
         
-        ImageView icon = (ImageView)findViewById(R.id.splashLogo);
-        icon.setAnimation(null);
+        ProgressBar spinner = (ProgressBar)findViewById(R.id.progressBar1);
+        spinner.setVisibility(View.INVISIBLE);
 	}
 	
 	@Override
