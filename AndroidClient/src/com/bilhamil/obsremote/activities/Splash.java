@@ -195,6 +195,12 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
 	}
 	
 	@Override
+	protected void onSaveInstanceState(Bundle outState) 
+	{
+	    //No call for super(). Bug on API Level > 11.
+	}
+	
+	@Override
     public void onConnectionAuthenticated()
     {
         /* Startup the remote since we're ready to go */

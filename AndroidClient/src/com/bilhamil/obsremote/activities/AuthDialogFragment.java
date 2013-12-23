@@ -30,7 +30,7 @@ public class AuthDialogFragment extends DialogFragment {
         AuthDialogFragment frag = new AuthDialogFragment();
         frag.message = errorMessage;
         frag.app = app;
-        frag.show(fragAct.getSupportFragmentManager(), OBSRemoteApplication.TAG);
+        fragAct.getSupportFragmentManager().beginTransaction().add(frag, OBSRemoteApplication.TAG).commitAllowingStateLoss();
     }
     
     @Override

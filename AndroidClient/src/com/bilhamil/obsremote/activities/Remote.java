@@ -98,12 +98,13 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
     {
         super.onStop();
         unbindService(mConnection);
+        getApp().service.removeUpdateListener(Remote.this);
     }
     
     @Override
     protected void onDestroy()
     {
-        super.onDestroy();        
+        super.onDestroy();
     }
     
     /** Defines callbacks for service binding, passed to bindService() */
