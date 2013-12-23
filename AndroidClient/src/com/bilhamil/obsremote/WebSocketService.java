@@ -215,7 +215,6 @@ public class WebSocketService extends Service
         {
             Log.d(OBSRemoteApplication.TAG, "Status: Connected");
             checkVersion();
-            checkAuthRequired();
         }
         
         @Override
