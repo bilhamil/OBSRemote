@@ -448,9 +448,6 @@ public class WebSocketService extends Service
             getApp().setAuthSalted(salted);
         }
         
-        Toast toast = Toast.makeText(this, "Authenticated!", Toast.LENGTH_LONG);
-        toast.show();
-        
         for(RemoteUpdateListener listener: listeners)
         {
             listener.onConnectionAuthenticated();
