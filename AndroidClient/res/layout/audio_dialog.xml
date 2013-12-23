@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="20dp"
-        android:background="@color/transparent"
+        android:background="@android:color/transparent"
         android:scaleType="fitCenter"
         android:src="@drawable/desktop_ons" >
     </ImageButton>
@@ -45,7 +45,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignRight="@+id/desktop_button"
         android:layout_below="@+id/desktop_button"
-        android:background="@color/transparent"
+        android:background="@android:color/transparent"
         android:scaleType="fitCenter"
         android:src="@drawable/microphone_on" >
     </ImageButton>

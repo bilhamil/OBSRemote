@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/startstopbutton"
             android:layout_alignBottom="@+id/startstopbutton"
-            android:background="@color/transparent"
+            android:background="@android:color/transparent"
             android:layout_alignParentRight="true"
             android:src="@drawable/desktop_ons"
             android:onClick="adjustVolume">

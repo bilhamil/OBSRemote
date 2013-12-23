@@ -23,7 +23,6 @@
     
     <color name="volumered">#bf2020</color>
     <color name="volumegray">#555555</color>
-    <color name="transparent">#00000000</color>
     
     <color name="streamingred">#b80000</color>
 </resources>
