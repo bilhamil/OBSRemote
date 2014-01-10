@@ -11,6 +11,7 @@ import com.bilhamil.obsremote.messages.ResponseHandler;
 import com.bilhamil.obsremote.messages.requests.GetSceneList;
 import com.bilhamil.obsremote.messages.requests.GetStreamingStatus;
 import com.bilhamil.obsremote.messages.requests.SetCurrentScene;
+import com.bilhamil.obsremote.messages.requests.SetSourceOrder;
 import com.bilhamil.obsremote.messages.requests.SetSourceRender;
 import com.bilhamil.obsremote.messages.requests.StartStopStreaming;
 import com.bilhamil.obsremote.messages.responses.GetSceneListResponse;
@@ -18,6 +19,8 @@ import com.bilhamil.obsremote.messages.responses.Response;
 import com.bilhamil.obsremote.messages.responses.StreamStatusResponse;
 import com.bilhamil.obsremote.messages.util.Scene;
 import com.bilhamil.obsremote.messages.util.Source;
+import com.mobeta.android.dslv.DragSortListView;
+import com.mobeta.android.dslv.DragSortListView.DragSortListener;
 
 import android.os.Bundle;
 import android.os.IBinder;
@@ -34,6 +37,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -72,8 +76,9 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
         
         /* setup source adapter */
         sourceAdapter = new SourceAdapter(this, new ArrayList<Source>());
-        ListView sourcesView = (ListView)findViewById(R.id.SourcesListView);
+        DragSortListView sourcesView = (DragSortListView)findViewById(R.id.SourcesListView);
         sourcesView.setAdapter(sourceAdapter);
+        sourcesView.setOnItemClickListener(new SourceItemClickListener(sourceAdapter));
         
         ColorDrawable lightgray = new ColorDrawable(this.getResources().getColor(R.color.buttonbackground));
         sourcesView.setDivider(lightgray);
@@ -251,7 +256,7 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
         }        
     }
     
-    public class SourceAdapter extends ArrayAdapter<Source>
+    public class SourceAdapter extends ArrayAdapter<Source> implements DragSortListView.DropListener
     {
         public SourceAdapter(Context context,  ArrayList<Source> sources)
         {
@@ -260,26 +265,30 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
         
         public void setSources(ArrayList<Source> sources)
         {
+            boolean refreshNeeded = sources.size() != getCount();
+            
+            if(!refreshNeeded)
+            {
+                for(int i = 0; i < Math.min(getCount(), sources.size()); i++)
+                {
+                    Source ns = sources.get(i);
+                    Source os = getItem(i);
+                    
+                    if(!ns.equals(os))
+                    {
+                        refreshNeeded = true;
+                        break;
+                    }
+                }
+            }
+            
+            if(!refreshNeeded)
+                return;
+            
             this.clear();
             for(Source source: sources)
             {
                 this.add(source);
-            }
-        }
-        
-        public class SourceOnClickListener implements OnClickListener
-        {
-            Source source;
-            
-            public SourceOnClickListener(Source source)
-            {
-                this.source = source;
-            }
-            
-            @Override
-            public void onClick(View v)
-            {
-                service.sendRequest(new SetSourceRender(source.name, !source.render));
             }
         }
         
@@ -299,13 +308,47 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
                 text.setTextColor(getResources().getColor(R.color.textgraydisabled));
             }
             
-            OnClickListener listener = new SourceOnClickListener(getItem(position));
+            //OnClickListener listener = new SourceOnClickListener(getItem(position));
             
-            view.setOnClickListener(listener);
+            //view.findViewById(R.id.sourceitem).setOnClickListener(listener);
             
                         
             return view;
+        }
+
+        @Override
+        public void drop(int from, int to)
+        {
+            Source s = this.getItem(from);
+            this.remove(s);
+            this.insert(s, to);
+            
+            ArrayList<String> sources = new ArrayList<String>();
+            for(int i = 0; i < this.getCount(); i++)
+            {
+                sources.add(this.getItem(i).name);
+            }
+            
+            service.sendRequest(new SetSourceOrder(sources));
         }        
+    }
+    
+    public class SourceItemClickListener implements AdapterView.OnItemClickListener
+    {
+        SourceAdapter adapter;
+        
+        public SourceItemClickListener(SourceAdapter adapter)
+        {
+            this.adapter = adapter;
+        }
+        
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View itemView,
+                int itemNumber, long id)
+        {
+            Source source = adapter.getItem(itemNumber);
+            service.sendRequest(new SetSourceRender(source.name, !source.render));
+        }
     }
     
     public void updateStreaming(boolean streaming, boolean previewOnly)

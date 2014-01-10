@@ -4,6 +4,9 @@
     android:layout_height="wrap_content"
     android:background="@drawable/sourceon">
 
+    <RelativeLayout android:id="@+id/sourceitem"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
     <TextView
         android:padding="5dp"
         android:layout_marginLeft="10dp"
@@ -22,5 +25,5 @@
         android:text="SourceItem"
         android:textAppearance="?android:attr/textAppearanceMedium" 
         android:textColor="@color/textgray"/>
-    
+    </RelativeLayout>
 </RelativeLayout>

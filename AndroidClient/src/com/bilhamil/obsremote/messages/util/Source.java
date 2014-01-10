@@ -22,4 +22,14 @@ public class Source
         cx = s.cx;
         cy = s.cy;
     }
+    
+    public boolean equals(Object o)
+    {
+        if(!(o instanceof Source))
+            return false;
+        Source os = (Source) o;
+        return name.equals(os.name) && render == os.render && 
+               x == os.x && cx == os.cx &&
+               y == os.y && cy == os.cy;
+    }
 }

@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:dslv="http://schemas.android.com/apk/res/com.bilhamil.obsremote"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -102,16 +103,29 @@
                 android:textStyle="bold"
                 android:textColor="@color/darkgray"/>
 
-            <ListView
+<!--             <ListView -->
+<!--                 android:id="@+id/SourcesListView" -->
+<!--                 android:layout_width="match_parent" -->
+<!--                 android:layout_height="wrap_content" -->
+<!--                 android:layout_alignParentBottom="true" -->
+<!--                 android:layout_alignParentLeft="true" -->
+<!--                 android:layout_alignParentRight="true" -->
+<!--                 android:layout_below="@+id/SourcesText" > -->
+<!--                 </ListView> -->
+
+            <com.mobeta.android.dslv.DragSortListView
+                
                 android:id="@+id/SourcesListView"
-                android:layout_width="match_parent"
+			    dslv:drag_enabled="true"
+			    dslv:sort_enabled="true"
+			    dslv:drag_start_mode="onLongPress"
+			    dslv:drag_handle_id="@+id/sourceitem"
+			    android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="true"
-                android:layout_below="@+id/SourcesText" >
-
-            </ListView>
+                android:layout_below="@+id/SourcesText" />
 
         </RelativeLayout>
 
