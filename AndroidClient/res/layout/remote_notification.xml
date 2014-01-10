@@ -16,7 +16,7 @@
         android:layout_alignParentTop="true"
         android:src="@drawable/ic_launcher" />
     
-    <LinearLayout
+    <RelativeLayout
         android:layout_toRightOf="@id/notificationicon"
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
@@ -30,7 +30,9 @@
         <LinearLayout android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:orientation="vertical"
-            android:layout_marginRight="40dp">
+            android:layout_marginRight="60dp"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/notificationleftcolumn">
 
              <TextView
                  android:id="@+id/notificationtime"
@@ -71,7 +73,9 @@
         
         <LinearLayout android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@id/notificationleftcolumn">
              
             <TextView
                 android:id="@+id/notificationfps"
@@ -79,7 +83,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:layout_weight="0.50"
-                android:gravity="center_vertical"
+                android:gravity="center_vertical|left"
                 android:text="FPS: 60" />
 
             <TextView
@@ -88,13 +92,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:layout_weight="0.50"
-                android:gravity="center_vertical"
+                android:gravity="center_vertical|left"
                 android:ellipsize="end"
                 android:maxLines="1"
                 
                 android:text="Dropped: 0" />
             
         </LinearLayout>
-    </LinearLayout>
+    </RelativeLayout>
 
 </RelativeLayout>
