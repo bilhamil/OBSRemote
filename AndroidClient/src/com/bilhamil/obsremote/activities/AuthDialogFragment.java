@@ -14,22 +14,26 @@ import android.widget.TextView;
 
 import com.bilhamil.obsremote.OBSRemoteApplication;
 import com.bilhamil.obsremote.R;
+import com.bilhamil.obsremote.WebSocketService;
 
 public class AuthDialogFragment extends DialogFragment {
+    
+    public WebSocketService service;
     
     public String message;
     public OBSRemoteApplication app;
     
-    public static void startAuthentication(FragmentActivity fragAct, OBSRemoteApplication app)
+    public static void startAuthentication(FragmentActivity fragAct, OBSRemoteApplication app, WebSocketService serv)
     {
-        startAuthentication(fragAct, app, null);
+        startAuthentication(fragAct, app, serv, null);
     }
     
-    public static void startAuthentication(FragmentActivity fragAct, OBSRemoteApplication app, String errorMessage)
+    public static void startAuthentication(FragmentActivity fragAct, OBSRemoteApplication app,  WebSocketService serv, String errorMessage)
     {
         AuthDialogFragment frag = new AuthDialogFragment();
         frag.message = errorMessage;
         frag.app = app;
+        frag.service = serv;
         fragAct.getSupportFragmentManager().beginTransaction().add(frag, OBSRemoteApplication.TAG).commitAllowingStateLoss();
     }
     
@@ -59,15 +63,15 @@ public class AuthDialogFragment extends DialogFragment {
                        
                        app.setRememberPass(rememberPassword);
                        
-                       app.service.authenticate(password);
+                       service.authenticate(password);
                    }
                })
                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                    public void onClick(DialogInterface dialog, int id) {
                        // User cancelled the dialog, shutdown everything
-                       if(app.service != null)
+                       if(service != null)
                        {
-                           app.service.disconnect();
+                           service.disconnect();
                        }
                    }
                });

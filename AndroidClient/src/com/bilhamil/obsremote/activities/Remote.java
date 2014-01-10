@@ -42,7 +42,8 @@ import android.widget.TextView;
 
 public class Remote extends FragmentActivity implements RemoteUpdateListener 
 {
-
+    public WebSocketService service;
+    
     private SceneAdapter sceneAdapter;
     private ArrayList<Scene> scenes;
 
@@ -97,8 +98,8 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
     protected void onStop()
     {
         super.onStop();
+        service.removeUpdateListener(Remote.this);
         unbindService(mConnection);
-        getApp().service.removeUpdateListener(Remote.this);
     }
     
     @Override
@@ -115,26 +116,26 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
                 IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             LocalBinder binder = (LocalBinder) service;
-            getApp().service = binder.getService();
-            getApp().service.addUpdateListener(Remote.this);
+            Remote.this.service = binder.getService();
+            Remote.this.service.addUpdateListener(Remote.this);
             
-            if(getApp().service.isConnected())
+            if(Remote.this.service.isConnected())
             {
-                if(getApp().service.needsAuth() && !getApp().service.authenticated())
-                    AuthDialogFragment.startAuthentication(Remote.this,getApp());
+                if(Remote.this.service.needsAuth() && !Remote.this.service.authenticated())
+                    AuthDialogFragment.startAuthentication(Remote.this,getApp(),Remote.this.service);
                 else
                     initialSetup();
             }
             else
             {
-                getApp().service.connect();
+                Remote.this.service.connect();
             }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
-            getApp().service.removeUpdateListener(Remote.this);
-            getApp().service = null;
+            Remote.this.service.removeUpdateListener(Remote.this);
+            Remote.this.service = null;
             
             finish();
         }
@@ -157,7 +158,7 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
     private void updateStreamStatus()
     {
         /* Get stream status */
-        getApp().service.sendRequest(new GetStreamingStatus(), new ResponseHandler()
+        service.sendRequest(new GetStreamingStatus(), new ResponseHandler()
         {
             
             @Override
@@ -173,7 +174,7 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
     private void updateScenes()
     {
         /* Get scenes */
-        getApp().service.sendRequest(new GetSceneList(), new ResponseHandler()
+        service.sendRequest(new GetSceneList(), new ResponseHandler()
         {
             
             @Override
@@ -239,7 +240,7 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
                     {
                         String sceneName = ((TextView)v.findViewById(R.id.scenename)).getText().toString();
                         
-                        getApp().service.sendRequest(new SetCurrentScene(sceneName));
+                        service.sendRequest(new SetCurrentScene(sceneName));
                     }
                 };
                 
@@ -278,7 +279,7 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
             @Override
             public void onClick(View v)
             {
-                getApp().service.sendRequest(new SetSourceRender(source.name, !source.render));
+                service.sendRequest(new SetSourceRender(source.name, !source.render));
             }
         }
         
@@ -309,7 +310,7 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
     
     public void updateStreaming(boolean streaming, boolean previewOnly)
     {
-        WebSocketService serv = getApp().service;
+        WebSocketService serv = service;
         
         serv.setStreaming(streaming);
         serv.previewOnly = previewOnly;
@@ -349,13 +350,13 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
     
     public void startStopStreaming(View view)
     {
-        getApp().service.sendRequest(new StartStopStreaming());
+        service.sendRequest(new StartStopStreaming());
     }
     
     public void adjustVolume(View view)
     {
         // startup volume dialog
-        VolumeDialogFragment.startDialog(this);
+        VolumeDialogFragment.startDialog(this, service);
     }
     
     public OBSRemoteApplication getApp()
@@ -369,8 +370,9 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
         /* Finish immediately on back press */
         if ((keyCode == KeyEvent.KEYCODE_BACK))
         {
+            Splash.autoConnect = false;
+            service.disconnect();
             finish();
-            getApp().service.disconnect();
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -402,13 +404,13 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
     @Override
     public void onFailedAuthentication(String message)
     {
-        AuthDialogFragment.startAuthentication(Remote.this,getApp(), message);
+        AuthDialogFragment.startAuthentication(Remote.this,getApp(), service, message);
     }
 
     @Override
     public void onNeedsAuthentication()
     {
-        AuthDialogFragment.startAuthentication(Remote.this,getApp());
+        AuthDialogFragment.startAuthentication(Remote.this,getApp(), service);
     }
 
     public static int strainToColor(float strain)

@@ -27,8 +27,7 @@ public class OBSRemoteApplication extends Application
     
     private Gson gson;
     private String authChallenge;
-    public WebSocketService service = null;
-    
+        
 	public OBSRemoteApplication()
 	{
 	    GsonBuilder builder = new GsonBuilder();
@@ -122,7 +121,7 @@ public class OBSRemoteApplication extends Application
         return prefMgr.getString(SALTED, "");
     }
     
-	public void setAuthChallenge(String challenge)
+    public void setAuthChallenge(String challenge)
 	{
 	    this.authChallenge = challenge;
 	}

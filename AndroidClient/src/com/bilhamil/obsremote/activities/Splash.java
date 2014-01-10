@@ -34,7 +34,8 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
 	
     private boolean busy;
     protected boolean authRequired = false;
-
+    public static boolean autoConnect = true;
+    public WebSocketService service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) 
@@ -56,10 +57,6 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
         
         String defaultHostname = getApp().getDefaultHostname();
         hostnameEdit.setText(defaultHostname);
-        
-        /* Startup the service */
-        Intent intent = new Intent(this, WebSocketService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 	
 	/** Defines callbacks for service binding, passed to bindService() */
@@ -70,25 +67,30 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
                 IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             LocalBinder binder = (LocalBinder) service;
-            getApp().service = binder.getService();
-            getApp().service.addUpdateListener(Splash.this);
+            Splash.this.service = binder.getService();
+            Splash.this.service.addUpdateListener(Splash.this);
             
-            if(getApp().service.isConnected())
+            if(Splash.this.service.isConnected())
             {
-                if(getApp().service.needsAuth())
-                    AuthDialogFragment.startAuthentication(Splash.this,getApp());
+                if(Splash.this.service.needsAuth())
+                    AuthDialogFragment.startAuthentication(Splash.this,getApp(), Splash.this.service);
             }
-            else
+            else if(autoConnect)
             {
                 setNotBusy();
                 defaultConnect();
+                autoConnect = false;
+            }
+            else
+            {
+                setNotBusy();               
             }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
-            getApp().service.removeUpdateListener(Splash.this);
-            getApp().service = null;
+            Splash.this.service.removeUpdateListener(Splash.this);
+            Splash.this.service = null;
             
             setNotBusy();
         }
@@ -98,17 +100,9 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
 	protected void onStart()
 	{
 	    super.onStart();
-	    WebSocketService service = getApp().service;
-	    if(service != null)
-	    {
-	        service.addUpdateListener(this);
-	        if(!service.isConnected())
-	        {
-	            setNotBusy();
-	        }
-	    }
-	    
-	    
+	    /* Startup the service */
+        Intent intent = new Intent(this, WebSocketService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);	    
 	}
 	
 	@Override
@@ -136,17 +130,17 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
 	protected void onStop()
 	{
 	    super.onStop();
-	    if(getApp().service != null)
-            getApp().service.removeUpdateListener(this);
+	    if(service != null)
+            service.removeUpdateListener(this);
+	    
+	    unbindService(mConnection);
+        service = null;
 	}
 	
 	@Override
 	protected void onDestroy()
 	{
 	    super.onDestroy();
-	    
-        unbindService(mConnection);
-        getApp().service = null;
 	}
 	
 	public OBSRemoteApplication getApp()
@@ -161,7 +155,7 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
 		getApp().setDefaultHostname(hostname);
 		
 		/* Get the service going */
-		getApp().service.connect();
+		service.connect();
 		
 		setBusy();
 	}
@@ -169,7 +163,7 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
 	public void defaultConnect()
 	{
 	    /* Get the service going */
-        getApp().service.connect();
+        service.connect();
         
         setBusy();
 	}
@@ -238,13 +232,13 @@ public class Splash extends FragmentActivity implements RemoteUpdateListener
     @Override
     public void onFailedAuthentication(String message)
     {
-        AuthDialogFragment.startAuthentication(this, getApp(), message);
+        AuthDialogFragment.startAuthentication(this, getApp(), service, message);
     }
 
     @Override
     public void onNeedsAuthentication()
     {
-        AuthDialogFragment.startAuthentication(this, getApp());
+        AuthDialogFragment.startAuthentication(this, getApp(), service);
     }
 
     @Override

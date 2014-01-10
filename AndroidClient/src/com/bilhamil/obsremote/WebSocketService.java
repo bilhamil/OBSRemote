@@ -28,6 +28,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -38,6 +39,7 @@ public class WebSocketService extends Service
 {
     public static final float appVersion = 1.1f;
     private static final String[] wsSubProtocols = {"obsapi"};
+    private static final String TAG = "OBSRemoteService";
 
     private final WebSocketConnection remoteConnection = new WebSocketConnection();
 
@@ -48,10 +50,12 @@ public class WebSocketService extends Service
     private boolean streaming;
     public Object previewOnly; 
         
-    private String salted;
+    private static String salted = "";
     private boolean authRequired;
     private boolean authenticated;
 
+    private final Handler handler = new Handler();
+    
     public void connect() 
     {
         String hostname = getApp().getDefaultHostname();
@@ -64,7 +68,7 @@ public class WebSocketService extends Service
             
         } catch (WebSocketException e) {
 
-            Log.d(OBSRemoteApplication.TAG, e.toString());
+            Log.d(TAG, e.toString());
         }
     }
     
@@ -79,8 +83,9 @@ public class WebSocketService extends Service
         responseHandlers.clear();
         this.setStreaming(false);
         previewOnly = false;
-                
-        salted = "";
+        
+        /* Don't reset salted we're holding on to this for auto re-authenticate */
+        // salted = "";
         authRequired = false;
         authenticated = false;
     }
@@ -90,7 +95,7 @@ public class WebSocketService extends Service
     {
         super.onDestroy();
         
-        Log.d(OBSRemoteApplication.TAG, "WebSocketService stopped");
+        Log.d(TAG, "WebSocketService stopped");
         this.notifyOnClose(0, "Service destroyed");
         
         listeners.clear();
@@ -109,10 +114,70 @@ public class WebSocketService extends Service
         }
     }
    
+    private boolean bound = false;
+    
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        cancelShutdown();
+
+        return START_NOT_STICKY;
+    }
+    
     @Override
     public IBinder onBind(Intent intent)
     {
+        cancelShutdown();
+        
+        // start self
+        startService(new Intent(this, WebSocketService.class));
+        
+        bound = true;
+        
         return new LocalBinder();
+    }
+    
+    @Override
+    public void onRebind(Intent intent) 
+    {
+        cancelShutdown();
+    }
+    
+    @Override
+    public boolean onUnbind(Intent i)
+    {
+        bound = false;
+        
+        if(!streaming)
+            startShutdown();
+        
+        // don't want rebind
+        return true;
+    }
+
+    public void startShutdown()
+    {
+        // post a callback to be run in 1 minute
+        handler.postDelayed(delayedShutdown, 1000L * 60);
+        Log.d(TAG, "Starting shutdown!");
+    }
+    
+    private Runnable delayedShutdown = new Runnable() {
+
+        @Override
+        public void run() {
+            WebSocketService.this.stopSelf();
+        }
+
+    };
+
+    /**
+     * Cancel any shutdown timer that may have been set.
+     */
+    private void cancelShutdown() 
+    {
+        // remove any shutdown callbacks registered
+        Log.d(TAG, "Cancling shutdown!");
+        handler.removeCallbacks(delayedShutdown);
     }
     
     private Notification notification;
@@ -151,12 +216,20 @@ public class WebSocketService extends Service
             /* have to set this manually to deal with support library bug *facepalm* */
             notification.contentView = remoteViews;
             
+            this.cancelShutdown();
+            
             this.startForeground(NOTIFICATION_ID, notification);
         }
         else if(this.streaming && !newStreaming)        {
             //stop foreground
             this.stopForeground(true);
             notification = null;
+            
+            /* if we stop streaming and no activities active shutdown */
+            if(!bound)
+            {
+                startShutdown();
+            }
         }
         
         this.streaming = newStreaming;
@@ -213,14 +286,14 @@ public class WebSocketService extends Service
         @Override
         public void onOpen()
         {
-            Log.d(OBSRemoteApplication.TAG, "Status: Connected");
+            Log.d(TAG, "Status: Connected");
             checkVersion();
         }
         
         @Override
         public void onClose(int code, String reason)
         {
-            Log.d(OBSRemoteApplication.TAG, "Connection lost.");
+            Log.d(TAG, "Connection lost.");
             notifyOnClose(code, reason);
         }
         
@@ -277,7 +350,7 @@ public class WebSocketService extends Service
             }
             catch(ClassCastException e)
             {
-                Log.e(OBSRemoteApplication.TAG, "Failed to cast response.");
+                Log.e(TAG, "Failed to cast response.");
                 return;
             }
             
@@ -291,9 +364,9 @@ public class WebSocketService extends Service
     }
 
     /* auth stuff */
-    public void autoAuthenticate()
+    public void autoAuthenticate(String s)
     {
-        salted = getApp().getAuthSalted();
+        salted = s;
         authenticateWithSalted(salted);
     }
     
@@ -313,7 +386,7 @@ public class WebSocketService extends Service
         
         hashed = OBSRemoteApplication.sign(salted,  challenge);
         
-        getApp().service.sendRequest(new Authenticate(hashed), new ResponseHandler() {
+        sendRequest(new Authenticate(hashed), new ResponseHandler() {
 
             @Override
             public void handleResponse(Response resp, String jsonMessage)
@@ -337,7 +410,7 @@ public class WebSocketService extends Service
     
     private void checkVersion()
     {
-        getApp().service.sendRequest(new GetVersion(), new ResponseHandler()
+        sendRequest(new GetVersion(), new ResponseHandler()
         {
             
             @Override
@@ -363,7 +436,7 @@ public class WebSocketService extends Service
     
     private void checkAuthRequired()
     {
-        getApp().service.sendRequest(new GetAuthRequired(), new ResponseHandler() {
+        sendRequest(new GetAuthRequired(), new ResponseHandler() {
 
             @Override
             public void handleResponse(Response resp, String jsonMessage)
@@ -375,12 +448,21 @@ public class WebSocketService extends Service
                 {
                     getApp().setAuthChallenge(authResp.challenge);
                     
-                    if(getApp().getAuthSalt().equals(authResp.salt) && 
-                       getApp().getRememberPassword() && 
-                       !getApp().getAuthSalted().equals(""))
-                    {
-                        /* circumstances right to try auto authenticate */
-                        autoAuthenticate();
+                    if(getApp().getAuthSalt().equals(authResp.salt))
+                    { 
+                       if(!salted.equals(""))
+                       {
+                           autoAuthenticate(salted);
+                       }
+                       else if(getApp().getRememberPassword() && !getApp().getAuthSalted().equals(""))
+                       {
+                            /* circumstances right to try auto authenticate */
+                            autoAuthenticate(getApp().getAuthSalted());
+                       }
+                       else
+                       {
+                           notifyNeedsAuthentication();
+                       }
                     }
                     else
                     {

@@ -21,6 +21,7 @@ import android.widget.RelativeLayout;
 import com.bilhamil.obsremote.OBSRemoteApplication;
 import com.bilhamil.obsremote.R;
 import com.bilhamil.obsremote.RemoteUpdateListener;
+import com.bilhamil.obsremote.WebSocketService;
 import com.bilhamil.obsremote.messages.ResponseHandler;
 import com.bilhamil.obsremote.messages.requests.GetVolumes;
 import com.bilhamil.obsremote.messages.requests.SetVolume;
@@ -32,10 +33,12 @@ import com.bilhamil.obsremote.messages.util.Source;
 public class VolumeDialogFragment extends DialogFragment implements RemoteUpdateListener {
     
     private View dialogView;
+    public WebSocketService service;    
     
-    public static void startDialog(FragmentActivity fragAct)
+    public static void startDialog(FragmentActivity fragAct, WebSocketService s)
     {
         VolumeDialogFragment frag = new VolumeDialogFragment();
+        frag.service = s;
         frag.show(fragAct.getSupportFragmentManager(), OBSRemoteApplication.TAG);
     }
     
@@ -46,7 +49,7 @@ public class VolumeDialogFragment extends DialogFragment implements RemoteUpdate
     
     private void updateVolumes()
     {
-        getApp().service.sendRequest(new GetVolumes(), new ResponseHandler()
+        service.sendRequest(new GetVolumes(), new ResponseHandler()
         {
             
             @Override
@@ -141,7 +144,7 @@ public class VolumeDialogFragment extends DialogFragment implements RemoteUpdate
             @Override
             public void onClick(View v)
             {
-                getApp().service.sendRequest(ToggleMute.getMicrophoneMute());
+                service.sendRequest(ToggleMute.getMicrophoneMute());
             }
         });
         
@@ -151,7 +154,7 @@ public class VolumeDialogFragment extends DialogFragment implements RemoteUpdate
             @Override
             public void onClick(View v)
             {
-                getApp().service.sendRequest(ToggleMute.getDesktopMute());
+                service.sendRequest(ToggleMute.getDesktopMute());
             }
         });
         
@@ -200,7 +203,7 @@ public class VolumeDialogFragment extends DialogFragment implements RemoteUpdate
             
             req.volume = volumeVal;
             
-            getApp().service.sendRequest(req);
+            service.sendRequest(req);
             
             return true;
         }
@@ -212,7 +215,7 @@ public class VolumeDialogFragment extends DialogFragment implements RemoteUpdate
     {
         super.onStart();
         
-        getApp().service.addUpdateListener(this);
+        service.addUpdateListener(this);
         
         /* initial volume acquisition */
         updateVolumes();
@@ -222,7 +225,7 @@ public class VolumeDialogFragment extends DialogFragment implements RemoteUpdate
     public void onStop()
     {
         super.onStop();
-        getApp().service.removeUpdateListener(VolumeDialogFragment.this);
+        service.removeUpdateListener(VolumeDialogFragment.this);
     }
     
     @Override
