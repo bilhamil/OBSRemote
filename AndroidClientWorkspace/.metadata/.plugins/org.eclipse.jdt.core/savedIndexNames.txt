@@ -1,7 +1,0 @@
-INDEX VERSION 1.126+C:\Users\bilhamil\Documents\GitHub\OBSRemote\AndroidClientWorkspace\.metadata\.plugins\org.eclipse.jdt.core
-923168354.index
-2157912042.index
-4212610730.index
-1531412002.index
-1082650540.index
-3570675707.index
