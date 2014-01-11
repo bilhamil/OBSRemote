@@ -1,5 +1,7 @@
 package com.bilhamil.obsremote.activities;
 
+import java.util.ArrayList;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -14,9 +16,12 @@ import android.widget.TextView;
 
 import com.bilhamil.obsremote.OBSRemoteApplication;
 import com.bilhamil.obsremote.R;
+import com.bilhamil.obsremote.RemoteUpdateListener;
 import com.bilhamil.obsremote.WebSocketService;
+import com.bilhamil.obsremote.messages.util.Source;
 
-public class AuthDialogFragment extends DialogFragment {
+public class AuthDialogFragment extends DialogFragment implements RemoteUpdateListener 
+{
     
     public WebSocketService service;
     
@@ -78,4 +83,89 @@ public class AuthDialogFragment extends DialogFragment {
         // Create the AlertDialog object and return it
         return builder.create();
     }
+    
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+    	super.onCreate(savedInstanceState);
+    	
+    	setRetainInstance(true);
+        service.addUpdateListener(this);
+    }
+    
+    @Override
+    public void onDestroyView() 
+    {
+        if (getDialog() != null && getRetainInstance()) {
+            getDialog().setDismissMessage(null);
+        }
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy()
+    {
+    	super.onDestroy();
+        service.removeUpdateListener(this);
+    }
+    
+    @Override
+	public void onConnectionAuthenticated() 
+	{}
+
+	@Override
+	public void onConnectionClosed(int code, String reason) 
+	{
+		this.dismissAllowingStateLoss();
+	}
+
+	@Override
+	public void onStreamStarting(boolean previewOnly) 
+	{}
+
+	@Override
+	public void onStreamStopping() 
+	{}
+
+	@Override
+	public void onFailedAuthentication(String message) 
+	{}
+
+	@Override
+	public void onNeedsAuthentication() 
+	{}
+
+	@Override
+	public void onStreamStatusUpdate(int totalStreamTime, int fps,
+			float strain, int numDroppedFrames, int numTotalFrames, int bps) 
+	{}
+
+	@Override
+	public void onSceneSwitch(String sceneName) 
+	{}
+
+	@Override
+	public void onScenesChanged() 
+	{}
+
+	@Override
+	public void onSourceChanged(String sourceName, Source source) 
+	{}
+
+	@Override
+	public void onSourceOrderChanged(ArrayList<String> sources) 
+	{}
+
+	@Override
+	public void onRepopulateSources(ArrayList<Source> sources) 
+	{}
+
+	@Override
+	public void onVolumeChanged(String channel, boolean finalValue,
+			float volume, boolean muted) 
+	{}
+
+	@Override
+	public void onVersionMismatch(float version) 
+	{}
 }

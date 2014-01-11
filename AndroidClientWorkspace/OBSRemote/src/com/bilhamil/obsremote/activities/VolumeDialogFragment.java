@@ -33,13 +33,14 @@ import com.bilhamil.obsremote.messages.util.Source;
 public class VolumeDialogFragment extends DialogFragment implements RemoteUpdateListener {
     
     private View dialogView;
-    public WebSocketService service;    
+    public WebSocketService service;
+    public static final String TAG = "VolumeDialogFragment";
     
     public static void startDialog(FragmentActivity fragAct, WebSocketService s)
     {
         VolumeDialogFragment frag = new VolumeDialogFragment();
         frag.service = s;
-        frag.show(fragAct.getSupportFragmentManager(), OBSRemoteApplication.TAG);
+        frag.show(fragAct.getSupportFragmentManager(), TAG);
     }
     
     public OBSRemoteApplication getApp()
@@ -124,7 +125,32 @@ public class VolumeDialogFragment extends DialogFragment implements RemoteUpdate
         gray.setLayoutParams(params);
         
     }
+    
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+    	super.onCreate(savedInstanceState);
+    	
+    	setRetainInstance(true);
+    	
+        service.addUpdateListener(this);
+    }
+    
+    @Override
+    public void onDestroyView() {
 
+        if (getDialog() != null && getRetainInstance()) {
+            getDialog().setDismissMessage(null);
+        }
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+    	super.onDestroy();
+        service.removeUpdateListener(VolumeDialogFragment.this);
+    }
+    
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
@@ -215,26 +241,19 @@ public class VolumeDialogFragment extends DialogFragment implements RemoteUpdate
     {
         super.onStart();
         
-        service.addUpdateListener(this);
-        
         /* initial volume acquisition */
         updateVolumes();
     }
 
-    @Override
-    public void onStop()
-    {
-        super.onStop();
-        service.removeUpdateListener(VolumeDialogFragment.this);
-    }
-    
     @Override
     public void onConnectionAuthenticated()
     {}
 
     @Override
     public void onConnectionClosed(int code, String reason)
-    {}
+    {
+    	this.dismissAllowingStateLoss();
+    }
     
     @Override
     public void onStreamStarting(boolean previewOnly)
