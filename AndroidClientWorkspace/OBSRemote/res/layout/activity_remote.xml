@@ -120,6 +120,8 @@
 			    dslv:sort_enabled="true"
 			    dslv:drag_start_mode="onLongPress"
 			    dslv:drag_handle_id="@+id/sourceitem"
+			    
+			    android:cacheColorHint="@color/datorange"
 			    android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
