@@ -32,7 +32,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 import android.support.v4.app.NotificationCompat.Builder;
 
 public class WebSocketService extends Service
