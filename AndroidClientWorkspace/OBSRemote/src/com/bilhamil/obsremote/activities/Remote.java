@@ -20,6 +20,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -88,10 +89,17 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
     {
         super.onStart();
         
-        //hide start/stop button until after setup
+        //hide UI button until after setup
         Button toggleStreamingButton = (Button) findViewById(R.id.startstopbutton);
-        toggleStreamingButton.setVisibility(View.INVISIBLE);
-        
+        ListView scenesView = (ListView)findViewById(R.id.ScenesListView);
+    	DragSortListView sourcesView = (DragSortListView)findViewById(R.id.SourcesListView);
+        ImageButton volumeButton = (ImageButton)findViewById(R.id.volumebutton);
+    	
+    	toggleStreamingButton.setVisibility(View.INVISIBLE);
+        scenesView.setVisibility(View.INVISIBLE);
+    	sourcesView.setVisibility(View.INVISIBLE);
+    	volumeButton.setVisibility(View.INVISIBLE);
+    	
         /* bind the service */
         Intent intent = new Intent(this, WebSocketService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -158,6 +166,9 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
         updateStreamStatus();
         
         updateScenes();
+        
+        ImageButton volumeButton = (ImageButton)findViewById(R.id.volumebutton);
+        volumeButton.setVisibility(View.VISIBLE);
     }
 
     private void updateStreamStatus()
@@ -187,6 +198,13 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
             {
                 if(resp.isOk())
                 {
+                	ListView scenesView = (ListView)findViewById(R.id.ScenesListView);
+                	DragSortListView sourcesView = (DragSortListView)findViewById(R.id.SourcesListView);
+                	
+                	scenesView.setVisibility(View.VISIBLE);
+                	sourcesView.setVisibility(View.VISIBLE);
+                	
+                	
                     GetSceneListResponse scenesResp = (GetSceneListResponse)getApp().getGson().fromJson(jsonMessage, GetSceneListResponse.class);
                     
                     Remote.this.scenes = scenesResp.scenes;
