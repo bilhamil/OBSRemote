@@ -266,9 +266,9 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
             super(context, R.layout.source_item, R.id.sourcename, sources);
         }
         
-        public void setSources(ArrayList<Source> sources)
+        public void setSources(ArrayList<Source> sources, boolean forceRefresh)
         {
-            boolean refreshNeeded = sources.size() != getCount();
+            boolean refreshNeeded = sources.size() != getCount() || forceRefresh;
             
             if(!refreshNeeded)
             {
@@ -388,7 +388,7 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
         {
             if(scene.name.equals(sceneName))
             {
-                this.sourceAdapter.setSources(scene.sources);
+                this.sourceAdapter.setSources(scene.sources, true);
                 this.currentScene = scene;
             }
         }
@@ -572,7 +572,7 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
         
         currentScene.sources = newSources;
         
-        this.sourceAdapter.setSources(currentScene.sources);
+        this.sourceAdapter.setSources(currentScene.sources, false);
     }
 
     @Override
@@ -583,7 +583,7 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
         
         this.currentScene.sources = sources;
         
-        this.sourceAdapter.setSources(sources);
+        this.sourceAdapter.setSources(sources, true);
     }
 
     @Override
