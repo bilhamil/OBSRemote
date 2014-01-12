@@ -117,9 +117,13 @@ public class WebSocketService extends Service
     
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        cancelShutdown();
-
-        return START_NOT_STICKY;
+    	/* if nothing is bound try connecting, else cancle any shutdowns happening */
+    	if(!bound)
+    		startShutdown();
+    	else
+    		cancelShutdown();
+        
+        return START_STICKY;
     }
     
     @Override
@@ -127,11 +131,11 @@ public class WebSocketService extends Service
     {
         cancelShutdown();
         
-        // start self
-        startService(new Intent(this, WebSocketService.class));
-        
         bound = true;
         
+        // start self
+        startService(new Intent(this, WebSocketService.class));
+                
         return new LocalBinder();
     }
     
@@ -202,7 +206,7 @@ public class WebSocketService extends Service
             // Set Icon
             builder.setSmallIcon(R.drawable.notification_icon);
             // Set Ticker Message
-            builder.setTicker("Stream Starting");
+            builder.setTicker("Streaming");
             // Don't Dismiss Notification
             builder.setAutoCancel(false);
             // Set PendingIntent into Notification
@@ -235,6 +239,7 @@ public class WebSocketService extends Service
     }
     
     private long lastTimeUpdated = 0;
+    float maxStrain = 0;
     
     public void updateNotification(int totalStreamTime, int fps,
             float strain, int numDroppedFrames, int numTotalFrames, int bps)
@@ -244,7 +249,9 @@ public class WebSocketService extends Service
             
             long currentTime = System.currentTimeMillis();
             
-            if(currentTime - lastTimeUpdated < 250)
+            maxStrain = Math.max(maxStrain, strain);
+            
+            if(currentTime - lastTimeUpdated < 1000)
                 return;
             
             lastTimeUpdated = currentTime;
@@ -257,13 +264,14 @@ public class WebSocketService extends Service
             
             if(android.os.Build.VERSION.SDK_INT > 9)
             {
-                notification.contentView.setTextColor(R.id.notificationbittratevalue, Remote.strainToColor(strain));
+                notification.contentView.setTextColor(R.id.notificationbittratevalue, Remote.strainToColor(maxStrain));
             }
             
             notification.contentView.setTextViewText(R.id.notificationdropped, getString(R.string.droppedframes) + " " + numDroppedFrames);
             
             notfManager.notify(NOTIFICATION_ID, notification);
             
+            maxStrain = 0;            
         }
     }
     
