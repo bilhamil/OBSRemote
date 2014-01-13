@@ -94,11 +94,13 @@ public class Remote extends FragmentActivity implements RemoteUpdateListener
         ListView scenesView = (ListView)findViewById(R.id.ScenesListView);
     	DragSortListView sourcesView = (DragSortListView)findViewById(R.id.SourcesListView);
         ImageButton volumeButton = (ImageButton)findViewById(R.id.volumebutton);
-    	
-    	toggleStreamingButton.setVisibility(View.INVISIBLE);
+        LinearLayout statsPanel = (LinearLayout) findViewById(R.id.statspanel);
+        
+        toggleStreamingButton.setVisibility(View.INVISIBLE);
         scenesView.setVisibility(View.INVISIBLE);
     	sourcesView.setVisibility(View.INVISIBLE);
     	volumeButton.setVisibility(View.INVISIBLE);
+    	statsPanel.setVisibility(View.GONE);
     	
         /* bind the service */
         Intent intent = new Intent(this, WebSocketService.class);

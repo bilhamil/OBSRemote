@@ -61,9 +61,16 @@ public class WebSocketService extends Service
         String wsuri = "ws://" + hostname + ":4444/";
         
         try {
-            remoteConnection.connect(wsuri, wsSubProtocols, 
-                                     new WSHandler(), new WebSocketOptions(), 
-                                     null);
+        	if(remoteConnection.isConnected())
+        	{
+        		checkVersion();
+        	}
+        	else
+        	{
+	            remoteConnection.connect(wsuri, wsSubProtocols, 
+	                                     new WSHandler(), new WebSocketOptions(), 
+	                                     null);
+        	}
             
         } catch (WebSocketException e) {
 
@@ -431,13 +438,15 @@ public class WebSocketService extends Service
                 if(vResp.version != appVersion)
                 {
                     /* throw a fit */
-                    
+                	Log.d(OBSRemoteApplication.TAG, "Version mismatch.");
+
                     remoteConnection.disconnect();
                     
                     notifyOnVersionMismatch(vResp.version);
                 }
                 else
                 {
+                	Log.d(OBSRemoteApplication.TAG, "Version good.");
                     checkAuthRequired();
                 }
             }
