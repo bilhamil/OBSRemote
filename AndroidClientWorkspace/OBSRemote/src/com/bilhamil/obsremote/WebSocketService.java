@@ -10,10 +10,12 @@ import com.bilhamil.obsremote.messages.IncomingMessage;
 import com.bilhamil.obsremote.messages.ResponseHandler;
 import com.bilhamil.obsremote.messages.requests.Authenticate;
 import com.bilhamil.obsremote.messages.requests.GetAuthRequired;
+import com.bilhamil.obsremote.messages.requests.GetStreamingStatus;
 import com.bilhamil.obsremote.messages.requests.GetVersion;
 import com.bilhamil.obsremote.messages.requests.Request;
 import com.bilhamil.obsremote.messages.responses.AuthRequiredResp;
 import com.bilhamil.obsremote.messages.responses.Response;
+import com.bilhamil.obsremote.messages.responses.StreamStatusResponse;
 import com.bilhamil.obsremote.messages.responses.VersionResponse;
 import com.bilhamil.obsremote.messages.updates.Update;
 import com.bilhamil.obsremote.messages.util.Source;
@@ -26,7 +28,13 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -74,13 +82,14 @@ public class WebSocketService extends Service
     public void disconnect()
     {
         remoteConnection.disconnect();
-        resetState();
     }
     
     private void resetState()
     {
         responseHandlers.clear();
+        /* don't reset streaming in case we can reconnect */
         this.setStreaming(false);
+        
         previewOnly = false;
         
         /* Don't reset salted we're holding on to this for auto re-authenticate */
@@ -90,9 +99,17 @@ public class WebSocketService extends Service
     }
     
     @Override
+    public void onCreate()
+    {
+    	this.registerReceiver(mWifiStateChangedReceiver,new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION));
+    }
+    
+    @Override
     public void onDestroy()
     {
         super.onDestroy();
+        
+        this.unregisterReceiver(mWifiStateChangedReceiver);
         
         Log.d(TAG, "WebSocketService stopped");
         this.notifyOnClose(0, "Service destroyed");
@@ -168,7 +185,7 @@ public class WebSocketService extends Service
 
         @Override
         public void run() {
-            WebSocketService.this.stopSelf();
+            disconnect();
         }
 
     };
@@ -294,6 +311,7 @@ public class WebSocketService extends Service
         public void onOpen()
         {
             Log.d(TAG, "Status: Connected");
+            uncleanDisconnect = false;
             checkVersion();
         }
         
@@ -316,6 +334,91 @@ public class WebSocketService extends Service
             //nothing
         }
     }
+    
+    private boolean uncleanDisconnect = false;
+    
+    private BroadcastReceiver mWifiStateChangedReceiver = new BroadcastReceiver()
+    {
+    	boolean done = false;
+    	
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            // TODO Auto-generated method stub
+
+            int extraWifiState = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, WifiManager.WIFI_STATE_UNKNOWN);
+
+            switch (extraWifiState)
+            {
+            case WifiManager.WIFI_STATE_DISABLED:
+            	done = true;
+            break;
+            
+            case WifiManager.WIFI_STATE_DISABLING:
+            	/* shutdown connection and cleanup */
+            	if(remoteConnection.isConnected())
+            	{
+            		/*disconnect and be ready to reconnect*/
+					Log.d(OBSRemoteApplication.TAG, "Disconnecting service since wifi is turning off.");
+
+            		uncleanDisconnect = streaming;
+            		disconnect();
+            	}
+            	
+            	break;
+            case WifiManager.WIFI_STATE_ENABLED:
+            	/* start waiting for connection to restart */
+            	if(uncleanDisconnect)
+            	{
+            		done = false;
+            		/* try to reconnect */
+            		Thread reconnectThread = new Thread(new Runnable() {
+						
+						@Override
+						public void run() 
+						{
+							Log.d(OBSRemoteApplication.TAG, "Trying to reconnect service since wifi is back on.");
+							ConnectivityManager conMan = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE); 
+			                while((conMan.getActiveNetworkInfo() == null || conMan.getActiveNetworkInfo().getState() != NetworkInfo.State.CONNECTED) && !done)
+			                {
+			                    try
+			                    {
+			                        Thread.sleep(250);
+			                    } catch (InterruptedException e)
+			                    {
+			                        e.printStackTrace();
+			                    }
+			                }
+			                
+			                if(!done)
+			                {
+			                	/* just some time to make sure you are actually connected */
+			                	try {
+									Thread.sleep(1000);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+			                	
+			                	connect();
+			                	uncleanDisconnect = false;
+			                }
+			                
+			                done = false;
+						}
+					});
+            		
+            		reconnectThread.start();
+            	}
+                
+                break;
+            case WifiManager.WIFI_STATE_ENABLING:
+                break;
+            case WifiManager.WIFI_STATE_UNKNOWN:
+                break;
+            }
+
+        }
+    };
     
     public void sendRequest(Request request)
     {
@@ -528,9 +631,26 @@ public class WebSocketService extends Service
         }
     }
     
+    private void updateStreamingStatus()
+    {
+    	sendRequest(new GetStreamingStatus(), new ResponseHandler()
+        {
+            
+            @Override
+            public void handleResponse(Response resp, String jsonMessage)
+            {
+                StreamStatusResponse ssResp = getApp().getGson().fromJson(jsonMessage, StreamStatusResponse.class);
+                
+                setStreaming(ssResp.streaming);
+            }
+        });
+    }
+    
     private void notifyOnAuthenticated()
     {
         this.authenticated = true;
+        
+        updateStreamingStatus();
         
         if(authRequired && getApp().getRememberPassword())
         {
@@ -553,7 +673,13 @@ public class WebSocketService extends Service
     
     private void notifyOnClose(int code, String reason)
     {
-        this.resetState();
+    	if(code != WebSocket.ConnectionHandler.CLOSE_NORMAL && streaming)
+    	{
+    		/* note for wifi change receiver that we were streaming, try to reconnect */
+    		uncleanDisconnect = true;
+    	}
+    	
+    	this.resetState();
         
         for(RemoteUpdateListener listener: listeners)
         {
