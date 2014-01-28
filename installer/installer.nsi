@@ -2,7 +2,7 @@
 
 ; Define your application name
 !define APPNAME "OBS Remote"
-!define APPVERSION "1.1"
+!define APPVERSION "1.11"
 !define APPNAMEANDVERSION "OBS Remote ${APPVERSION}"
 
 ; Additional script dependencies
@@ -68,11 +68,11 @@ Section "OBS Remote" Section1
 
   ; Set Section Files and Shortcuts
   SetOutPath "$INSTDIR\plugins\"
-  File "..\WebSocketAPIPlugin\Output\Win32\Release\WebSocketAPIPlugin.dll"
+  File ".\OBSRemoteManualInstall\32-bit\WebSocketAPIPlugin.dll"
   
   ${if} ${RunningX64}
-    SetOutPath "$INSTDIR\64bit\plugins\"
-    File "..\WebSocketAPIPlugin\Output\x64\Release\WebSocketAPIPlugin.dll"
+    SetOutPath "$PROGRAMFILES64\OBS\plugins\"
+    File ".\OBSRemoteManualInstall\64-bit\WebSocketAPIPlugin.dll"
   ${endif}
   
   ; Enable firewall port opening. Needs http://nsis.sourceforge.net/NSIS_Simple_Firewall_Plugin
@@ -118,7 +118,7 @@ Section Uninstall
   Delete "$INSTDIR\plugins\WebSocketAPIPlugin.dll"
   
   ${if} ${RunningX64}
-    Delete "$INSTDIR\64bit\plugins\WebSocketAPIPlugin.dll"
+    Delete "$PROGRAMFILES64\OBS\plugins\WebSocketAPIPlugin.dll"
   ${endif}
   
   #SimpleFC::RemovePort 4444 6
