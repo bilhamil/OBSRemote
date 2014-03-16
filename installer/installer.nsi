@@ -2,7 +2,7 @@
 
 ; Define your application name
 !define APPNAME "OBS Remote"
-!define APPVERSION "1.11"
+!define APPVERSION "1.12"
 !define APPNAMEANDVERSION "OBS Remote ${APPVERSION}"
 
 ; Additional script dependencies
