@@ -70,16 +70,17 @@ Section "OBS Remote" Section1
   SetOutPath "$INSTDIR\plugins\"
   File ".\OBSRemoteManualInstall\32-bit\WebSocketAPIPlugin.dll"
   
-  ${if} ${RunningX64}
-    SetOutPath "$PROGRAMFILES64\OBS\plugins\"
-    File ".\OBSRemoteManualInstall\64-bit\WebSocketAPIPlugin.dll"
-  ${endif}
-  
   ; Enable firewall port opening. Needs http://nsis.sourceforge.net/NSIS_Simple_Firewall_Plugin
   #SimpleFC::AddPort 4444 "OBS Remote" 6 3 2 "" 1
   SimpleFC::AdvAddRule "OBS Remote" "Allow OBS Remote Connections" "6" "1" "1" "2147483647" "1" "$INSTDIR\OBS.exe" "" "$INSTDIR\OBS.exe,-10000" "4444" "" "" ""
   
-  SimpleFC::AdvAddRule "OBS Remote x64" "Allow OBS Remote Connections" "6" "1" "1" "2147483647" "1" "$INSTDIR\64bit\OBS.exe" "" "$INSTDIR\64bit\OBS.exe,-10000" "4444" "" "" ""
+  ${if} ${RunningX64}
+    SetOutPath "$PROGRAMFILES64\OBS\plugins\"
+    File ".\OBSRemoteManualInstall\64-bit\WebSocketAPIPlugin.dll"
+
+    SimpleFC::AdvAddRule "OBS Remote x64" "Allow OBS Remote Connections" "6" "1" "1" "2147483647" "1" "$PROGRAMFILES64\OBS\OBS.exe" "" "$PROGRAMFILES64\OBS\OBS.exe,-10000" "4444" "" "" ""
+
+  ${endif}
   
   WriteUninstaller "$INSTDIR\UninstallOBSRemote.exe"
   CreateShortCut "$SMPROGRAMS\Open Broadcaster Software\UninstallOBSRemote.lnk" "$INSTDIR\UninstallOBSRemote.exe"
