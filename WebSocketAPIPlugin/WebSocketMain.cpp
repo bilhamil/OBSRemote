@@ -29,7 +29,7 @@ extern "C" __declspec(dllexport) CTSTR GetPluginDescription();
 
 HANDLE WebSocketThread;
 
-const int port = 4444;
+int port = 4444;
 bool running;
 WebSocketOBSTriggerHandler* triggerHandler = NULL;
 
@@ -223,6 +223,28 @@ struct libwebsocket_protocols protocols[] = {
     }
 };
 
+int get_unique_port()
+{
+    struct sockaddr_in serv_addr;
+
+    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0) {
+        fprintf(stderr, "ERROR opening socket");
+        return 4444;
+    }
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = INADDR_ANY;
+    serv_addr.sin_port = htons(port);
+
+    while (bind(sockfd, (struct sockaddr *) &serv_addr, 
+                            sizeof(serv_addr)) < 0)
+        port++;
+
+    unbind(sockfd, (struct sockaddr *) &serv_addr, 
+                            sizeof(serv_addr));
+    return port;
+}
+
 
 
 DWORD STDCALL MainWebSocketThread(LPVOID lpUnused)
@@ -231,6 +253,8 @@ DWORD STDCALL MainWebSocketThread(LPVOID lpUnused)
     const char *interface = NULL;
     unsigned char buf[LWS_SEND_BUFFER_PRE_PADDING + 1024 +
                           LWS_SEND_BUFFER_POST_PADDING];
+
+    port = get_unique_port();
 
     context = libwebsocket_create_context(port, interface, protocols,
                 libwebsocket_internal_extensions,
@@ -326,5 +350,5 @@ CTSTR GetPluginName()
 
 CTSTR GetPluginDescription()
 {
-    return TEXT("An http/websocket interface enabling remote control through web clients. Accessible on port# 4444");
+    return TEXT("An http/websocket interface enabling remote control through web clients. Accessible on port# 4444+");
 }
