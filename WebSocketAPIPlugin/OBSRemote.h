@@ -19,7 +19,7 @@
 
 #pragma once
 
-#define OBS_REMOTE_VERSION 1.1
-#define OBS_REMOTE_FULLNAME "OBS Remote v1.1"
+#define OBS_REMOTE_VERSION 1.2
+#define OBS_REMOTE_FULLNAME "OBS Remote v1.2"
 
 #include "resource.h"
