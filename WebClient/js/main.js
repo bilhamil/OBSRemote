@@ -1,6 +1,7 @@
 var currentlyStreaming = false;
 var currentlyPreviewing = false;
 var totalSecondsStreaming = 0;
+var isRecording = false;
 
 /*auth variables*/
 var authSalt = "";
@@ -12,7 +13,8 @@ $(function() {
 	
 	$("#button1").on("click", startStreaming);
 	$("#button2").on("click", startPreview);
-	
+	$("#button3").on("click", startRecording);
+
 	/* initialize auth dialog */
 	$( "#auth-dialog-form" ).dialog({
       autoOpen: false,
@@ -308,8 +310,18 @@ function onStartStreaming(update)
 			$("#OnTheAir p:first").text("ON THE AIR");
 			streamConfigStartStreaming();
 		}
-		$("#button1").css("visibility", "hidden");
-		$("#button2 p:first").html("Stop " + ((previewOnly)?"Preview":"Streaming"));
+
+        if (!isRecording) {
+            $("#button1").css("visibility", "hidden");
+            $("#button3").css("visibility", "hidden");
+            $("#button2 p:first").html("Stop " + ((previewOnly) ? "Preview" : "Streaming"));
+        } else {
+            $("#button1").css("visibility", "hidden");
+            $("#button2").css("visibility", "hidden");
+            $("#button3 p:first").html("Stop Recording");
+        }
+		
+		
 	}
 	
 }
@@ -324,8 +336,12 @@ function onStopStreaming(update)
 		$("#OnTheAir").attr("class", null);
 		$("#OnTheAir p:first").text("OFF THE AIR");
 		$("#button1").css("visibility", "visible");
+		$("#button2").css("visibility", "visible");
+		$("#button3").css("visibility", "visible");
 		$("#button2 p:first").html("Start Preview");
+		$("#button3 p:first").html("Start Recording");
 		$("#StatsTable").css("visibility", "hidden");
+	    isRecording = false;
 	}
 	
 	streamConfigStopStreaming(totalSecondsStreaming);
@@ -361,6 +377,15 @@ function startStreaming()
 	var myJSONRequest = {};
 	myJSONRequest["request-type"] = "StartStopStreaming";
 	
+	sendMessage(myJSONRequest);
+}
+
+function startRecording()
+{
+	var myJSONRequest = {};
+	myJSONRequest["request-type"] = "StartStopRecording";
+    isRecording = true;
+
 	sendMessage(myJSONRequest);
 }
 

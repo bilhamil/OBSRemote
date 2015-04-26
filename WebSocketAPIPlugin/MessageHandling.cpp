@@ -34,6 +34,7 @@ void OBSAPIMessageHandler::initializeMessageMap()
     messageMap[REQ_SET_SCENEITEM_POSITION_AND_SIZE] =   OBSAPIMessageHandler::HandleSetSceneItemPositionAndSize;
     messageMap[REQ_GET_STREAMING_STATUS] =              OBSAPIMessageHandler::HandleGetStreamingStatus;
     messageMap[REQ_STARTSTOP_STREAMING] =               OBSAPIMessageHandler::HandleStartStopStreaming;
+	messageMap[REQ_STARTSTOP_RECORDING] =               OBSAPIMessageHandler::HandleStartStopRecording;
     messageMap[REQ_TOGGLE_MUTE] =                       OBSAPIMessageHandler::HandleToggleMute;
     messageMap[REQ_GET_VOLUMES] =                       OBSAPIMessageHandler::HandleGetVolumes;
     messageMap[REQ_SET_VOLUME] =                        OBSAPIMessageHandler::HandleSetVolume;
@@ -407,6 +408,13 @@ json_t* OBSAPIMessageHandler::HandleStartStopStreaming(OBSAPIMessageHandler* han
     {
         OBSStartStopStream();
     }
+    return GetOkResponse();
+}
+
+json_t* OBSAPIMessageHandler::HandleStartStopRecording(OBSAPIMessageHandler* handler, json_t* message)
+{
+	OBSStartStopRecording();
+
     return GetOkResponse();
 }
 
