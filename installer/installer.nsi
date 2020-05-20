@@ -42,8 +42,8 @@ RequestExecutionLevel admin
 !insertmacro MUI_RESERVEFILE_LANGDLL
 
 Function PreReqCheck
-  ; Check to see if OBS is Installed
-  ReadRegStr $0 HKLM "Software\Open Broadcaster Software" ""
+  ; Check to see if OBS is Installed;
+  ReadRegStr $0 HKLM "Software\OBS Studio" ""
   
   ${If} $0 == "";
     MessageBox MB_OK|MB_ICONSTOP "${APPNAME} requires that Open Broadcaster Software be already installed."
